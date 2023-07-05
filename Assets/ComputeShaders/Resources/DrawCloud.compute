@@ -1,0 +1,55 @@
+#pragma kernel Draw
+#include "Utils.cginc"
+
+RWTexture2D<float4> DrawnTex;
+Texture2D<float4> TexToApply;
+int DrawOriginX;
+int DrawOriginY;
+
+uint TexToApplyWidth;
+uint TexToApplyHeight;
+
+float4 TopColor; // Replace red
+float4 MiddleColor; // Replace green
+float4 BottomColor; // Replace blue
+
+
+bool IsPixelColored(int3 id)
+{
+    return DrawnTex[id.xy].w > 0.01;
+}
+
+bool ShouldDraw(int3 id)
+{
+    return (id.x - DrawOriginX) >= 0 && (id.x - DrawOriginX) < TexToApplyWidth
+        && (id.y - DrawOriginY) >= 0 && (id.y - DrawOriginY) < TexToApplyHeight;
+}
+
+[numthreads(32,32,1)]
+void Draw (int3 id : SV_DispatchThreadID)
+{
+    if(IsPixelColored(id) && DrawnTex[id.xy].x < 0.01 )
+        return;
+    
+    if(ShouldDraw(id))
+    {
+        int2 texCoord = int2(id.x - DrawOriginX, id.y - DrawOriginY); 
+        float4 color = TexToApply[texCoord];
+
+        if(TexToApply[texCoord].w > 0.01)
+        {
+            float alpha = DrawnTex[id.xy].w;
+            if(color.x > 0.01)
+            {
+                if(alpha < 0.01)
+                    DrawnTex[id.xy] = TopColor;
+            }
+            else if(color.y > 0.01)
+            {
+                DrawnTex[id.xy] = MiddleColor;
+            }
+            else
+                DrawnTex[id.xy] = BottomColor;
+        }
+    }
+}

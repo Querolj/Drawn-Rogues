@@ -1,0 +1,21 @@
+#pragma kernel CSMain
+
+StructuredBuffer<int> ColorIds;
+StructuredBuffer<int> ColorUsages;
+RWStructuredBuffer<uint> PixelCountsByColorIdAndUsage;
+
+int Width;
+int IdLenght;
+
+const float eps = 0.001;
+
+[numthreads(32,32,1)]
+void CSMain (int3 id : SV_DispatchThreadID)
+{
+    int indexTexInfo = ( Width * id.y) + id.x;
+    if( ColorIds[indexTexInfo] > eps )
+    {
+        int indexPixCount = (IdLenght * ColorUsages[indexTexInfo]) + ColorIds[indexTexInfo];
+        InterlockedAdd(PixelCountsByColorIdAndUsage[indexPixCount], 1);
+    }
+}

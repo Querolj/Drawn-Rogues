@@ -1,0 +1,71 @@
+#pragma kernel DrawPath
+#include "Utils.cginc"
+
+RWTexture2D<float4> FrameTex;
+Texture2D<float4> BorderBrushTex;
+Texture2D<float4> CenterBrushTex;
+
+int BrushWidth;
+int BrushHeight;
+int MousePosX;
+int MousePosY;
+int ColorId;
+int ColorUsage;
+int FrameWidth;
+
+RWStructuredBuffer<int> ColorIds;
+RWStructuredBuffer<int> ColorUsages;
+RWStructuredBuffer<int> PixelsAdded;
+
+uint2 GetBrushOrigin()
+{
+    return uint2(MousePosX - ((BrushWidth) / 2), MousePosY - ((BrushHeight ) / 2) );
+}
+
+bool ShouldUseBrush(uint2 brushOrigin, int3 id)
+{
+    return (id.x - brushOrigin.x) >= 0 && (id.x - brushOrigin.x) < (BrushWidth )
+        && (id.y - brushOrigin.y) >= 0 && (id.y - brushOrigin.y) < (BrushHeight );
+}
+
+bool IsPixelColored(int3 id)
+{
+    return ColorIds[(id.y * FrameWidth ) + id.x] == ColorId;
+}
+
+[numthreads(32,32,1)]
+void DrawPath (int3 id : SV_DispatchThreadID)
+{
+    // in brush area?
+    uint2 brushOrigin = GetBrushOrigin();
+    bool useBrush = ShouldUseBrush(brushOrigin, id);
+
+    if(!useBrush)
+        return;
+    
+    int2 brushPixCoordinate = id.xy - brushOrigin;
+
+    if(!Equals(CenterBrushTex[brushPixCoordinate].a, 0))
+    {
+        FrameTex[id.xy] = CenterBrushTex[brushPixCoordinate];
+        if(!IsPixelColored(id))
+        {
+            ColorIds[(id.y * FrameWidth ) + id.x] = ColorId;
+            ColorUsages[(id.y * FrameWidth ) + id.x] = ColorUsage;
+            InterlockedAdd(PixelsAdded[0],1);
+        }
+
+        return;
+    }
+
+    if(IsPixelColored(id))
+        return;
+        
+    if(!Equals(BorderBrushTex[brushPixCoordinate].a, 0))
+    {
+        FrameTex[id.xy] = BorderBrushTex[brushPixCoordinate];
+        ColorIds[(id.y * FrameWidth ) + id.x] = ColorId;
+        ColorUsages[(id.y * FrameWidth ) + id.x] = ColorUsage;
+        InterlockedAdd(PixelsAdded[0],1);
+    }
+}

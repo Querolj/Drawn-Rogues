@@ -1,0 +1,163 @@
+#pragma kernel DrawColor
+#pragma kernel DrawTex
+#pragma kernel DrawBrushTex
+#include "Utils.cginc"
+
+RWTexture2D<float4> FrameTex;
+Texture2D<float4> BrushTex;
+
+int MousePosX;
+int MousePosY;
+int BrushWidth;
+int BrushHeight;
+float4 Color;
+int PixelId;
+int PixelUsage;
+int PixelTimestamp;
+
+int FrameWidth;
+int FrameHeight;
+RWStructuredBuffer<int> DownBorderTouched;
+RWStructuredBuffer<int> PixelsAdded;
+RWStructuredBuffer<int> PixelIds;
+RWStructuredBuffer<int> PixelUsages;
+RWStructuredBuffer<int> PixelTimestamps;
+RWStructuredBuffer<int> PixelUsagesTouched;
+
+Texture2D<float4> ColorTex;
+int ColorTexWidth;
+int ColorTexHeight;
+
+void CheckPixelUsagesNear(int3 coord)
+{
+    int colorUsageNear;
+    int index = (coord.y + 1) * FrameWidth + coord.x;
+    if(coord.y + 1 < FrameHeight && PixelTimestamp != PixelTimestamps[index] && PixelTimestamps[index] != 0)
+    {
+        int north = ((coord.y + 1) * FrameWidth) + coord.x;
+        colorUsageNear = PixelUsages[north];
+        PixelUsagesTouched[colorUsageNear] = 1;
+    }
+    
+    index = coord.y * FrameWidth + (coord.x + 1);
+    if(coord.x + 1 < FrameWidth && PixelTimestamp != PixelTimestamps[index] && PixelTimestamps[index] != 0)
+    {
+        int est = (coord.y * FrameWidth) + ( coord.x + 1);
+        colorUsageNear = PixelUsages[est];
+        PixelUsagesTouched[colorUsageNear] = 1;
+    }
+
+    index = (coord.y - 1) * FrameWidth + coord.x;
+    if(coord.y - 1 >= 0 && PixelTimestamp != PixelTimestamps[index] && PixelTimestamps[index] != 0)
+    {
+        int south = ((coord.y - 1) * FrameWidth) + coord.x;
+        colorUsageNear = PixelUsages[south];
+        PixelUsagesTouched[colorUsageNear] = 1;
+    }
+
+    index = coord.y * FrameWidth + (coord.x - 1);
+    if(coord.x - 1 >= 0 && PixelTimestamp != PixelTimestamps[index] && PixelTimestamps[index] != 0)
+    {
+        int west = (coord.y * FrameWidth) + ( coord.x - 1);
+        colorUsageNear = PixelUsages[west];
+        PixelUsagesTouched[colorUsageNear] = 1;
+    }
+}
+
+uint2 GetBrushOrigin()
+{
+    return uint2(MousePosX - ((BrushWidth) / 2), MousePosY - ((BrushHeight ) / 2) );
+}
+
+bool ShouldUseBrush(uint2 brushOrigin, int3 id)
+{
+    return (id.x - brushOrigin.x) >= 0 && (id.x - brushOrigin.x) < (BrushWidth )
+        && (id.y - brushOrigin.y) >= 0 && (id.y - brushOrigin.y) < (BrushHeight );
+}
+
+bool IsPixelColored(int3 id)
+{
+    return PixelIds[(id.y * FrameWidth ) + id.x] == PixelId;
+}
+
+[numthreads(32,32,1)]
+void DrawColor (int3 id : SV_DispatchThreadID)
+{
+    if(IsPixelColored(id))
+        return;
+
+    uint2 brushOrigin = GetBrushOrigin();
+    bool useBrush = ShouldUseBrush(brushOrigin, id);
+
+    if(useBrush && Equals(BrushTex[id.xy - brushOrigin].r, 0))
+    {
+        // stroke validation
+        CheckPixelUsagesNear(id);
+        if(DownBorderTouched[0] == 0)
+            DownBorderTouched[0] = id.y == FrameHeight - 1 ? 1 : 0;
+
+        // Color texture
+        FrameTex[id.xy] = Color;
+
+        // Complete texture infos
+        PixelIds[(id.y * FrameWidth ) + id.x] = PixelId;
+        PixelUsages[(id.y * FrameWidth ) + id.x] = PixelUsage;
+        PixelTimestamps[(id.y * FrameWidth ) + id.x] = PixelTimestamp;
+
+        // Count pixels drawed
+        InterlockedAdd(PixelsAdded[0],1);
+    }
+}
+
+[numthreads(32,32,1)]
+void DrawTex (int3 id : SV_DispatchThreadID)
+{
+    if(IsPixelColored(id))
+        return;
+
+    uint2 brushOrigin = GetBrushOrigin();
+    bool useBrush = ShouldUseBrush(brushOrigin, id);
+
+    int2 texUv = int2(id.x % ColorTexWidth, id.y % ColorTexHeight); 
+
+    if(useBrush && Equals(BrushTex[id.xy - brushOrigin].r, 0))
+    {
+        // stroke validation
+        CheckPixelUsagesNear(id);
+        if(DownBorderTouched[0] == 0)
+            DownBorderTouched[0] = id.y == 0 ? 1 : 0;
+
+        // Color texture
+        FrameTex[id.xy] = ColorTex[texUv];
+
+        // Complete texture infos
+        PixelIds[(id.y * FrameWidth ) + id.x] = PixelId;
+        PixelUsages[(id.y * FrameWidth ) + id.x] = PixelUsage;
+        PixelTimestamps[(id.y * FrameWidth ) + id.x] = PixelTimestamp;
+
+        // Count pixels drawed
+        InterlockedAdd(PixelsAdded[0],1);
+    }
+}
+
+[numthreads(32,32,1)]
+void DrawBrushTex (int3 id : SV_DispatchThreadID)
+{
+    if(IsPixelColored(id))
+        return;
+
+    uint2 brushOrigin = GetBrushOrigin();
+    bool useBrush = ShouldUseBrush(brushOrigin, id);
+    
+    int2 brushPixCoordinate = id.xy - brushOrigin;
+
+    if(useBrush && !Equals(BrushTex[brushPixCoordinate].a, 0))
+    {
+        FrameTex[id.xy] = BrushTex[brushPixCoordinate];
+        PixelIds[(id.y * FrameWidth ) + id.x] = PixelId;
+        PixelUsages[(id.y * FrameWidth ) + id.x] = PixelUsage;
+        PixelTimestamps[(id.y * FrameWidth ) + id.x] = PixelTimestamp;
+
+        InterlockedAdd(PixelsAdded[0],1);
+    }
+}

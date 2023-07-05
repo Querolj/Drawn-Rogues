@@ -1,0 +1,22 @@
+#pragma kernel CSMain
+#include "Utils.cginc"
+
+StructuredBuffer<VerticalArea> VerticalAreas;
+uint AreaCount;
+RWTexture2D<float4> ShadowTex;
+
+[numthreads(32,32,1)]
+void CSMain (int3 id : SV_DispatchThreadID)
+{
+    float alpha = 0.5;
+    for(int i = 0; i < AreaCount; i++)
+    {
+        if( id.y >= VerticalAreas[i].LowerLimit && id.y < VerticalAreas[i].UpperLimit)
+        {
+            alpha = 0;
+            break;
+        }
+    }
+    
+    ShadowTex[id.xy] = float4(0, 0, 0, alpha);
+}

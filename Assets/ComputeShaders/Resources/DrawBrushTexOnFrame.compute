@@ -1,0 +1,38 @@
+#pragma kernel CSMain
+#include "Utils.cginc"
+
+RWTexture2D<float4> FrameTex;
+Texture2D<float4> BrushTex;
+
+int MousePosX;
+int MousePosY;
+int BrushWidth;
+int BrushHeight;
+
+int ColorId;
+int ColorUsage;
+int FrameWidth;
+RWStructuredBuffer<int> ColorIds;
+RWStructuredBuffer<int> ColorUsages;
+RWStructuredBuffer<int> PixelsAdded;
+
+[numthreads(32,32,1)]
+void CSMain (int3 id : SV_DispatchThreadID)
+{
+    uint2 brushOrigin = uint2(MousePosX - ((BrushWidth) / 2), MousePosY - ((BrushHeight ) / 2) );
+    bool useBrush = (id.x - brushOrigin.x) >= 0 && (id.x - brushOrigin.x) < (BrushWidth )
+        && (id.y - brushOrigin.y) >= 0 && (id.y - brushOrigin.y) < (BrushHeight );
+    
+    float2 brushUv = float2((id.x - brushOrigin.x) / (float)(BrushWidth ), (id.y - brushOrigin.y) / (float)(BrushHeight ));
+    int2 brushPixCoordinate = id.xy - brushOrigin;
+
+    bool isPixelColored = ColorIds[(id.y * FrameWidth ) + id.x] == ColorId;
+
+    if(useBrush && !Equals(BrushTex[brushPixCoordinate].a, 0) && !isPixelColored)
+    {
+        FrameTex[id.xy] = BrushTex[brushPixCoordinate];
+        ColorIds[(id.y * FrameWidth ) + id.x] = ColorId;
+        ColorUsages[(id.y * FrameWidth ) + id.x] = ColorUsage;
+        InterlockedAdd(PixelsAdded[0],1);
+    }
+}

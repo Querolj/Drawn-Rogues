@@ -1,0 +1,31 @@
+#pragma kernel CSMain
+
+Texture2D<float4> Tex;
+RWStructuredBuffer<int> MinX;
+RWStructuredBuffer<int> MaxX;
+RWStructuredBuffer<int> MinY;
+RWStructuredBuffer<int> MaxY;
+uint FrameWidth;
+StructuredBuffer<int> PixelUsages;
+
+
+[numthreads(32,32,1)]
+void CSMain (int3 id : SV_DispatchThreadID)
+{
+    if(Tex[id.xy].a > 0.0001)
+    {   
+        // if pixel is used for head or body
+        if(PixelUsages[(id.y * FrameWidth ) + id.x] == 1 || PixelUsages[(id.y * FrameWidth ) + id.x] == 2)
+        {
+            InterlockedMin(MinX[0], id.x);
+            InterlockedMax(MaxX[0], id.x);
+            InterlockedMin(MinY[0], id.y);
+            InterlockedMax(MaxY[0], id.y);
+        }
+        else if(PixelUsages[(id.y * FrameWidth ) + id.x] == 4) // legs
+        {
+            InterlockedMin(MinY[0], id.y);
+            InterlockedMax(MaxY[0], id.y);
+        }
+    }
+}

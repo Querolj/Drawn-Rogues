@@ -1,0 +1,49 @@
+#pragma kernel RetrieveTexPixels
+#pragma kernel RetrieveColorPixels
+
+#include "Utils.cginc"
+
+RWStructuredBuffer<float4> PixelMatches;
+Texture2D<float4> ColorTexture;
+uint ColorTexWidth;
+uint ColorTexHeight;
+StructuredBuffer<int> ColorIds;
+uint Width;
+int ColorId;
+float4 Color;
+RWStructuredBuffer<int> PixelFound;
+
+
+[numthreads(32,32,1)]
+void RetrieveTexPixels (int3 id : SV_DispatchThreadID)
+{
+    if( ColorIds[id.y * Width + id.x] == ColorId )
+    {
+        PixelFound[0] = 1;
+
+        int x = id.x % ColorTexWidth;
+        int y = id.y % ColorTexHeight;
+        int2 texUv = int2(x, y); 
+
+        PixelMatches[id.y * Width + id.x] = ColorTexture[texUv];
+
+    }
+    else
+    {
+        PixelMatches[id.y * Width + id.x] = float4(0,0,0,0);
+    }
+}
+
+[numthreads(32,32,1)]
+void RetrieveColorPixels (int3 id : SV_DispatchThreadID)
+{
+    if( ColorIds[id.y * Width + id.x] == ColorId )
+    {
+        PixelFound[0] = 1;
+        PixelMatches[id.y * Width + id.x] = Color;
+    }
+    else
+    {
+        PixelMatches[id.y * Width + id.x] = float4(0,0,0,0);
+    }
+}

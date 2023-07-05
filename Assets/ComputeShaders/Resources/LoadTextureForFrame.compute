@@ -1,0 +1,21 @@
+#pragma kernel CSMain
+#include "Utils.cginc"
+
+int Width;
+StructuredBuffer<float4> ColorsById;
+
+// data to set
+RWStructuredBuffer<int2> TextureInfo;
+RWTexture2D<int2> TextureData;
+RWTexture2D<float4> FrameTex;
+
+[numthreads(32,32,1)]
+void CSMain (int3 id : SV_DispatchThreadID)
+{
+    int colorId = TextureData[id.xy].r;
+    TextureInfo[(id.y * Width) + id.x].x = colorId;
+    TextureInfo[(id.y * Width) + id.x].y = TextureData[id.xy].g; // set color usage
+    
+    // recolor texture with the real color
+    FrameTex[id.xy] = ColorsById[colorId];
+}

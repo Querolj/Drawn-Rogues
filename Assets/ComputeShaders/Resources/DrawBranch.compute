@@ -1,0 +1,48 @@
+#pragma kernel DrawBranch
+#include "Utils.cginc"
+
+int BrushPosX;
+int BrushPosY;
+int BrushWidth;
+int BrushHeight;
+Texture2D<float4> BrushTex;
+
+float4 BrushColor;
+RWTexture2D<float4> DrawnTex;
+
+RWStructuredBuffer<int> BranchTouch;
+
+
+bool IsPixelColored(int3 id)
+{
+    return DrawnTex[id.xy].w > 0.01;
+}
+
+bool ShouldDraw(uint2 brushOrigin, int3 id)
+{
+    return (id.x - brushOrigin.x) >= 0 && (id.x - brushOrigin.x) < (BrushWidth )
+        && (id.y - brushOrigin.y) >= 0 && (id.y - brushOrigin.y) < (BrushHeight );
+}
+
+int2 GetBrushOrigin()
+{
+    return int2(BrushPosX - ((BrushWidth) / 2), BrushPosY - ((BrushHeight ) / 2) );
+}
+
+[numthreads(32,32,1)]
+void DrawBranch (int3 id : SV_DispatchThreadID)
+{
+    // if(DrawnTex[id.xy].w > 0.01)
+    // {
+    //     BranchTouch[0] = 1;
+    //     return;
+    // }
+
+    int2 brushOrigin = GetBrushOrigin();
+
+    if(ShouldDraw(brushOrigin, id) && Equals(BrushTex[id.xy - brushOrigin].r, 0))
+    {
+        DrawnTex[id.xy] = BrushColor;
+    }
+    
+}
