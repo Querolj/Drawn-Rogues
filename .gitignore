@@ -77,3 +77,10 @@ crashlytics-build.properties
 /[Aa]ssets/kawetofe_assets
 /[Aa]ssets/AdvancedPolygonCollider
 /[Aa]ssets/TextMesh\ Pro
+
+# Big assets file
+*.fbx
+*.png
+*.jpg
+*.wav
+*.aseprite
