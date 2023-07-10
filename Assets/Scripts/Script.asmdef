@@ -15,7 +15,8 @@
         "SpriteAnimation",
         "ParticleSystemCallback",
         "ActionDelayer",
-        "Brush"
+        "Brush",
+        "BaseColor"
     ],
     "includePlatforms": [
         "Editor",

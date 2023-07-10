@@ -1,14 +1,7 @@
 {
-    "name": "MapInstaller",
+    "name": "BaseColor",
     "rootNamespace": "",
-    "references": [
-        "GUID:0d8beb7f090555447a6cf5ce9e54dbb4",
-        "GUID:df65605ea4d51e04cb7ed6235fe2f0bf",
-        "GUID:feddd5436f717624587c9bee128dbc5d",
-        "GUID:282418dc39f29be4b802f3c062c460e1",
-        "GUID:aadaa77543d952c41adbfc2f6cff86da",
-        "GUID:182dc7ea5bcf03a449119928c849136c"
-    ],
+    "references": [],
     "includePlatforms": [
         "Editor",
         "WindowsStandalone64"

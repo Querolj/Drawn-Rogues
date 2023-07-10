@@ -51,9 +51,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private FreeDrawUI _freeDrawUI;
 
-    [SerializeField]
-    private BaseColorPalette _baseColorPalette;
-
     private TurnBasedCombat _turnBasedCombat;
 
     // [SerializeField]
@@ -80,12 +77,14 @@ public class PlayerController : MonoBehaviour
 
     private ModeSwitcher _modeSwitcher;
     private MoveIndicator _moveIndicator;
+    private BaseColorInventory _baseColorInventory;
 
     [Inject, UsedImplicitly]
-    private void Init (ModeSwitcher modeSwitcher, MoveIndicator moveIndicator)
+    private void Init (ModeSwitcher modeSwitcher, MoveIndicator moveIndicator, BaseColorInventory baseColorInventory)
     {
         _modeSwitcher = modeSwitcher;
         _moveIndicator = moveIndicator;
+        _baseColorInventory = baseColorInventory;
     }
 
     private void Awake ()
@@ -116,7 +115,7 @@ public class PlayerController : MonoBehaviour
             colorDropsAvailable.Add (bc, total);
         }
 
-        _baseColorPalette.ColorDropsAvailable = colorDropsAvailable;
+        _baseColorInventory.ColorDropsAvailable = colorDropsAvailable;
     }
 
     private void LoadDrawCharacter ()

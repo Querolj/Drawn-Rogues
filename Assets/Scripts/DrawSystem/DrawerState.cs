@@ -45,19 +45,17 @@ public class FrameState
 
 public class BaseColorPaletteState
 {
-    // private List < (ColouringInstance, int) > _pixQuantityByColouringInst;
-    // public List < (ColouringInstance, int) > PixQuantityByColouringInst { get { return _pixQuantityByColouringInst; } }
     private Dictionary<BaseColor, int> _colorDropsAvailable = new Dictionary<BaseColor, int> ();
 
-    public BaseColorPaletteState (BaseColorPalette palette)
+    public BaseColorPaletteState (BaseColorInventory baseColorInventory)
     {
-        if (palette == null)
-            throw new ArgumentNullException (nameof (palette));
-        _colorDropsAvailable = new Dictionary<BaseColor, int> (palette.ColorDropsAvailable);
+        if (baseColorInventory == null)
+            throw new ArgumentNullException (nameof (baseColorInventory));
+        _colorDropsAvailable = new Dictionary<BaseColor, int> (baseColorInventory.ColorDropsAvailable);
 
     }
 
-    public void Apply (ref BaseColorPalette palette)
+    public void Apply (ref BaseColorInventory palette)
     {
         if (palette == null)
             throw new ArgumentNullException (nameof (palette));
@@ -70,7 +68,7 @@ public class DrawerState
     private List<FrameState> _frameStates;
     private BaseColorPaletteState _paletteState;
 
-    public DrawerState (BaseColorPalette palette, List<Frame> frames)
+    public DrawerState (BaseColorInventory palette, List<Frame> frames)
     {
         if (palette == null)
             throw new ArgumentNullException (nameof (palette));
@@ -87,7 +85,7 @@ public class DrawerState
 
     }
 
-    public void Apply (ref BaseColorPalette palette)
+    public void Apply (ref BaseColorInventory palette)
     {
         if (palette == null)
             throw new ArgumentNullException (nameof (palette));

@@ -31,7 +31,6 @@ public class CombatZone : MonoBehaviour
     private EscapeZone _escapeTemplate;
 
     private TurnBasedCombat _turnBasedCombat;
-    private BaseColorPalette _baseColorPalette;
     private RewardUI _rewardUI;
 
     private Drawer _drawer;
@@ -51,10 +50,12 @@ public class CombatZone : MonoBehaviour
     private EscapeZone _escapeZoneLeft;
     private EscapeZone _escapeZoneRight;
     private MoveIndicator _moveIndicator;
+    private BaseColorInventory _baseColorPalette;
 
     [Inject, UsedImplicitly]
-    private void Init (MoveIndicator moveIndicator)
+    private void Init (MoveIndicator moveIndicator, BaseColorInventory baseColorPalette)
     {
+        _baseColorPalette = baseColorPalette;
         _moveIndicator = moveIndicator;
     }
 
@@ -63,7 +64,6 @@ public class CombatZone : MonoBehaviour
         _turnBasedCombat = GameObject.FindObjectOfType<TurnBasedCombat> (); // TODO : Inject
         _drawer = GameObject.FindObjectOfType<Drawer> (); // TODO : Inject
         _playerController = GameObject.FindObjectOfType<PlayerController> (); // TODO : Inject
-        _baseColorPalette = GameObject.FindObjectOfType<BaseColorPalette> (); // TODO : Inject
         _rewardUI = GameObject.FindObjectOfType<RewardUI> (true); // TODO : Inject
 
         _trigger.OnDetect += OnTriggerDetect;

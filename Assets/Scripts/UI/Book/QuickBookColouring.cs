@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 public class QuickBookColouring : MonoBehaviour
 {
@@ -36,7 +38,7 @@ public class QuickBookColouring : MonoBehaviour
     [SerializeField]
     private Drawer _drawer;
 
-    private BaseColorPalette _baseColorPalette;
+    private ColouringInventory _colouringInventory;
 
     private List<BookmarkColouring> _bookmarksCreated = new List<BookmarkColouring> ();
 
@@ -49,14 +51,14 @@ public class QuickBookColouring : MonoBehaviour
 
     private void Awake ()
     {
-        _baseColorPalette = FindObjectOfType<BaseColorPalette> (); // TODO: inject
+        _colouringInventory = FindObjectOfType<ColouringInventory> (); // TODO: inject
     }
 
     private void Start ()
     {
         _selectedSlot.gameObject.SetActive (false);
 
-        _colouringsByBaseColor = _baseColorPalette.ColouringAvailableByBaseColor; // _colouringLoader.GetColourings (_colouringType);
+        _colouringsByBaseColor = _colouringInventory.ColouringAvailableByBaseColor; // _colouringLoader.GetColourings (_colouringType);
 
         for (int i = 0; i < _colouringLoader.GetMaxColouringList (_colouringType); i++)
             CreateSlotColouring ();
@@ -68,7 +70,7 @@ public class QuickBookColouring : MonoBehaviour
         }
 
         Display (BaseColor.Green);
-        _baseColorPalette.OnColouringAdded += OnColouringAdded;
+        _colouringInventory.OnColouringAdded += OnColouringAdded;
     }
 
     private void OnColouringAdded (Colouring colouring)

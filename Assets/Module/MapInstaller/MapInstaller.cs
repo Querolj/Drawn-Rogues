@@ -21,5 +21,6 @@ public class MapInstaller : MonoInstaller
         Container.Bind<MoveIndicator> ().FromComponentsInNewPrefab (_moveIndicatore).AsSingle ();
         Container.Bind<ActionDelayer> ().FromComponentsInNewPrefab (_actionDelayer).AsSingle ();
         Container.Bind<ResizableBrush> ().FromNewScriptableObject (_resizableBrush).AsSingle ();
+        Container.Bind<BaseColorInventory> ().AsSingle ();
     }
 }

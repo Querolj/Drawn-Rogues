@@ -9,9 +9,6 @@ public class Drawer : MonoBehaviour
 {
     private Dictionary<Frame, Vector2> _coordinateByFocusedFrame = new Dictionary<Frame, Vector2> ();
 
-    [SerializeField]
-    private BaseColorPalette _palette;
-
     private Colouring _selectedColouring;
     public void SetSelectedColouring (Colouring colouring)
     {
@@ -114,10 +111,12 @@ public class Drawer : MonoBehaviour
     #endregion
 
     private ResizableBrush _resizableBrush;
+    private BaseColorInventory _baseColorInventory;
 
     [Inject, UsedImplicitly]
-    private void Init (ModeSwitcher modeSwitcher, ResizableBrush resizableBrush)
+    private void Init (ModeSwitcher modeSwitcher, ResizableBrush resizableBrush, BaseColorInventory baseColorInventory)
     {
+        _baseColorInventory = baseColorInventory;
         _resizableBrush = resizableBrush;
         modeSwitcher.OnChangeMode += (mode) =>
         {
@@ -307,7 +306,7 @@ public class Drawer : MonoBehaviour
         if (_selectedColouring == null)
             return;
 
-        int maxDrawablePix = _palette.GetMaxDrawablePixelsFromColouring (_selectedColouring);
+        int maxDrawablePix = _baseColorInventory.GetMaxDrawablePixelsFromColouring (_selectedColouring.BaseColorsUsedPerPixel);
         if (_resizableBrush.ActiveBrush.GetOpaquePixelsCount () <= maxDrawablePix)
             return;
 
@@ -323,7 +322,7 @@ public class Drawer : MonoBehaviour
             return;
 
         ChangeBrushFromAvailableColorQuantity ();
-        int maxDrawablePixCount = _palette.GetMaxDrawablePixelsFromColouring (_selectedColouring);
+        int maxDrawablePixCount = _baseColorInventory.GetMaxDrawablePixelsFromColouring (_selectedColouring.BaseColorsUsedPerPixel);
         // check pixel left on the char 
 
         if (drawStrokeJustStarting)
@@ -352,7 +351,7 @@ public class Drawer : MonoBehaviour
 
         }, drawStrokeJustStarting);
 
-        bool drawedSomething = maxDrawablePixCount != _palette.GetMaxDrawablePixelsFromColouring (_selectedColouring);
+        bool drawedSomething = maxDrawablePixCount != _baseColorInventory.GetMaxDrawablePixelsFromColouring (_selectedColouring.BaseColorsUsedPerPixel);
 
         if (drawStrokeJustStarting && (_strokeValidation == null || _strokeValidation.IsValid) && drawedSomething)
         {
@@ -362,7 +361,7 @@ public class Drawer : MonoBehaviour
 
     private bool AllowStartDraw ()
     {
-        if (_palette.GetMaxDrawablePixelsFromColouring (_selectedColouring) <= 0)
+        if (_baseColorInventory.GetMaxDrawablePixelsFromColouring (_selectedColouring.BaseColorsUsedPerPixel) <= 0)
             return false;
         return true;
     }
@@ -405,7 +404,7 @@ public class Drawer : MonoBehaviour
 
     private void OnPixelsAdded (Colouring colouring, int pixelsAdded)
     {
-        _palette.RemoveBaseColorDrops (colouring, pixelsAdded);
+        _baseColorInventory.RemoveBaseColorDrops (colouring.BaseColorsUsedPerPixel, pixelsAdded);
     }
 
     public void Activate (bool activate)
@@ -443,7 +442,7 @@ public class Drawer : MonoBehaviour
     {
         if (_drawerStateToPush != null)
         {
-            _drawerStateToPush.Apply (ref _palette);
+            _drawerStateToPush.Apply (ref _baseColorInventory);
             OnUndo?.Invoke ();
         }
     }
@@ -451,7 +450,7 @@ public class Drawer : MonoBehaviour
     private void CommitToUndoStack (Colouring ci, StrokeInfo currentStrokeInfo)
     {
         // Debug.Log ("Commit to undo stack");
-        _drawerStateToPush = new DrawerState (_palette, _coordinateByFocusedFrame.Keys.ToList ());
+        _drawerStateToPush = new DrawerState (_baseColorInventory, _coordinateByFocusedFrame.Keys.ToList ());
     }
 
     private void PushToUndoStack ()
@@ -477,7 +476,7 @@ public class Drawer : MonoBehaviour
 
         DrawerState drawerState = _drawerStateHistory.Pop ();
         List<Frame> frames = _coordinateByFocusedFrame.Keys.ToList ();
-        drawerState.Apply (ref _palette);
+        drawerState.Apply (ref _baseColorInventory);
         _drawerStateToPush = null;
         OnUndo?.Invoke ();
     }

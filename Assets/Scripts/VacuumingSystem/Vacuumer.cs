@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
+using Zenject;
 
 public class Vacuumer : MonoBehaviour
 {
@@ -8,7 +10,7 @@ public class Vacuumer : MonoBehaviour
     private GameObject _vacuumerRenderer;
 
     [SerializeField]
-    private BaseColorPalette _palette;
+    private ColouringInventory _colouringInventory;
 
     [SerializeField]
     private RewardUI _rewardUI;
@@ -24,6 +26,13 @@ public class Vacuumer : MonoBehaviour
 
     private Dictionary<int, Vacuumable> _vacuumableByAttackableId = new Dictionary<int, Vacuumable> (); // cache
     public event Action OnVacuumDone;
+    private BaseColorInventory _baseColorInventory;
+
+    [Inject, UsedImplicitly]
+    private void Init (BaseColorInventory baseColorInventory)
+    {
+        _baseColorInventory = baseColorInventory;
+    }
 
     private void Awake ()
     {
@@ -110,13 +119,13 @@ public class Vacuumer : MonoBehaviour
         List<Colouring> colouringsLooted = new List<Colouring> ();
         foreach (ColouringReward colouringReward in _focusedVacuumable.ColouringsReward)
         {
-            if (_palette.HasColouring (colouringReward.Colouring))
+            if (_colouringInventory.HasColouring (colouringReward.Colouring))
                 continue;
 
             if (UnityEngine.Random.Range (0f, 1f) < colouringReward.ChanceToDrop)
             {
                 Debug.Log ("Dropped colouring " + colouringReward.Colouring);
-                _palette.AddColouring (colouringReward.Colouring);
+                _colouringInventory.AddColouring (colouringReward.Colouring);
                 colouringsLooted.Add (colouringReward.Colouring);
             }
         }
@@ -126,7 +135,7 @@ public class Vacuumer : MonoBehaviour
         foreach (ColorDropQuantity colorDropQuantity in _focusedVacuumable.ColorDropsReward)
             colorDropsLooted.Add (colorDropQuantity.BaseColor, colorDropQuantity.Quantity);
 
-        _palette.AddColorDrops (colorDropsLooted);
+        _baseColorInventory.AddColorDrops (colorDropsLooted);
 
         // display rewards
         _rewardUI.Display (colorDropsLooted, colouringsLooted, OnVacuumDone);

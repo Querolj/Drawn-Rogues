@@ -48,10 +48,3 @@ public class Colouring : ScriptableObject
         }
     }
 }
-
-[Serializable]
-public class BaseColorDrops
-{
-    public BaseColor BaseColor;
-    public int TotalDrops;
-}

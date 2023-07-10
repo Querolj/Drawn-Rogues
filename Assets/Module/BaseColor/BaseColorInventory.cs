@@ -1,52 +1,9 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class BaseColorPalette : MonoBehaviour
+public class BaseColorInventory
 {
-    [SerializeField]
-    private List<Colouring> _startingColouring = new List<Colouring> ();
-
-    [SerializeField]
-    private BaseColorDisplays _baseColorDisplays;
-
     #region Player inventory
-    public event Action<Colouring> OnColouringAdded;
-    private List<Colouring> _colouringAvailable = null;
-    public void AddColouring (Colouring colouring)
-    {
-        if (_colouringAvailable.Contains (colouring))
-            throw new Exception ("Trying to add a colouring that is already in the palette");
-
-        _colouringAvailable.Add (colouring);
-        OnColouringAdded?.Invoke (colouring);
-    }
-
-    public bool HasColouring (Colouring colouring)
-    {
-        return _colouringAvailable.Contains (colouring);
-    }
-
-    public Dictionary<BaseColor, List<Colouring>> ColouringAvailableByBaseColor
-    {
-        get
-        {
-            Dictionary<BaseColor, List<Colouring>> colouringsByBaseColor = new Dictionary<BaseColor, List<Colouring>> ();
-
-            foreach (Colouring colouring in _colouringAvailable)
-            {
-                BaseColorDrops baseColorDrops = colouring.BaseColorsUsedPerPixel[0];
-                if (!colouringsByBaseColor.ContainsKey (baseColorDrops.BaseColor))
-                {
-                    colouringsByBaseColor.Add (baseColorDrops.BaseColor, new List<Colouring> ());
-                }
-
-                colouringsByBaseColor[baseColorDrops.BaseColor].Add (colouring);
-            }
-
-            return colouringsByBaseColor;
-        }
-    }
 
     private Dictionary<BaseColor, int> _colorDropsAvailable = new Dictionary<BaseColor, int> ();
     public Dictionary<BaseColor, int> ColorDropsAvailable
@@ -58,15 +15,15 @@ public class BaseColorPalette : MonoBehaviour
         set
         {
             _colorDropsAvailable = value;
-            _baseColorDisplays.Display (_colorDropsAvailable);
+            OnValueChanged?.Invoke (_colorDropsAvailable);
         }
     }
     #endregion
 
+    public event Action<Dictionary<BaseColor, int>> OnValueChanged;
+
     private void Awake ()
     {
-        _colouringAvailable = new List<Colouring> (_startingColouring);
-
         AddColorDrops (new Dictionary<BaseColor, int> () { { BaseColor.Green, 10000 }, { BaseColor.Purple, 10000 } });
     }
 
@@ -80,13 +37,13 @@ public class BaseColorPalette : MonoBehaviour
                 _colorDropsAvailable[kvp.Key] += kvp.Value;
         }
 
-        _baseColorDisplays.Display (_colorDropsAvailable);
+        OnValueChanged?.Invoke (_colorDropsAvailable);
     }
 
-    public int GetMaxDrawablePixelsFromColouring (Colouring colouring)
+    public int GetMaxDrawablePixelsFromColouring (List<BaseColorDrops> drops)
     {
         int minPixelNumber = int.MaxValue;
-        foreach (BaseColorDrops baseColorQuantity in colouring.BaseColorsUsedPerPixel)
+        foreach (BaseColorDrops baseColorQuantity in drops)
         {
             if (!_colorDropsAvailable.ContainsKey (baseColorQuantity.BaseColor))
                 return 0;
@@ -101,9 +58,9 @@ public class BaseColorPalette : MonoBehaviour
         return minPixelNumber;
     }
 
-    public void RemoveBaseColorDrops (Colouring colouring, int totalPixelsDrawed)
+    public void RemoveBaseColorDrops (List<BaseColorDrops> drops, int totalPixelsDrawed)
     {
-        foreach (BaseColorDrops baseColorQuantity in colouring.BaseColorsUsedPerPixel)
+        foreach (BaseColorDrops baseColorQuantity in drops)
         {
             if (!_colorDropsAvailable.ContainsKey (baseColorQuantity.BaseColor))
                 throw new Exception ("Trying to remove a color that is not in the palette");
@@ -115,7 +72,7 @@ public class BaseColorPalette : MonoBehaviour
             _colorDropsAvailable[bc] -= totalPixelsDrawed * baseColorQuantity.TotalDrops;
         }
 
-        _baseColorDisplays.Display (_colorDropsAvailable);
+        OnValueChanged?.Invoke (_colorDropsAvailable);
     }
 
     public int TotalColorQuantityLeft ()
