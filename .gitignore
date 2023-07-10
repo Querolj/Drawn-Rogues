@@ -72,11 +72,11 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # Asset store
-/[Aa]ssets/kawetofe_assets*
-/[Aa]ssets/TextMesh Pro*
-/[Aa]ssets/LightningBolt
-/[Aa]ssets/FantasySkyboxFREE*
-/[Aa]ssets/AdvancedPolygonCollider
+/[Aa]ssets/kawetofe_assets/
+/[Aa]ssets/TextMesh Pro/
+/[Aa]ssets/LightningBolt/
+/[Aa]ssets/FantasySkyboxFREE/
+/[Aa]ssets/AdvancedPolygonCollider/
 
 # Test
 Test/*
