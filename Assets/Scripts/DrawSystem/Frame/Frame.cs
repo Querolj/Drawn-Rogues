@@ -57,7 +57,6 @@ public class Frame : MonoBehaviour
     private const string KERNEL_DRAW_TEX = "DrawTex";
     private const string KERNEL_DRAW_BRUSH_TEX = "DrawBrushTex";
 
-    private ComputeShader _drawPathOnFrameCs;
     private ComputeShader _countAvailablePixelsCs;
     private ComputeShader _readTextureInfos = null;
 
@@ -67,7 +66,6 @@ public class Frame : MonoBehaviour
         _onPixelsAdded += onPixelsAdded;
     }
 
-    private int _activeBrushId = -1;
     protected int _width;
     protected int _height;
 
@@ -126,14 +124,7 @@ public class Frame : MonoBehaviour
             return;
         }
 
-        _drawPathOnFrameCs = Resources.Load<ComputeShader> ("DrawPathOnMap");
-        if (_drawPathOnFrameCs == null)
-        {
-            Debug.LogError (nameof (_drawPathOnFrameCs) + "null, it was not loaded (not found?)");
-            return;
-        }
-
-        _countAvailablePixelsCs = Resources.Load<ComputeShader> ("CountAvailablePixels");
+        _countAvailablePixelsCs = Resources.Load<ComputeShader> ("CountDrawablePixelsUnderBrush");
         if (_countAvailablePixelsCs == null)
         {
             Debug.LogError (nameof (_countAvailablePixelsCs) + "null, it was not loaded (not found?)");
@@ -156,18 +147,6 @@ public class Frame : MonoBehaviour
     public FrameInfos GetTextureInfos ()
     {
         return new FrameInfos (_pixelIds, _pixelUsages, _pixelTimestamps, _currentPixelsAllowed, _maxPixelsAllowed);
-    }
-
-    public void SetBrushDrawingPrediction (Brush brush, Texture2D texture)
-    {
-        // Update frame material
-        _mat.SetInt ("BrushWidth", brush.Texture.width);
-        _mat.SetInt ("BrushHeight", brush.Texture.height);
-
-        _mat.SetTexture ("BrushTex", brush.Texture);
-        _mat.SetTexture ("Tex", texture);
-        _mat.SetInt ("TexWidth", texture.width);
-        _mat.SetInt ("TexHeight", texture.height);
     }
 
     public virtual void UpdateBrushDrawingPrediction (Vector2 coordinate)
@@ -200,49 +179,6 @@ public class Frame : MonoBehaviour
         _drawOnFrameCs.SetTexture (kernel, "BrushTex", brush.Texture);
         kernel = _drawOnFrameCs.FindKernel (KERNEL_DRAW_TEX);
         _drawOnFrameCs.SetTexture (kernel, "BrushTex", brush.Texture);
-
-        _activeBrushId = brush.GetInstanceID ();
-    }
-
-    public void SetBrush (Texture2D brushTex)
-    {
-        if (brushTex == null)
-            throw new ArgumentNullException (nameof (brushTex));
-
-        int kernel = _drawOnFrameCs.FindKernel (KERNEL_DRAW_BRUSH_TEX);
-
-        _drawOnFrameCs.SetInt ("BrushWidth", brushTex.width);
-        _drawOnFrameCs.SetInt ("BrushHeight", brushTex.height);
-        RenderTexture rendTex = new RenderTexture (brushTex.width, brushTex.height, 0, RenderTextureFormat.ARGB32);
-        rendTex.enableRandomWrite = true;
-        Graphics.Blit (brushTex, rendTex);
-        _drawOnFrameCs.SetTexture (kernel, "BrushTex", rendTex);
-    }
-
-    public void SetBrushForPath (Texture2D borderBrushTex, Texture2D centerBrushTex)
-    {
-        if (borderBrushTex == null)
-            throw new ArgumentNullException (nameof (borderBrushTex));
-
-        if (centerBrushTex == null)
-            throw new ArgumentNullException (nameof (centerBrushTex));
-
-        if (borderBrushTex.width != centerBrushTex.width || borderBrushTex.height != centerBrushTex.height)
-            throw new ArgumentException ("Border and center brush textures must have the same dimensions");
-
-        int kernel = _drawPathOnFrameCs.FindKernel ("DrawPath");
-
-        _drawPathOnFrameCs.SetInt ("BrushWidth", borderBrushTex.width);
-        _drawPathOnFrameCs.SetInt ("BrushHeight", borderBrushTex.height);
-        RenderTexture borderRendTex = new RenderTexture (borderBrushTex.width, borderBrushTex.height, 0, RenderTextureFormat.ARGB32);
-        borderRendTex.enableRandomWrite = true;
-        Graphics.Blit (borderBrushTex, borderRendTex);
-        _drawPathOnFrameCs.SetTexture (kernel, "BorderBrushTex", borderRendTex);
-
-        RenderTexture centerRendTex = new RenderTexture (centerBrushTex.width, centerBrushTex.height, 0, RenderTextureFormat.ARGB32);
-        centerRendTex.enableRandomWrite = true;
-        Graphics.Blit (centerBrushTex, centerRendTex);
-        _drawPathOnFrameCs.SetTexture (kernel, "CenterBrushTex", centerRendTex);
     }
 
     public void Clear ()
@@ -268,15 +204,12 @@ public class Frame : MonoBehaviour
 
     private Vector2Int _previousMousePosFrameSpace = Vector2Int.zero;
 
-    // return number of pixels draw
+    // return number of pixels drawn
     public int Draw (Vector2 coordinate, Colouring colouring, PixelUsage pixelUsage, bool isNewStroke,
-        Brush[] brushes, int brushIndex, int availablePixels, out StrokeInfo strokeInfo)
+        ResizableBrush resizableBrush, int maxDrawablePixCount, out StrokeInfo strokeInfo)
     {
-        if (brushes == null || brushes.Length == 0)
-            throw new ArgumentNullException (nameof (brushes));
-
-        if (brushIndex < 0 || brushIndex >= brushes.Length)
-            throw new ArgumentOutOfRangeException (nameof (brushIndex) + " must be between 0 and " + (brushes.Length - 1));
+        if (resizableBrush == null)
+            throw new ArgumentNullException (nameof (resizableBrush));
 
         if (isNewStroke || _currentStrokeInfo == null)
         {
@@ -287,16 +220,14 @@ public class Frame : MonoBehaviour
 
         strokeInfo = _currentStrokeInfo;
 
-        availablePixels = Mathf.Min (_currentPixelsAllowed, availablePixels);
-        if (availablePixels == 0)
+        maxDrawablePixCount = Mathf.Min (_currentPixelsAllowed, maxDrawablePixCount);
+        if (maxDrawablePixCount == 0)
             return 0;
-        // Debug.Log ("Available pixels: " + availablePixels);
-        int initialAvailablePixels = availablePixels;
+
+        int initialAvailablePixels = maxDrawablePixCount;
 
         // Set brush
-        Brush brush = brushes[brushIndex];
-        SetBrush (brush);
-        _activeBrushId = brush.GetInstanceID ();
+        SetBrush (resizableBrush.ActiveBrush);
 
         ComputeShader cs = _drawOnFrameCs;
         int kernel = cs.FindKernel (KERNEL_DRAW_TEX);
@@ -367,34 +298,32 @@ public class Frame : MonoBehaviour
             int lerpedMousePosX = (int) Mathf.Lerp ((float) _previousMousePosFrameSpace.x, (float) mousePosFrameSpace.x, i);
             int lerpedMousePosY = (int) Mathf.Lerp ((float) _previousMousePosFrameSpace.y, (float) mousePosFrameSpace.y, i);
 
-            int freePixelCount = CountAvailablePixels (new Vector2Int (lerpedMousePosX, lerpedMousePosY), brush);
-            // Need to set a smaller brush if not enough pixels available
-            if (freePixelCount > availablePixels)
-            {
-                if (brushIndex == 0)
-                {
-                    ReleaseBuffers (pixelIdsBuffer, pixelUsagesBuffer, pixelTimestampsBuffer, downBorderTouchedBuffer);
-                    _currentPixelsAllowed -= Mathf.Clamp (initialAvailablePixels - availablePixels, 0, _maxPixelsAllowed);
-                    return pixelAddedSum;
-                }
+            int freePixelCount = CountDrawablePixelsUnderBrush (new Vector2Int (lerpedMousePosX, lerpedMousePosY), resizableBrush.ActiveBrush);
 
-                for (int j = brushIndex - 1; j >= 0; j--)
+            // Set a smaller brush if not enough pixels available
+            if (freePixelCount > maxDrawablePixCount)
+            {
+                for (int j = resizableBrush.Brushes.Length - 1; j >= 0; j--)
                 {
-                    brush = brushes[j];
-                    freePixelCount = CountAvailablePixels (new Vector2Int (lerpedMousePosX, lerpedMousePosY), brush);
-                    if (freePixelCount <= availablePixels)
+                    if (resizableBrush.HasSmallestBrushActive ()) // no smaller brush available
                     {
-                        brushIndex = j;
-                        SetBrush (brush);
-                        _activeBrushId = brush.GetInstanceID ();
+                        ReleaseBuffers (pixelIdsBuffer, pixelUsagesBuffer, pixelTimestampsBuffer, downBorderTouchedBuffer);
+                        _currentPixelsAllowed -= Mathf.Clamp (initialAvailablePixels - maxDrawablePixCount, 0, _maxPixelsAllowed);
+                        return pixelAddedSum;
+                    }
+
+                    freePixelCount = CountDrawablePixelsUnderBrush (new Vector2Int (lerpedMousePosX, lerpedMousePosY), resizableBrush.ActiveBrush);
+                    if (freePixelCount <= maxDrawablePixCount)
+                    {
+                        SetBrush (resizableBrush.ActiveBrush);
                         break;
                     }
                 }
 
-                if (freePixelCount > availablePixels)
+                if (freePixelCount > maxDrawablePixCount)
                 {
                     ReleaseBuffers (pixelIdsBuffer, pixelUsagesBuffer, pixelTimestampsBuffer, downBorderTouchedBuffer);
-                    _currentPixelsAllowed -= Mathf.Clamp (initialAvailablePixels - availablePixels, 0, _maxPixelsAllowed);
+                    _currentPixelsAllowed -= Mathf.Clamp (initialAvailablePixels - maxDrawablePixCount, 0, _maxPixelsAllowed);
                     return pixelAddedSum;
                 }
             }
@@ -417,7 +346,7 @@ public class Frame : MonoBehaviour
             // get pixels added
             pixelsAddedBuffer.GetData (pixelsAdded);
             pixelAddedSum += pixelsAdded[0];
-            availablePixels -= pixelsAdded[0];
+            maxDrawablePixCount -= pixelsAdded[0];
             pixelsAdded[0] = 0;
 
             colorsUsagesTouchedBuffer.GetData (colorUsageTouchedInt);
@@ -426,11 +355,11 @@ public class Frame : MonoBehaviour
             colorsUsagesTouchedBuffer.Release ();
             pixelsAddedBuffer.Release ();
 
-            if (availablePixels <= 0)
+            if (maxDrawablePixCount <= 0)
                 break;
         }
 
-        _currentPixelsAllowed -= Mathf.Clamp (initialAvailablePixels - availablePixels, 0, _maxPixelsAllowed);
+        _currentPixelsAllowed -= Mathf.Clamp (initialAvailablePixels - maxDrawablePixCount, 0, _maxPixelsAllowed);
 
         // Get datas
         pixelIdsBuffer.GetData (_pixelIds);
@@ -474,11 +403,11 @@ public class Frame : MonoBehaviour
         return pixelAddedSum;
     }
 
-    private int CountAvailablePixels (Vector2Int mouseCoordinate, Brush brush)
+    private int CountDrawablePixelsUnderBrush (Vector2Int mouseCoordinate, Brush brush)
     {
         ComputeShader cs = _countAvailablePixelsCs;
 
-        int kernel = cs.FindKernel ("CountAvailablePixels");
+        int kernel = cs.FindKernel ("CountDrawablePixelsUnderBrush");
         cs.SetInt ("MousePosX", mouseCoordinate.x);
         cs.SetInt ("MousePosY", mouseCoordinate.y);
 

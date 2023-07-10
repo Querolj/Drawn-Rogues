@@ -156,6 +156,12 @@ public class Attackable : CombatEntity
     public event Action<Attackable> OnMouseExited;
     public event Action<Attackable> OnDestroyed;
 
+    private ActionDelayer _actionDelayer;
+    private void Init (ActionDelayer actionDelayer)
+    {
+        _actionDelayer = actionDelayer;
+    }
+
     protected virtual void Awake ()
     {
         _renderer = GetComponent<SpriteRenderer> ();
@@ -259,7 +265,7 @@ public class Attackable : CombatEntity
 
     public virtual Bounds GetSpriteBounds ()
     {
-        Vector4 border = Utils.GetTextureBorder (_renderer.sprite.texture);
+        Vector4 border = GraphicUtils.GetTextureBorder (_renderer.sprite.texture);
         border /= 100f;
 
         Vector3 boundsSize = new Vector3 (border.z - border.x, border.w - border.y, 0f);
@@ -379,7 +385,7 @@ public class Attackable : CombatEntity
 
             if (nextIndex < _tempEffects[timeline].Count)
             {
-                ActionDelayer.Instance.ExecuteInSeconds (SECONDS_BETWEEN_EFFECTS, () =>
+                _actionDelayer.ExecuteInSeconds (SECONDS_BETWEEN_EFFECTS, () =>
                 {
                     ApplyTempEffects (onAllEffectApplied, fightDescription, timeline, nextIndex);
                 });

@@ -34,7 +34,12 @@ public class TurnBasedCombat : MonoBehaviour
 
     // Attacks ordered by priority
     private Stack<CombatEntity> _combatEntitiesLeftToPlay;
-    private void Awake () { }
+
+    private ActionDelayer _actionDelayer;
+    private void Init (ActionDelayer actionDelayer)
+    {
+        _actionDelayer = actionDelayer;
+    }
 
     private IEnumerator Start ()
     {
@@ -214,7 +219,7 @@ public class TurnBasedCombat : MonoBehaviour
             return;
         }
 
-        ActionDelayer.Instance.ExecuteInSeconds (SECONDS_BETWEEN_APPLY_ALL_EFFECTS, () =>
+        _actionDelayer.ExecuteInSeconds (SECONDS_BETWEEN_APPLY_ALL_EFFECTS, () =>
         {
             attackable.ApplyTempEffects (() => ApplyAllTempEffects (attackables, timeline, onAllTempEffectsApplied), _fightDescription, timeline);
         });

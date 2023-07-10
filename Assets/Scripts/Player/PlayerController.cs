@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Cinemachine;
+using JetBrains.Annotations;
 using UnityEngine;
+using Zenject;
 
 public class PlayerController : MonoBehaviour
 {
@@ -29,9 +31,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private CinemachineVirtualCamera _freeDrawVirtualCamera;
 
-    [SerializeField]
-    private MoveIndicator _moveIndicator;
-
     private ControlMode _controlMode = ControlMode.Map;
 
     [SerializeField]
@@ -51,9 +50,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private FreeDrawUI _freeDrawUI;
-
-    [SerializeField]
-    private ModeSwitcher _modeSwitcher;
 
     [SerializeField]
     private BaseColorPalette _baseColorPalette;
@@ -81,6 +77,16 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     private List<DrawedCharacter> _ownedCharacters = new List<DrawedCharacter> ();
+
+    private ModeSwitcher _modeSwitcher;
+    private MoveIndicator _moveIndicator;
+
+    [Inject, UsedImplicitly]
+    private void Init (ModeSwitcher modeSwitcher, MoveIndicator moveIndicator)
+    {
+        _modeSwitcher = modeSwitcher;
+        _moveIndicator = moveIndicator;
+    }
 
     private void Awake ()
     {
@@ -288,7 +294,7 @@ public class PlayerController : MonoBehaviour
             throw new System.Exception (nameof (combatZone) + " not set, can't fight. (it should be set)");
 
         _controlMode = ControlMode.Combat;
-        _moveIndicator.ActiveCombatMode (_controlledCharacter);
+        _moveIndicator.ActiveCombatMode (_controlledCharacter.GetSpriteBounds ());
     }
 
     public void InitForFreeDraw ()
@@ -302,7 +308,7 @@ public class PlayerController : MonoBehaviour
         _controlMode = ControlMode.FreeDecorDraw;
         _freeDrawUI.gameObject.SetActive (true);
         _freeDrawUI.Init (_controlledCharacter);
-        _moveIndicator.ActiveCombatMode (_controlledCharacter);
+        _moveIndicator.ActiveCombatMode (_controlledCharacter.GetSpriteBounds ());
     }
 
     private void StopFreeDrawMode ()

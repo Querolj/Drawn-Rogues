@@ -1,5 +1,7 @@
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 public class BattlegroundUI : MonoBehaviour
 {
@@ -48,8 +50,13 @@ public class BattlegroundUI : MonoBehaviour
     [SerializeField]
     private Drawer _drawer;
 
-    [SerializeField]
     private ModeSwitcher _modeSwitcher;
+
+    [Inject, UsedImplicitly]
+    private void Init (ModeSwitcher modeSwitcher)
+    {
+        _modeSwitcher = modeSwitcher;
+    }
 
     private void Awake ()
     {

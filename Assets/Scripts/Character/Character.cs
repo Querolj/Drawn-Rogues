@@ -68,15 +68,13 @@ public class Character : Attackable
         if (tag != "Player")
         {
             _ai = GetComponent<AIBehaviour> ();
-            if (_ai != null)
-                _ai.Init (this, GetComponentInParent<CharacterAnimation> ());
         }
 
     }
 
     public override Bounds GetSpriteBounds ()
     {
-        Vector4 border = Utils.GetTextureBorder (_renderer.sprite.texture);
+        Vector4 border = GraphicUtils.GetTextureBorder (_renderer.sprite.texture);
         border /= PIXEL_PER_UNIT;
 
         Vector3 boundsSize = new Vector3 (border.z - border.x, border.w - border.y, 0f);

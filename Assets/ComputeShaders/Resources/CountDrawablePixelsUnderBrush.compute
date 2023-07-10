@@ -1,0 +1,42 @@
+#pragma kernel CountDrawablePixelsUnderBrush
+#include "Utils.cginc"
+
+RWStructuredBuffer<int> Count;
+
+int FrameWidth;
+int FrameHeight;
+int MousePosX;
+int MousePosY;
+int BrushWidth;
+int BrushHeight;
+Texture2D<float4> BrushTex;
+
+RWStructuredBuffer<int> PixelIds;
+
+uint2 GetBrushOrigin()
+{
+    return uint2(MousePosX - ((BrushWidth) / 2), MousePosY - ((BrushHeight ) / 2) );
+}
+
+bool ShouldUseBrush(uint2 brushOrigin, int3 id)
+{
+    return (id.x - brushOrigin.x) >= 0 && (id.x - brushOrigin.x) < (BrushWidth )
+        && (id.y - brushOrigin.y) >= 0 && (id.y - brushOrigin.y) < (BrushHeight );
+}
+
+[numthreads(32,32,1)]
+void CountDrawablePixelsUnderBrush (int3 id : SV_DispatchThreadID)
+{
+    uint2 brushOrigin = GetBrushOrigin();
+    bool useBrush = ShouldUseBrush(brushOrigin, id);
+
+    if(useBrush && Equals(BrushTex[id.xy - brushOrigin].r, 0) )
+    {
+        int index = (id.y * FrameWidth) + id.x;
+        if(PixelIds[index] == 0)
+        {
+            InterlockedAdd(Count[0], 1);
+        }
+    }
+    
+}

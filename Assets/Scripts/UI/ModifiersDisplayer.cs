@@ -1,12 +1,11 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 public class ModifiersDisplayer : MonoBehaviour
 {
-    [SerializeField]
-    private ModeSwitcher _modeSwitcher;
-
     [SerializeField]
     private ModifierType _typeToDisplay;
 
@@ -17,6 +16,15 @@ public class ModifiersDisplayer : MonoBehaviour
     private ModifierInfoDisplayer _modifierInfoDisplayer;
 
     private List<Modifier> _modifierInstances = new List<Modifier> ();
+
+    private ModeSwitcher _modeSwitcher;
+
+    [Inject, UsedImplicitly]
+    private void Init (ModeSwitcher modeSwitcher)
+    {
+        _modeSwitcher = modeSwitcher;
+    }
+
     private void Awake ()
     {
         Modifier[] modifiers = Resources.LoadAll<Modifier> ("Modifier/" + _typeToDisplay);

@@ -1,0 +1,32 @@
+{
+    "name": "Script",
+    "rootNamespace": "",
+    "references": [
+        "Unity.TextMeshPro",
+        "UnityEngine.UI",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Cinemachine",
+        "AdvancedPolygonCollider",
+        "Zenject",
+        "ModeSwitcher",
+        "MoveIndicator",
+        "GraphicUtils",
+        "Utils",
+        "SpriteAnimation",
+        "ParticleSystemCallback",
+        "ActionDelayer",
+        "Brush"
+    ],
+    "includePlatforms": [
+        "Editor",
+        "WindowsStandalone64"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -12,8 +12,8 @@ public class ColorDropReward : MonoBehaviour
 
     public void Display (BaseColor baseColor, int dropNum)
     {
-        _dropletImage.color = BaseColorToColor.GetColor (baseColor);
-        _dropNumText.text = "x " + dropNum + " " + BaseColorToColor.GetColorName (baseColor) + " droplets obtained!";
-        _dropNumText.text = BaseColorToColor.ColorText (_dropNumText.text, baseColor);
+        _dropletImage.color = BaseColorUtils.GetColor (baseColor);
+        _dropNumText.text = "x " + dropNum + " " + BaseColorUtils.GetColorName (baseColor) + " droplets obtained!";
+        _dropNumText.text = BaseColorUtils.ColorText (_dropNumText.text, baseColor);
     }
 }

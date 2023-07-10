@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-public class ColouringSlot : MonoBehaviour
+public class ColouringSlot : Slot
 {
     [SerializeField]
     private TMP_Text _title;
@@ -35,12 +35,12 @@ public class ColouringSlot : MonoBehaviour
         _title.text = colouring.Name;
         _colorTexImage.sprite = colouring.SpriteUI;
 
-        _dropNumText1.text = BaseColorToColor.ColorText (colouring.BaseColorsUsedPerPixel[0].TotalDrops.ToString (), colouring.BaseColorsUsedPerPixel[0].BaseColor);
+        _dropNumText1.text = BaseColorUtils.ColorText (colouring.BaseColorsUsedPerPixel[0].TotalDrops.ToString (), colouring.BaseColorsUsedPerPixel[0].BaseColor);
 
         if (colouring.BaseColorsUsedPerPixel.Count > 1)
         {
             _dropNumText2.gameObject.SetActive (true);
-            _dropNumText2.text = BaseColorToColor.ColorText (colouring.BaseColorsUsedPerPixel[1].TotalDrops.ToString (), colouring.BaseColorsUsedPerPixel[1].BaseColor);
+            _dropNumText2.text = BaseColorUtils.ColorText (colouring.BaseColorsUsedPerPixel[1].TotalDrops.ToString (), colouring.BaseColorsUsedPerPixel[1].BaseColor);
         }
         else
         {

@@ -1,29 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
+using Zenject;
 
 public class Drawer : MonoBehaviour
 {
-
-    [SerializeField]
-    private Brush[] _brushes;
-    private Brush _activeBrush;
-    private int _indexActiveBrush = 0;
-    private GameObject[] _brushRenderer;
     private Dictionary<Frame, Vector2> _coordinateByFocusedFrame = new Dictionary<Frame, Vector2> ();
 
     [SerializeField]
     private BaseColorPalette _palette;
 
-    // [SerializeField]
-    // private QuickBookColouring _quickBook;
     private Colouring _selectedColouring;
     public void SetSelectedColouring (Colouring colouring)
     {
         _selectedColouring = colouring;
-        if (colouring.HasBrushSize)
-            SetBrush (colouring.BrushSize - 1); // -1 because BrushSize is in pixel size, not an index
         Activate (true);
     }
 
@@ -121,39 +113,28 @@ public class Drawer : MonoBehaviour
     private bool _activateDrawer = false;
     #endregion
 
+    private ResizableBrush _resizableBrush;
+
+    [Inject, UsedImplicitly]
+    private void Init (ModeSwitcher modeSwitcher, ResizableBrush resizableBrush)
+    {
+        _resizableBrush = resizableBrush;
+        modeSwitcher.OnChangeMode += (mode) =>
+        {
+            Activate (mode == ModeSwitcher.Mode.Draw);
+        };
+    }
+
     private void Awake ()
     {
-        Array.Sort (_brushes, (b1, b2) => b1.GetOpaquePixelsCount ().CompareTo (b2.GetOpaquePixelsCount ()));
+        _mainCamera = Camera.main;
     }
 
     private void Start ()
     {
-        _mainCamera = Camera.main;
-        if (_brushes.Length == 0)
-        {
-            Debug.LogError ("Need at least on brush");
-            return;
-        }
-
-        _activeBrush = _brushes[0];
-        _brushRenderer = new GameObject[_brushes.Length];
-
-        for (int i = 0; i < _brushes.Length; i++)
-        {
-            GameObject brushGo = new GameObject (_brushes[i].name);
-            brushGo.transform.SetParent (transform);
-            SpriteRenderer rend = brushGo.AddComponent<SpriteRenderer> ();
-            rend.sprite = Sprite.Create (_brushes[i].Texture, new Rect (0, 0, _brushes[i].Texture.width, _brushes[i].Texture.height), Vector2.one / 2);
-            rend.color = new Color (1f, 1f, 1f, 0.3f);
-            brushGo.SetActive (false);
-            _brushRenderer[i] = brushGo;
-        }
-
         OnDrawStrokeStart += ResetStrokeValidation;
         OnDrawStrokeEnd += CommitToUndoStack;
-
         ResetStrokeValidation ();
-
     }
 
     private void ResetStrokeValidation ()
@@ -208,7 +189,7 @@ public class Drawer : MonoBehaviour
 
         if (!_selectedColouring.HasBrushSize && Input.mouseScrollDelta.y != 0)
         {
-            ScrollBrush (Input.mouseScrollDelta.y < 0 ? -1 : 1);
+            _resizableBrush.ChangeBrushFromIndexOffset (Input.mouseScrollDelta.y < 0 ? -1 : 1);
         }
 
         DoForAllFrames ((frame, uv) =>
@@ -250,7 +231,7 @@ public class Drawer : MonoBehaviour
         // Debug.DrawRay (_mainCamera.transform.position, direction * 100, Color.red, 10f, true);
 
         // ray on brush corners
-        Vector2 brushExtents = _activeBrush.GetExtents ();
+        Vector2 brushExtents = _resizableBrush.ActiveBrush.GetExtents ();
         Vector3 bottomLeft = _mainCamera.transform.position;
         bottomLeft += -_mainCamera.transform.right * brushExtents.x;
         bottomLeft += -_mainCamera.transform.up * brushExtents.y;
@@ -321,51 +302,16 @@ public class Drawer : MonoBehaviour
         return touched;
     }
 
-    private void UpdateBrushFromAvailableColorQuantity ()
+    private void ChangeBrushFromAvailableColorQuantity ()
     {
         if (_selectedColouring == null)
             return;
 
         int maxDrawablePix = _palette.GetMaxDrawablePixelsFromColouring (_selectedColouring);
-        if (_activeBrush.GetOpaquePixelsCount () <= maxDrawablePix)
+        if (_resizableBrush.ActiveBrush.GetOpaquePixelsCount () <= maxDrawablePix)
             return;
 
-        for (int i = _brushes.Length - 1; i >= 0; i--)
-        {
-            if (_brushes[i].GetOpaquePixelsCount () <= maxDrawablePix)
-            {
-                SetBrush (i);
-                return;
-            }
-        }
-    }
-
-    private void ScrollBrush (int indexOffset)
-    {
-        _indexActiveBrush = Mathf.Clamp ((_indexActiveBrush + indexOffset) % _brushes.Length, 0, _brushes.Length - 1);
-        _activeBrush = _brushes[_indexActiveBrush];
-        foreach (Frame frame in _coordinateByFocusedFrame.Keys)
-        {
-            frame.SetBrushDrawingPrediction (_activeBrush, _selectedColouring.Texture);
-        }
-    }
-
-    private void SetBrush (int index)
-    {
-        if (index < 0 || index >= _brushes.Length)
-            throw new Exception ("Brush index out of bound : " + index);
-
-        _indexActiveBrush = index;
-        _activeBrush = _brushes[_indexActiveBrush];
-
-        if (_selectedColouring != null)
-        {
-            foreach (Frame frame in _coordinateByFocusedFrame.Keys)
-            {
-                frame.SetBrushDrawingPrediction (_activeBrush, _selectedColouring.Texture);
-            }
-        }
-
+        _resizableBrush.SetBiggestBrushPossible (maxDrawablePix);
     }
 
     private void DrawOnFocusedFrames (bool drawStrokeJustStarting)
@@ -376,7 +322,7 @@ public class Drawer : MonoBehaviour
         if (!AllowStartDraw ())
             return;
 
-        UpdateBrushFromAvailableColorQuantity ();
+        ChangeBrushFromAvailableColorQuantity ();
         int maxDrawablePixCount = _palette.GetMaxDrawablePixelsFromColouring (_selectedColouring);
         // check pixel left on the char 
 
@@ -386,7 +332,7 @@ public class Drawer : MonoBehaviour
         DoForAllFrames ((frame, uv) =>
         {
             int pixelsAdded = frame.Draw (uv, _selectedColouring, _bodyPartSelection.GetPixelUsageFromSelectedBodyPart (), drawStrokeJustStarting,
-                _brushes, _indexActiveBrush, maxDrawablePixCount, out _currentStrokeInfo);
+                _resizableBrush, maxDrawablePixCount, out _currentStrokeInfo);
 
             if (pixelsAdded <= 0)
                 return;
@@ -452,7 +398,7 @@ public class Drawer : MonoBehaviour
 
     private void InitFrame (Frame frame)
     {
-        frame.SetBrush (_activeBrush);
+        frame.SetBrush (_resizableBrush.ActiveBrush);
         frame.SetOnPixelsAdded (OnPixelsAdded);
         _initedFrames.Add (frame);
     }
@@ -470,13 +416,6 @@ public class Drawer : MonoBehaviour
             foreach (Frame frame in _coordinateByFocusedFrame.Keys)
             {
                 frame.StopBrushDrawingPrediction ();
-            }
-        }
-        else
-        {
-            foreach (Frame frame in _coordinateByFocusedFrame.Keys)
-            {
-                frame.SetBrushDrawingPrediction (_activeBrush, _selectedColouring.Texture);
             }
         }
     }

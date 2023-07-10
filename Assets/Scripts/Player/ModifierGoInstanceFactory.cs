@@ -1,13 +1,22 @@
 using System;
+using JetBrains.Annotations;
 using UnityEngine;
+using Zenject;
 
 public class ModifierGoInstanceFactory : MonoBehaviour
 {
     [SerializeField]
     private Drawer _drawer;
 
-    [SerializeField]
     private ModeSwitcher _modeSwitcher;
+    private ActionDelayer _actionDelayer;
+
+    [Inject, UsedImplicitly]
+    private void Init (ModeSwitcher modeSwitcher, ActionDelayer actionDelayer)
+    {
+        _modeSwitcher = modeSwitcher;
+        _actionDelayer = actionDelayer;
+    }
 
     public GameObject Create (Bounds renderBounds, Transform modifierLayer, Modifier modifier, Vector3 localPos, bool isFlipped, float delayLimitCalculInSec = 0f, Action<Modifier> onModifierDeleted = null)
     {
@@ -16,7 +25,7 @@ public class ModifierGoInstanceFactory : MonoBehaviour
         MoveModifier moveModifier = go.AddComponent<MoveModifier> ();
 
         // To wait for a camera to do a transition, since we have limits in screen space 
-        ActionDelayer.Instance.ExecuteInSeconds (delayLimitCalculInSec, () =>
+        _actionDelayer.ExecuteInSeconds (delayLimitCalculInSec, () =>
         {
             Vector3 bottomLeftLimit = renderBounds.center - renderBounds.extents;
 

@@ -49,7 +49,7 @@ public class Page : MonoBehaviour
         if (_title != null)
         {
             BaseColor baseColor = colourings[0].BaseColorsUsedPerPixel[0].BaseColor;
-            _title.text = BaseColorToColor.ColorText (BaseColorToColor.GetColorName (baseColor).ToUpper (), baseColor);
+            _title.text = BaseColorUtils.ColorText (BaseColorUtils.GetColorName (baseColor).ToUpper (), baseColor);
         }
     }
 

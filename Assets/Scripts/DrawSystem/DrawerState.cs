@@ -32,7 +32,6 @@ public class FrameState
 
     public void Apply ()
     {
-        Debug.Log ("Apply frame state " + _frame.name);
         _frame.DrawTexture.SetPixels (_pixels);
         _frame.DrawTexture.Apply ();
 

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c6c5b9ec18a12944b2d540f0a5438ba, type: 3}
+  m_Name: Punch
+  m_EditorClassIdentifier: 
+  Name: Punch
+  AnimationTemplate: {fileID: 5775562761018623581, guid: 5be2cc0f37b463b4aab351bd1a10e76b, type: 3}
+  MinDamage: 5
+  MaxDamage: 8
+  Range: 0.4
+  AttackSelectionType: 0
+  AttackAnimationType: 0
+  Effects: []

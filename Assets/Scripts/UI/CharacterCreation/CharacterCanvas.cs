@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 public class CharacterCanvas : MonoBehaviour
 {
@@ -23,9 +25,6 @@ public class CharacterCanvas : MonoBehaviour
 
     [SerializeField]
     private Button _validateButton;
-
-    [SerializeField]
-    private ModeSwitcher _modeSwitcher;
 
     private Stats _stats;
     public Stats Stats
@@ -86,6 +85,14 @@ public class CharacterCanvas : MonoBehaviour
     public event Action OnCharFormUpdated;
 
     private const int BASE_PIXELS_ALLOWED = 300;
+
+    private ModeSwitcher _modeSwitcher;
+
+    [Inject, UsedImplicitly]
+    private void Init (ModeSwitcher modeSwitcher)
+    {
+        _modeSwitcher = modeSwitcher;
+    }
 
     private void Awake ()
     {
@@ -163,7 +170,6 @@ public class CharacterCanvas : MonoBehaviour
         if (dc != null)
         {
             _validateButton.gameObject.SetActive (true);
-            _frame.Copy (dc.Frame);
             _drawedCharacterFormDescription = new DrawedCharacterFormDescription (dc.DrawedCharacterFormDescription);
             _drawedCharacterFormDescription.OnUpdated += () =>
             {
@@ -196,32 +202,7 @@ public class CharacterCanvas : MonoBehaviour
 
     private void UpdateStats (bool resetCurrentLife = true)
     {
-        _stats = new Stats ();
-        float kilogram = 0f;
-        Dictionary < (int, PixelUsage), int > d = _frame.GetPixelIdsAndUsagesCount ();
-        foreach ((int id, PixelUsage colorUsage) in d.Keys)
-        {
-            int pixCount = d[(id, colorUsage)];
-            if (pixCount <= 0)
-                continue;
-            try
-            {
-                if (CharColouringRegistry.Instance.ColouringsSourceById.ContainsKey (id))
-                {
-                    if (CharColouringRegistry.Instance.ColouringsSourceById[id] is CharacterColouring characterColouring)
-                    {
-                        _stats.Add (characterColouring, colorUsage, pixCount);
-                        kilogram += pixCount * characterColouring.KilogramPerPixel;
-                    }
-                    else
-                        throw new Exception ("Colouring" + CharColouringRegistry.Instance.ColouringsSourceById[id].Name + " is not a CharacterColouring");
-                }
-            }
-            catch (Exception e)
-            {
-                throw new Exception (pixCount + " : " + e);
-            }
-        }
+        _stats = new Stats (_frame.GetPixelIdsAndUsagesCount ());
 
         foreach (ModifierInfos modifierInfos in _modifiersAdded)
         {
@@ -231,7 +212,6 @@ public class CharacterCanvas : MonoBehaviour
             _stats.AddStats (modifier.Stats);
         }
 
-        _stats.Kilogram = kilogram;
         OnStatsChanged?.Invoke ();
         // Debug.Log (_stats.ToString ());
     }

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79aa1e4e185adb24ba6f9c50e4628145, type: 3}
+  m_Name: Ecrasement
+  m_EditorClassIdentifier: 
+  Name: Ecrasement
+  AnimationTemplate: {fileID: 5775562761018623581, guid: 5be2cc0f37b463b4aab351bd1a10e76b, type: 3}
+  MinDamage: 5
+  MaxDamage: 8
+  Range: 0.8
+  AttackSelectionType: 2
+  AttackAnimationType: 2
+  Effects:
+  - Effect: {fileID: 11400000, guid: a1171f3f9d7e36b40bd707d209547f29, type: 2}
+    Value: 100
+  ZoneSize: {x: 0.05, y: 0.025}
+  AttackableDetectorTemplate: {fileID: 3839747209023910754, guid: d9a7c7e467d5dff40acd58fc6408d8eb, type: 3}
+  TrajectorySpeed: 1
+  TrajectoryRadius: 0.05

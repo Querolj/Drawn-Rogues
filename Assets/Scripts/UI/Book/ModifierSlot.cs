@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ModifierSlot : MonoBehaviour
+public class ModifierSlot : Slot
 {
 
     [SerializeField]

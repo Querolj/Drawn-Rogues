@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Cinemachine;
+using JetBrains.Annotations;
 using UnityEngine;
+using Zenject;
 
 public class CombatZone : MonoBehaviour
 {
@@ -48,14 +50,19 @@ public class CombatZone : MonoBehaviour
     private const float ESCAPE_ZONE_SIZE = 0.1f;
     private EscapeZone _escapeZoneLeft;
     private EscapeZone _escapeZoneRight;
-    private MoveIndicator _arrowMove;
+    private MoveIndicator _moveIndicator;
+
+    [Inject, UsedImplicitly]
+    private void Init (MoveIndicator moveIndicator)
+    {
+        _moveIndicator = moveIndicator;
+    }
 
     private void Awake ()
     {
         _turnBasedCombat = GameObject.FindObjectOfType<TurnBasedCombat> (); // TODO : Inject
         _drawer = GameObject.FindObjectOfType<Drawer> (); // TODO : Inject
         _playerController = GameObject.FindObjectOfType<PlayerController> (); // TODO : Inject
-        _arrowMove = GameObject.FindObjectOfType<MoveIndicator> (true); // TODO : Inject
         _baseColorPalette = GameObject.FindObjectOfType<BaseColorPalette> (); // TODO : Inject
         _rewardUI = GameObject.FindObjectOfType<RewardUI> (true); // TODO : Inject
 
@@ -141,7 +148,7 @@ public class CombatZone : MonoBehaviour
             DrawCombatZoneLineOnMap ();
 
             // Set escape route
-            _arrowMove.OnPositionSet += ActivateEscapeRoute;
+            _moveIndicator.OnPositionSet += ActivateEscapeRoute;
         }
     }
 
@@ -152,7 +159,7 @@ public class CombatZone : MonoBehaviour
         _moveLine.gameObject.SetActive (false);
         _escapeZoneLeft.gameObject.SetActive (false);
         _escapeZoneRight.gameObject.SetActive (false);
-        _arrowMove.OnPositionSet -= ActivateEscapeRoute;
+        _moveIndicator.OnPositionSet -= ActivateEscapeRoute;
         _playerController.RemoveAllTempEffectOnChar ();
         if (!escaped)
             CollectReward ();

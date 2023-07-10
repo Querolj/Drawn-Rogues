@@ -4,10 +4,7 @@ using UnityEngine;
 public class Frame3D : Frame
 {
     [SerializeField]
-    private bool _generateDrawingTextureFromDimension = false;
-
-    [SerializeField]
-    private Vector2Int _dimension = new Vector2Int (512, 512);
+    private Vector2Int _dimension = new Vector2Int (64, 64);
 
     protected MeshRenderer _renderer;
 
@@ -18,13 +15,10 @@ public class Frame3D : Frame
         _renderer = GetComponent<MeshRenderer> ();
         _mat = GetComponent<MeshRenderer> ().material;
 
-        if (_generateDrawingTextureFromDimension)
-            _drawTexture = Utils.GetUniqueTransparentTex (_dimension);
-        else
-            _drawTexture = Utils.GetUniqueTransparentTex (new Vector2Int (_mat.mainTexture.width, _mat.mainTexture.height));
+        _drawTexture = GraphicUtils.GetUniqueTransparentTex (_dimension);
 
-        _width = _mat.mainTexture.width;
-        _height = _mat.mainTexture.height;
+        _width = _dimension.x;
+        _height = _dimension.y;
         _pixelIds = new int[_width * _height];
         _pixelUsages = new int[_width * _height];
         _pixelTimestamps = new int[Width * Height];

@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class QuickBookColouring : MonoBehaviour
 {
     [SerializeField]
-    private GameObject _smallSlotTemplate;
+    private ToggleGroup _toggleGroup;
+
+    [SerializeField]
+    private GameObject _itemSlotTemplate;
 
     [SerializeField]
     private Transform _slotContainer;
@@ -37,7 +41,6 @@ public class QuickBookColouring : MonoBehaviour
     private List<BookmarkColouring> _bookmarksCreated = new List<BookmarkColouring> ();
 
     private List<ColouringSlot> _slotsCreated = new List<ColouringSlot> ();
-    private List<ClickableImage> _clickableImagesCreated = new List<ClickableImage> ();
     private BaseColor _currentBaseColor = BaseColor.Brown;
     private Colouring _selectedColouring;
 
@@ -64,7 +67,7 @@ public class QuickBookColouring : MonoBehaviour
             CreateBookmark (bc);
         }
 
-        Display (BaseColor.Brown);
+        Display (BaseColor.Green);
         _baseColorPalette.OnColouringAdded += OnColouringAdded;
     }
 
@@ -91,7 +94,6 @@ public class QuickBookColouring : MonoBehaviour
             return;
 
         BookmarkColouring bookmark = Instantiate (_bookmarkTemplate, _bookmarkContainer);
-        bookmark.transform.localRotation = Quaternion.Euler (0, 0, 180);
         bookmark.Init (bc, () =>
         {
             if (_currentBaseColor == bc)
@@ -112,34 +114,26 @@ public class QuickBookColouring : MonoBehaviour
 
     private void CreateSlotColouring ()
     {
-        ColouringSlot slot = Instantiate (_smallSlotTemplate, _slotContainer).GetComponent<ColouringSlot> ();
-        ClickableImage clickableImage = slot.GetComponentInChildren<ClickableImage> ();
-        if (clickableImage == null)
-            throw new System.Exception ("No clickable image found in " + slot.name);
-
-        clickableImage.OnClick += () =>
-        {
-            if (_selectedColouring == slot.Colouring)
-                return;
-
-            foreach (ClickableImage ci in _clickableImagesCreated)
+        ColouringSlot slot = Instantiate (_itemSlotTemplate, _slotContainer).GetComponent<ColouringSlot> ();
+        slot.SetToggleGroup (_toggleGroup);
+        slot.SetOnClick (
+            () =>
             {
-                if (ci != clickableImage)
-                    ci.ActivateIdleImage ();
+                if (_selectedColouring == slot.Colouring)
+                    return;
+
+                _selectedColouring = slot.Colouring;
+                _drawer.SetSelectedColouring (slot.Colouring);
+
+                if (!_selectedSlot.gameObject.activeSelf)
+                    _selectedSlot.gameObject.SetActive (true);
+
+                _selectedSlot.Display (_selectedColouring);
+                OnColouringSelectionChanged?.Invoke (_selectedColouring);
             }
-
-            _selectedColouring = slot.Colouring;
-            _drawer.SetSelectedColouring (slot.Colouring);
-
-            if (!_selectedSlot.gameObject.activeSelf)
-                _selectedSlot.gameObject.SetActive (true);
-
-            _selectedSlot.Display (_selectedColouring);
-            OnColouringSelectionChanged?.Invoke (_selectedColouring);
-        };
+        );
 
         _slotsCreated.Add (slot);
-        _clickableImagesCreated.Add (clickableImage);
         slot.gameObject.SetActive (false);
     }
 
@@ -150,22 +144,13 @@ public class QuickBookColouring : MonoBehaviour
 
         _currentBaseColor = bc;
 
-        _title.text = BaseColorToColor.GetColoredColorName (bc);
+        _title.text = BaseColorUtils.GetColoredColorName (bc);
         List<Colouring> colourings = _colouringsByBaseColor[bc];
 
         for (int i = 0; i < _slotsCreated.Count; i++)
         {
             if (i < colourings.Count)
             {
-                if (_selectedColouring != null && _selectedColouring == colourings[i])
-                {
-                    _clickableImagesCreated[i].ActivateClickedImage ();
-                }
-                else
-                {
-                    _clickableImagesCreated[i].ActivateIdleImage ();
-                }
-
                 _slotsCreated[i].gameObject.SetActive (true);
                 _slotsCreated[i].Display (colourings[i]);
             }

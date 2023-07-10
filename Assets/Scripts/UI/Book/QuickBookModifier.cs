@@ -1,9 +1,13 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class QuickBookModifier : MonoBehaviour
 {
+    [SerializeField]
+    private ToggleGroup _toggleGroup;
+
     [SerializeField]
     private ModifierSlot _modifierSlotTemplate;
 
@@ -38,24 +42,23 @@ public class QuickBookModifier : MonoBehaviour
         for (int i = 0; i < _modifierLoader.GetMaxModifierList (); i++)
         {
             ModifierSlot slot = Instantiate (_modifierSlotTemplate, _slotContainer).GetComponent<ModifierSlot> ();
-            ClickableImage clickableImage = slot.GetComponentInChildren<ClickableImage> ();
-            if (clickableImage == null)
-                throw new System.Exception ("No clickable image found in " + slot.name);
+            slot.SetToggleGroup (_toggleGroup);
+            slot.SetOnClick (
+                () =>
+                {
+                    if (!_modifierPlacer.TrySetModifier (slot.Modifier, slot.ModifierImage))
+                        return;
 
-            clickableImage.OnClick += () =>
-            {
-                if (!_modifierPlacer.TrySetModifier (slot.Modifier, slot.ModifierImage))
-                    return;
+                    if (_selectedModifier == slot.Modifier)
+                        return;
 
-                if (_selectedModifier == slot.Modifier)
-                    return;
+                    _selectedModifier = slot.Modifier;
+                    if (!_selectedModifierSlot.gameObject.activeSelf)
+                        _selectedModifierSlot.gameObject.SetActive (true);
 
-                _selectedModifier = slot.Modifier;
-                if (!_selectedModifierSlot.gameObject.activeSelf)
-                    _selectedModifierSlot.gameObject.SetActive (true);
-
-                _selectedModifierSlot.Display (_selectedModifier);
-            };
+                    _selectedModifierSlot.Display (_selectedModifier);
+                }
+            );
 
             _slotsCreated.Add (slot);
             slot.gameObject.SetActive (false);

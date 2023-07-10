@@ -220,6 +220,33 @@ public class Stats
         _kilogram = kilogram;
     }
 
+    public Stats (Dictionary < (int, PixelUsage), int > pixelUsageByIds)
+    {
+        foreach ((int id, PixelUsage colorUsage) in pixelUsageByIds.Keys)
+        {
+            int pixCount = pixelUsageByIds[(id, colorUsage)];
+            if (pixCount <= 0)
+                continue;
+            try
+            {
+                if (CharColouringRegistry.Instance.ColouringsSourceById.ContainsKey (id))
+                {
+                    if (CharColouringRegistry.Instance.ColouringsSourceById[id] is CharacterColouring characterColouring)
+                    {
+                        Add (characterColouring, colorUsage, pixCount);
+                        _kilogram += pixCount * characterColouring.KilogramPerPixel;
+                    }
+                    else
+                        throw new Exception ("Colouring" + CharColouringRegistry.Instance.ColouringsSourceById[id].Name + " is not a CharacterColouring");
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception (pixCount + " : " + e);
+            }
+        }
+    }
+
     public void Add (CharacterColouring charColouring, PixelUsage pixelUsage, int multiplicator)
     {
         if (charColouring == null)

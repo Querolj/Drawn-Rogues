@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
+using Zenject;
 
 public class SpellButtonGenerator : MonoBehaviour
 {
@@ -8,12 +10,17 @@ public class SpellButtonGenerator : MonoBehaviour
     private SpellButton _spellButtonTemplate;
 
     [SerializeField]
-    private ModeSwitcher _modeSwitcher;
-
-    [SerializeField]
     private Drawer _drawer;
 
     private Character _lastPlayerCharacter = null;
+
+    private ModeSwitcher _modeSwitcher;
+
+    [Inject, UsedImplicitly]
+    private void Init (ModeSwitcher modeSwitcher)
+    {
+        _modeSwitcher = modeSwitcher;
+    }
 
     public void GenerateButtons (DrawedCharacter playerCharacter)
     {
@@ -42,12 +49,6 @@ public class SpellButtonGenerator : MonoBehaviour
                 {
                     _modeSwitcher.ChangeMode (ModeSwitcher.Mode.Draw);
                     _drawer.SetSelectedColouring (spell);
-                    Debug.Log ("SpellButtonGenerator: " + spell.Name);
-                    // AttackSelection attackSelection = _attackSelectionManager.SwitchAttackSelection (attack.AttackSelectionType, playerCharacter.transform.position);
-                    // attackSelection.gameObject.SetActive (true);
-                    // AttackInstance attackInstance = AttackInstFactory.Create (attack, playerCharacter);
-                    // attackInstance.OnAttackStarted += playerCharacter.GetComponentInParent<CharacterAnimation> ().PlayAttackAnimation;
-                    // attackSelection.Activate (attackInstance, playerCharacter, combatZone, onAttackEnded);
                 }
             );
         }

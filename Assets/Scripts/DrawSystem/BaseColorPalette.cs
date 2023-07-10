@@ -66,6 +66,8 @@ public class BaseColorPalette : MonoBehaviour
     private void Awake ()
     {
         _colouringAvailable = new List<Colouring> (_startingColouring);
+
+        AddColorDrops (new Dictionary<BaseColor, int> () { { BaseColor.Green, 10000 }, { BaseColor.Purple, 10000 } });
     }
 
     public void AddColorDrops (Dictionary<BaseColor, int> colorDrops)

@@ -18,6 +18,6 @@ public class SpellButton : MonoBehaviour
     {
         _spellName.text = spell.Name;
         BaseColorDrops colorDrop = spell.BaseColorsUsedPerPixel[0];
-        _spellColorCost.text = BaseColorToColor.ColorText (colorDrop.TotalDrops.ToString (), colorDrop.BaseColor);
+        _spellColorCost.text = BaseColorUtils.ColorText (colorDrop.TotalDrops.ToString (), colorDrop.BaseColor);
     }
 }

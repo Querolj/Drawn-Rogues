@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent (typeof (MeshRenderer))]
 [ExecuteInEditMode]
 public class SnapOnMap : MonoBehaviour
 {
@@ -26,7 +25,10 @@ public class SnapOnMap : MonoBehaviour
         if (Physics.Raycast (transform.position - Vector3.down * 100f, Vector3.down, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer ("Map")))
         {
             Vector3 newPos = transform.position;
-            newPos.y = hit.point.y + _meshRenderer.bounds.extents.y + _yOffset;
+            if (_meshRenderer != null)
+                newPos.y = hit.point.y + _meshRenderer.bounds.extents.y + _yOffset;
+            else
+                newPos.y = hit.point.y + _yOffset;
 
             transform.position = newPos;
             if (_rotate)

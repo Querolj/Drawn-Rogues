@@ -10,7 +10,7 @@ public class Effect : ScriptableObject
         ReceiveAttackDamage
     }
 
-    public enum ApplyConditionEnum
+    public enum ApplyCondition
     {
         AttackIsMelee,
         AttackIsProjectile,
@@ -20,8 +20,8 @@ public class Effect : ScriptableObject
     public SpriteAnimation AnimationOnApplyTemplate;
     public ParticleSystemCallback ParticleOnApplyTemplate;
     public Timeline EffectApplicationTimeline;
-    public List<ApplyConditionEnum> ApplyConditionsOnUser;
-    public List<ApplyConditionEnum> ApplyConditionsOnTarget;
+    public List<ApplyCondition> ApplyConditionsOnUser;
+    public List<ApplyCondition> ApplyConditionsOnTarget;
 
     protected float _initialValue;
     public float InitialValue
@@ -76,17 +76,17 @@ public class Effect : ScriptableObject
         onAnimeEnded?.Invoke ();
     }
 
-    private bool CheckApplyCondition (AttackInstance attack, List<ApplyConditionEnum> conditions)
+    private bool CheckApplyCondition (AttackInstance attack, List<ApplyCondition> conditions)
     {
         bool apply = true;
-        foreach (ApplyConditionEnum condition in conditions)
+        foreach (ApplyCondition condition in conditions)
         {
             switch (condition)
             {
-                case ApplyConditionEnum.AttackIsMelee:
+                case ApplyCondition.AttackIsMelee:
                     apply &= attack.AttackType == AttackType.Melee;
                     break;
-                case ApplyConditionEnum.AttackIsProjectile:
+                case ApplyCondition.AttackIsProjectile:
                     apply &= attack.AttackType == AttackType.Projectile;
                     break;
             }

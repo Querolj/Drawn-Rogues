@@ -16,8 +16,8 @@ public class BookmarkColouring : MonoBehaviour
     public void Init (BaseColor bc, Action onClick)
     {
         _button.onClick.AddListener (() => onClick ());
-        _unselectedBookmarkColorRend.color = BaseColorToColor.GetColor (bc);
-        _selectedBookmarkColorRend.color = BaseColorToColor.GetColor (bc);
+        _unselectedBookmarkColorRend.color = BaseColorUtils.GetColor (bc);
+        _selectedBookmarkColorRend.color = BaseColorUtils.GetColor (bc);
     }
 
     public void SetSelected (bool isSelected)

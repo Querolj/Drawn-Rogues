@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-[RequireComponent (typeof (Frame2D))]
+[RequireComponent (typeof (Frame))]
 public class DrawedCharacter : Character
 {
     [SerializeField]
     private GameObject _modifierLayer;
-    public GameObject ModifierLayer { get { return _modifierLayer; } }
-
-    [SerializeField]
-    private GameObject _cadre;
 
     [SerializeField]
     private List<ColouringSpell> _colouringSpell = new List<ColouringSpell> ();
@@ -30,12 +26,6 @@ public class DrawedCharacter : Character
 
     private ModifierGoInstanceFactory _modifierGoInstanceFactory;
 
-    private Frame2D _frame;
-    public Frame2D Frame
-    {
-        get { return _frame; }
-    }
-
     private ComputeShader _calculateSpriteBoundsCs;
     private DrawedCharacterFormDescription _drawedCharacterFormDescription;
     public DrawedCharacterFormDescription DrawedCharacterFormDescription
@@ -50,9 +40,14 @@ public class DrawedCharacter : Character
     }
 
     public event Action OnStatsChanged;
-    private GameObject _collider2dGo = null;
     public Action OnDrawedCharacterUpdate;
     private Material _mat;
+
+    private int _maxPixelsAllowed;
+    public int MaxPixelsAllowed
+    {
+        get { return _maxPixelsAllowed; }
+    }
 
     protected override void Awake ()
     {
@@ -77,17 +72,11 @@ public class DrawedCharacter : Character
         }
 
         _drawedCharacterFormDescription = new DrawedCharacterFormDescription ();
-        _frame = GetComponent<Frame2D> ();
         _mat = GetComponent<SpriteRenderer> ().material;
     }
 
     protected override void Start ()
     {
-        if (SceneManager.GetActiveScene ().name == "Map")
-        {
-            _cadre.SetActive (false);
-        }
-
         base.Start ();
 
         if (_collider as BoxCollider != null)
@@ -104,32 +93,9 @@ public class DrawedCharacter : Character
         }
     }
 
-    private void UpdateStats (bool resetCurrentLife = true)
+    private void UpdateStats (Dictionary < (int, PixelUsage), int > pixelUsageByIds, bool resetCurrentLife = true)
     {
-        Stats = new Stats ();
-        Dictionary < (int, PixelUsage), int > d = _frame.GetPixelIdsAndUsagesCount ();
-        foreach ((int id, PixelUsage colorUsage) in d.Keys)
-        {
-            int pixCount = d[(id, colorUsage)];
-            if (pixCount <= 0)
-                continue;
-            try
-            {
-                if (CharColouringRegistry.Instance.ColouringsSourceById.ContainsKey (id))
-                {
-                    if (CharColouringRegistry.Instance.ColouringsSourceById[id] is CharacterColouring characterColouring)
-                    {
-                        Stats.Add (characterColouring, colorUsage, pixCount);
-                    }
-                    else
-                        throw new Exception ("Colouring" + CharColouringRegistry.Instance.ColouringsSourceById[id].Name + " is not a CharacterColouring");
-                }
-            }
-            catch (Exception e)
-            {
-                throw new Exception (pixCount + " : " + e);
-            }
-        }
+        Stats = new Stats (pixelUsageByIds);
 
         foreach (ModifierInfos modifierInfos in _modifierAdded)
         {
@@ -208,8 +174,6 @@ public class DrawedCharacter : Character
     public void Init (DrawedCharacterFormDescription drawedCharacterFormDescription, Frame3D frame, List<ModifierInfos> modifiersAdded, bool resetCurrentLife = true)
     {
         _drawedCharacterFormDescription = drawedCharacterFormDescription;
-        _frame.Copy (frame);
-        _mat.SetTexture ("_DrawTex", _frame.DrawTexture);
 
         RemoveAllModifiersGo ();
         _modifierAdded = new List<ModifierInfos> ();
@@ -222,7 +186,7 @@ public class DrawedCharacter : Character
         }
 
         GenerateColliders ();
-        UpdateStats (resetCurrentLife);
+        UpdateStats (frame.GetPixelIdsAndUsagesCount (), resetCurrentLife);
         OnDrawedCharacterUpdate?.Invoke ();
 
         // OnDrawedCharacterUpdate?.Invoke ();
@@ -233,8 +197,6 @@ public class DrawedCharacter : Character
     {
         _name = drawedCharacterInfos.Name;
         _drawedCharacterFormDescription = drawedCharacterInfos.DrawedCharacterFormDescription;
-        _frame.InitByFrameInfos (drawedCharacterInfos.FrameInfos);
-        _mat.SetTexture ("_DrawTex", _frame.DrawTexture);
         _modifierAdded = new List<ModifierInfos> ();
         foreach (ModifierInfos modifierInfos in drawedCharacterInfos.ModifierInfos)
         {
@@ -264,8 +226,7 @@ public class DrawedCharacter : Character
                 _level++;
                 totalXpToNextLevel = (int) Mathf.Pow (_level, 3f);
                 OnLevelUp?.Invoke ();
-                _frame.CurrentPixelsAllowed += ADD_PIXELS_PER_LEVEL;
-                _frame.MaxPixelsAllowed += ADD_PIXELS_PER_LEVEL;
+                _maxPixelsAllowed += ADD_PIXELS_PER_LEVEL;
             }
             else
             {
@@ -273,8 +234,6 @@ public class DrawedCharacter : Character
                 xp = 0;
             }
         }
-
-        Debug.Log ("Total xp 2 : " + _totalXp + " / " + totalXpToNextLevel + ", level " + _level);
     }
 
     public int GetMaxModifierAllowed ()

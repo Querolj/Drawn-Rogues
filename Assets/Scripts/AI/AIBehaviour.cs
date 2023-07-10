@@ -2,17 +2,23 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent (typeof (Character))]
 public class AIBehaviour : MonoBehaviour
 {
     protected Character _character;
     protected TrajectoryCalculator _trajectoryCalculator;
     protected CharacterAnimation _characterAnimation;
-
-    public void Init (Character character, CharacterAnimation characterAnimation)
+    private ActionDelayer _actionDelayer;
+    private void Init (ActionDelayer actionDelayer)
     {
-        _character = character;
-        _characterAnimation = characterAnimation;
+        _actionDelayer = actionDelayer;
+    }
+
+    private void Awake ()
+    {
         _trajectoryCalculator = new TrajectoryCalculator ();
+        _characterAnimation = GetComponentInParent<CharacterAnimation> ();
+        _character = GetComponent<Character> ();
     }
 
     public virtual void ExecuteTurn (CombatZone combatZone, Character playerCharacter, FightDescription fightDescription, Action onTurnEnd)
@@ -33,7 +39,7 @@ public class AIBehaviour : MonoBehaviour
             _character.CharMovement.TurnTowardTarget (playerCharacter.transform.position);
 
         // wait for the char to turn
-        ActionDelayer.Instance.ExecuteInSeconds (0.25f, () =>
+        _actionDelayer.ExecuteInSeconds (0.25f, () =>
         {
             switch (attackInstance)
             {

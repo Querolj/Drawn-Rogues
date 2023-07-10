@@ -12,7 +12,7 @@ public class BaseColorDisplay : MonoBehaviour
 
     public void Display (BaseColor bc, int dropNumber)
     {
-        _baseColorImage.color = BaseColorToColor.GetColor (bc);
+        _baseColorImage.color = BaseColorUtils.GetColor (bc);
         _dropNumber.text = dropNumber.ToString ();
     }
 }

@@ -1,4 +1,6 @@
+using JetBrains.Annotations;
 using UnityEngine;
+using Zenject;
 
 public class QuickBookManager : MonoBehaviour
 {
@@ -14,8 +16,13 @@ public class QuickBookManager : MonoBehaviour
     [SerializeField]
     private Bookmark _bookmarkModifier;
 
-    [SerializeField]
     private ModeSwitcher _modeSwitcher;
+
+    [Inject, UsedImplicitly]
+    private void Init (ModeSwitcher modeSwitcher)
+    {
+        _modeSwitcher = modeSwitcher;
+    }
 
     private void Awake ()
     {
