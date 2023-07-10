@@ -6038,7 +6038,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _frame: {fileID: 8922838254759901381}
-  _frameReader: {fileID: 1815562042}
   _modifierLayer: {fileID: 561842306}
   _modifierGoInstanceFactory: {fileID: 1670098847}
   _nameField: {fileID: 689106577}
