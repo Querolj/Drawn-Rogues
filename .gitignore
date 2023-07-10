@@ -74,10 +74,11 @@ crashlytics-build.properties
 # Asset store
 /[Aa]ssets/kawetofe_assets*
 /[Aa]ssets/TextMesh Pro*
-/[Aa]ssets/LightningBolt
+/[Aa]ssets/LightningBolt*
 /[Aa]ssets/FantasySkyboxFREE*
-/[Aa]ssets/AdvancedPolygonCollider
+/[Aa]ssets/AdvancedPolygonCollider*
 
 # Test
 Test/*
 
+.vscode/
