@@ -16,6 +16,8 @@ public class DrawedCharacter : Character
         get { return _colouringSpell; }
     }
 
+    private FrameReader _frameReader;
+
     private int _level = 1;
     public int Level
     {
@@ -54,6 +56,7 @@ public class DrawedCharacter : Character
         base.Awake ();
         _isEnemy = false;
         _modifierGoInstanceFactory = GameObject.FindFirstObjectByType<ModifierGoInstanceFactory> (); // TODO : Inject
+        _frameReader = GameObject.FindFirstObjectByType<FrameReader> (); // TODO : Inject
 
         _collider = GetComponent<Collider> ();
 
@@ -171,7 +174,7 @@ public class DrawedCharacter : Character
         }
     }
 
-    public void Init (DrawedCharacterFormDescription drawedCharacterFormDescription, Frame3D frame, List<ModifierInfos> modifiersAdded, bool resetCurrentLife = true)
+    public void Init (DrawedCharacterFormDescription drawedCharacterFormDescription, Frame frame, List<ModifierInfos> modifiersAdded, bool resetCurrentLife = true)
     {
         _drawedCharacterFormDescription = drawedCharacterFormDescription;
 
@@ -186,7 +189,7 @@ public class DrawedCharacter : Character
         }
 
         GenerateColliders ();
-        UpdateStats (frame.GetPixelIdsAndUsagesCount (), resetCurrentLife);
+        UpdateStats (_frameReader.GetPixelIdsAndUsagesCount (frame), resetCurrentLife);
         OnDrawedCharacterUpdate?.Invoke ();
 
         // OnDrawedCharacterUpdate?.Invoke ();

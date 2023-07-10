@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent (typeof (MeshFilter), typeof (MeshRenderer))]
 public class Frame : MonoBehaviour
 {
     protected int[] _pixelIds;
@@ -58,10 +59,9 @@ public class Frame : MonoBehaviour
     private const string KERNEL_DRAW_BRUSH_TEX = "DrawBrushTex";
 
     private ComputeShader _countAvailablePixelsCs;
-    private ComputeShader _readTextureInfos = null;
 
-    protected Action<Colouring, int> _onPixelsAdded;
-    public void SetOnPixelsAdded (Action<Colouring, int> onPixelsAdded)
+    protected Action<List<BaseColorDrops>, int> _onPixelsAdded;
+    public void SetOnPixelsAdded (Action<List<BaseColorDrops>, int> onPixelsAdded)
     {
         _onPixelsAdded += onPixelsAdded;
     }
@@ -103,6 +103,11 @@ public class Frame : MonoBehaviour
     [SerializeField]
     private bool _disallowDrawOnTransparency = true;
 
+    [SerializeField]
+    private Vector2Int _dimension = new Vector2Int (64, 64);
+
+    protected MeshRenderer _renderer;
+
     public int MaxPixelsAllowed
     {
         get { return _maxPixelsAllowed; }
@@ -131,17 +136,27 @@ public class Frame : MonoBehaviour
             return;
         }
 
-        _readTextureInfos = Resources.Load<ComputeShader> ("ReadTextureInfos");
-        if (_readTextureInfos == null)
-        {
-            Debug.LogError (nameof (_readTextureInfos) + "null, it was not loaded (not found?)");
-            return;
-        }
-
         if (_maxPixelsAllowed != -1)
         {
             ResetPixelAllowed (_maxPixelsAllowed);
         }
+
+        _renderer = GetComponent<MeshRenderer> ();
+        _mat = GetComponent<MeshRenderer> ().material;
+
+        _drawTexture = GraphicUtils.GetUniqueTransparentTex (_dimension);
+
+        _width = _dimension.x;
+        _height = _dimension.y;
+        _pixelIds = new int[_width * _height];
+        _pixelUsages = new int[_width * _height];
+        _pixelTimestamps = new int[Width * Height];
+
+        _initialPixels = new Color[_width * _height];
+
+        _mat.SetTexture ("_DrawTex", _drawTexture);
+        _mat.SetFloat ("Width", _width);
+        _mat.SetFloat ("Height", _height);
     }
 
     public FrameInfos GetTextureInfos ()
@@ -149,14 +164,10 @@ public class Frame : MonoBehaviour
         return new FrameInfos (_pixelIds, _pixelUsages, _pixelTimestamps, _currentPixelsAllowed, _maxPixelsAllowed);
     }
 
-    public virtual void UpdateBrushDrawingPrediction (Vector2 coordinate)
+    public virtual void UpdateBrushDrawingPrediction (Vector2 uv)
     {
-        throw new NotImplementedException ();
-    }
-
-    public virtual Vector3 FrameSpaceToWorldSpace (Vector2 uv)
-    {
-        throw new NotImplementedException ();
+        _mat.SetInt ("MousePosX", (int) (uv.x * _width));
+        _mat.SetInt ("MousePosY", (int) (uv.y * _height));
     }
 
     public void StopBrushDrawingPrediction ()
@@ -191,9 +202,9 @@ public class Frame : MonoBehaviour
         _drawTexture.Apply ();
     }
 
-    protected virtual Vector2Int GetMousePosFrameSpace (Vector2 coordinate)
+    protected virtual Vector2Int GetMousePosFrameSpace (Vector2 uv)
     {
-        throw new NotImplementedException ();
+        return new Vector2Int ((int) (uv.x * _width), (int) (uv.y * _height));
     }
 
     private StrokeInfo _currentStrokeInfo = null;
@@ -205,8 +216,8 @@ public class Frame : MonoBehaviour
     private Vector2Int _previousMousePosFrameSpace = Vector2Int.zero;
 
     // return number of pixels drawn
-    public int Draw (Vector2 coordinate, Colouring colouring, PixelUsage pixelUsage, bool isNewStroke,
-        ResizableBrush resizableBrush, int maxDrawablePixCount, out StrokeInfo strokeInfo)
+    public int Draw (Vector2 coordinate, int colouringId, Texture2D texture, List<BaseColorDrops> baseColorDrops,
+        PixelUsage pixelUsage, bool isNewStroke, ResizableBrush resizableBrush, int maxDrawablePixCount, out StrokeInfo strokeInfo)
     {
         if (resizableBrush == null)
             throw new ArgumentNullException (nameof (resizableBrush));
@@ -255,7 +266,7 @@ public class Frame : MonoBehaviour
         cs.SetInt ("PixelUsage", (int) pixelUsage);
 
         // Set pixel id
-        cs.SetInt ("PixelId", colouring.Id);
+        cs.SetInt ("PixelId", colouringId);
 
         // Set pixel timestamps
         ComputeBuffer pixelTimestampsBuffer = new ComputeBuffer (_pixelTimestamps.Length, sizeof (int));
@@ -270,9 +281,9 @@ public class Frame : MonoBehaviour
         cs.SetBuffer (kernel, "DownBorderTouched", downBorderTouchedBuffer);
 
         // Set Texture to draw
-        cs.SetTexture (kernel, "ColorTex", colouring.Texture);
-        cs.SetInt ("ColorTexWidth", colouring.Texture.width);
-        cs.SetInt ("ColorTexHeight", colouring.Texture.height);
+        cs.SetTexture (kernel, "ColorTex", texture);
+        cs.SetInt ("ColorTexWidth", texture.width);
+        cs.SetInt ("ColorTexHeight", texture.height);
 
         // Launch CS
         int x = GraphicUtils.GetComputeShaderDispatchCount (_width, 32);
@@ -373,7 +384,7 @@ public class Frame : MonoBehaviour
         }
 
         _currentStrokeInfo.AddPixels (pixelAddedSum);
-        _onPixelsAdded?.Invoke (colouring, pixelAddedSum);
+        _onPixelsAdded?.Invoke (baseColorDrops, pixelAddedSum);
 
         for (int i = 1; i < colorUsageTouchedInt.Length; i++)
         {
@@ -442,75 +453,6 @@ public class Frame : MonoBehaviour
         return pixelCount[0];
     }
 
-    public Dictionary < (int, PixelUsage), int > GetPixelIdsAndUsagesCount ()
-    {
-        if (_readTextureInfos == null)
-        {
-            Debug.LogError (nameof (_readTextureInfos) + "null, it was not loaded (not found?). Returning null.");
-            return null;
-        }
-
-        // Read pixels count from frame texture
-        int kernel = _readTextureInfos.FindKernel ("CSMain");
-
-        // Set color ids infos
-        // Set color ids buffer
-        ComputeBuffer colorsIdsBuffer = new ComputeBuffer (_pixelIds.Length, sizeof (int));
-        colorsIdsBuffer.SetData (_pixelIds);
-        _readTextureInfos.SetBuffer (kernel, "ColorIds", colorsIdsBuffer);
-
-        // Set color usages buffer
-        ComputeBuffer colorsUsagesBuffer = new ComputeBuffer (_pixelUsages.Length, sizeof (int));
-        colorsUsagesBuffer.SetData (_pixelUsages);
-        _readTextureInfos.SetBuffer (kernel, "ColorUsages", colorsUsagesBuffer);
-
-        // Set color counts
-        int colorUsageMaxValue = Utils.GetMaxEnumValue (typeof (PixelUsage));
-        int[] pixCounts = new int[(CharColouringRegistry.Instance.MaxId + 1) * (colorUsageMaxValue + 1)];
-
-        ComputeBuffer pixCountBuffer = new ComputeBuffer (pixCounts.Length, sizeof (uint));
-        pixCountBuffer.SetData (pixCounts);
-        _readTextureInfos.SetBuffer (kernel, "PixelCountsByColorIdAndUsage", pixCountBuffer);
-
-        // Set MaxId
-        _readTextureInfos.SetInt ("IdLenght", CharColouringRegistry.Instance.MaxId + 1);
-        _readTextureInfos.SetInt ("Width", Width);
-
-        // Exec CS
-        int x = GraphicUtils.GetComputeShaderDispatchCount (Width, 32);
-        int y = GraphicUtils.GetComputeShaderDispatchCount (Height, 32);
-        int z = 1;
-        _readTextureInfos.Dispatch (kernel, x, y, z);
-
-        // retrieve limited colors & read
-        pixCountBuffer.GetData (pixCounts);
-
-        Dictionary < (int, PixelUsage), int > pixelCountByColorIdAndUsage = new Dictionary < (int, PixelUsage), int > ();
-        for (int id = 1; id <= CharColouringRegistry.Instance.MaxId; id++)
-        {
-            foreach (PixelUsage colorUsage in System.Enum.GetValues (typeof (PixelUsage)))
-            {
-                int index = ((int) colorUsage * (CharColouringRegistry.Instance.MaxId + 1)) + id;
-                if (pixCounts[index] > 0)
-                {
-                    pixelCountByColorIdAndUsage.Add ((id, colorUsage), pixCounts[index]);
-                }
-            }
-        }
-
-        // Release
-        colorsIdsBuffer.Release ();
-        colorsUsagesBuffer.Release ();
-        pixCountBuffer.Release ();
-
-        return pixelCountByColorIdAndUsage;
-    }
-
-    public void DrawPath ()
-    {
-        return;
-    }
-
     public void Copy (Frame frame)
     {
         if (frame == null)
@@ -532,37 +474,37 @@ public class Frame : MonoBehaviour
         _maxPixelsAllowed = frame.MaxPixelsAllowed;
     }
 
-    public void InitByFrameInfos (FrameInfos frameInfos)
-    {
-        if (frameInfos.PixelIds.Length != Width * Height)
-            throw new Exception ("texInfos dimensions does not match with frame, len is : " + frameInfos.PixelIds.Length);
+    // public void InitByFrameInfos (FrameInfos frameInfos)
+    // {
+    //     if (frameInfos.PixelIds.Length != Width * Height)
+    //         throw new Exception ("texInfos dimensions does not match with frame, len is : " + frameInfos.PixelIds.Length);
 
-        _pixelIds = frameInfos.PixelIds;
-        _pixelUsages = frameInfos.PixelUsages;
-        _pixelTimestamps = frameInfos.PixelTimestamps;
-        _currentPixelsAllowed = frameInfos.CurrentPixelsAllowed;
-        _maxPixelsAllowed = frameInfos.MaxPixelsAllowed;
+    //     _pixelIds = frameInfos.PixelIds;
+    //     _pixelUsages = frameInfos.PixelUsages;
+    //     _pixelTimestamps = frameInfos.PixelTimestamps;
+    //     _currentPixelsAllowed = frameInfos.CurrentPixelsAllowed;
+    //     _maxPixelsAllowed = frameInfos.MaxPixelsAllowed;
 
-        Color[] pixels = new Color[Width * Height];
-        Dictionary<Colouring, Color[]> coloringsPixels = new Dictionary<Colouring, Color[]> ();
-        for (int i = 0; i < pixels.Length; i++)
-        {
-            int id = _pixelIds[i];
-            if (CharColouringRegistry.Instance.ColouringsSourceById.ContainsKey (id))
-            {
-                if (!coloringsPixels.ContainsKey (CharColouringRegistry.Instance.ColouringsSourceById[id]))
-                    coloringsPixels.Add (CharColouringRegistry.Instance.ColouringsSourceById[id], CharColouringRegistry.Instance.ColouringsSourceById[id].Texture.GetPixels ());
+    //     Color[] pixels = new Color[Width * Height];
+    //     Dictionary<Colouring, Color[]> coloringsPixels = new Dictionary<Colouring, Color[]> ();
+    //     for (int i = 0; i < pixels.Length; i++)
+    //     {
+    //         int id = _pixelIds[i];
+    //         if (CharColouringRegistry.Instance.ColouringsSourceById.ContainsKey (id))
+    //         {
+    //             if (!coloringsPixels.ContainsKey (CharColouringRegistry.Instance.ColouringsSourceById[id]))
+    //                 coloringsPixels.Add (CharColouringRegistry.Instance.ColouringsSourceById[id], CharColouringRegistry.Instance.ColouringsSourceById[id].Texture.GetPixels ());
 
-                int w = CharColouringRegistry.Instance.ColouringsSourceById[id].Texture.width;
-                int x = i % w;
-                int y = (i / w) % w;
-                int index = (y * w) + x;
+    //             int w = CharColouringRegistry.Instance.ColouringsSourceById[id].Texture.width;
+    //             int x = i % w;
+    //             int y = (i / w) % w;
+    //             int index = (y * w) + x;
 
-                pixels[i] = coloringsPixels[CharColouringRegistry.Instance.ColouringsSourceById[id]][index];
-            }
-        }
+    //             pixels[i] = coloringsPixels[CharColouringRegistry.Instance.ColouringsSourceById[id]][index];
+    //         }
+    //     }
 
-        DrawTexture.SetPixels (pixels);
-        DrawTexture.Apply ();
-    }
+    //     DrawTexture.SetPixels (pixels);
+    //     DrawTexture.Apply ();
+    // }
 }

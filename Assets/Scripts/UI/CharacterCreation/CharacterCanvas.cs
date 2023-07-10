@@ -9,7 +9,7 @@ using Zenject;
 public class CharacterCanvas : MonoBehaviour
 {
     [SerializeField]
-    private Frame3D _frame;
+    private Frame _frame;
 
     [SerializeField]
     private Transform _modifierLayer;
@@ -25,6 +25,8 @@ public class CharacterCanvas : MonoBehaviour
 
     [SerializeField]
     private Button _validateButton;
+
+    private FrameReader _frameReader;
 
     private Stats _stats;
     public Stats Stats
@@ -98,6 +100,7 @@ public class CharacterCanvas : MonoBehaviour
     {
         _mainCamera = Camera.main;
         _drawer = GameObject.FindFirstObjectByType<Drawer> (); // TODO : Inject
+        _frameReader = GameObject.FindFirstObjectByType<FrameReader> (); // TODO : Inject
         _stats = new Stats ();
         _modifierLayerRenderer = _modifierLayer.GetComponent<MeshRenderer> ();
         _validateButton.gameObject.SetActive (false);
@@ -202,7 +205,7 @@ public class CharacterCanvas : MonoBehaviour
 
     private void UpdateStats (bool resetCurrentLife = true)
     {
-        _stats = new Stats (_frame.GetPixelIdsAndUsagesCount ());
+        _stats = new Stats (_frameReader.GetPixelIdsAndUsagesCount (_frame));
 
         foreach (ModifierInfos modifierInfos in _modifiersAdded)
         {

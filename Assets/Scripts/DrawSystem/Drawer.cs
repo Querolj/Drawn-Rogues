@@ -330,8 +330,8 @@ public class Drawer : MonoBehaviour
 
         DoForAllFrames ((frame, uv) =>
         {
-            int pixelsAdded = frame.Draw (uv, _selectedColouring, _bodyPartSelection.GetPixelUsageFromSelectedBodyPart (), drawStrokeJustStarting,
-                _resizableBrush, maxDrawablePixCount, out _currentStrokeInfo);
+            int pixelsAdded = frame.Draw (uv, _selectedColouring.Id, _selectedColouring.Texture, _selectedColouring.BaseColorsUsedPerPixel,
+                _bodyPartSelection.GetPixelUsageFromSelectedBodyPart (), drawStrokeJustStarting, _resizableBrush, maxDrawablePixCount, out _currentStrokeInfo);
 
             if (pixelsAdded <= 0)
                 return;
@@ -402,9 +402,9 @@ public class Drawer : MonoBehaviour
         _initedFrames.Add (frame);
     }
 
-    private void OnPixelsAdded (Colouring colouring, int pixelsAdded)
+    private void OnPixelsAdded (List<BaseColorDrops> baseColorDrops, int pixelsAdded)
     {
-        _baseColorInventory.RemoveBaseColorDrops (colouring.BaseColorsUsedPerPixel, pixelsAdded);
+        _baseColorInventory.RemoveBaseColorDrops (baseColorDrops, pixelsAdded);
     }
 
     public void Activate (bool activate)

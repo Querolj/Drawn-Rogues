@@ -2,7 +2,7 @@ using System;
 using DigitalRuby.AdvancedPolygonCollider;
 using UnityEngine;
 
-public class FrameDecor : Frame3D
+public class FrameDecor : Frame
 {
     [SerializeField]
     private AdvancedPolygonCollider _advancedPolygonColliderTemplate;
@@ -58,42 +58,42 @@ public class FrameDecor : Frame3D
 
         PolygonCollider2D polyCol = advancedPolyCol.GetComponent<PolygonCollider2D> ();
 
-        GameObject goColouring;
+        GameObject goBehaviour;
         if (colouringSpell.BehaviourPrefab == null)
             throw new Exception ("could not load prefab for colouring spell " + colouringSpell.Name + ", can't generate collider for lc " + colouringSpell.Name);
 
-        goColouring = GameObject.Instantiate (colouringSpell.BehaviourPrefab);
-        goColouring.transform.SetParent (gameObject.transform);
+        goBehaviour = GameObject.Instantiate (colouringSpell.BehaviourPrefab);
+        goBehaviour.transform.SetParent (gameObject.transform);
         Vector3 newLocalPos = Vector3.zero;
         newLocalPos.z = -0.01f;
-        goColouring.transform.localPosition = newLocalPos;
-        goColouring.transform.localRotation = Quaternion.identity;
+        goBehaviour.transform.localPosition = newLocalPos;
+        goBehaviour.transform.localRotation = Quaternion.identity;
 
         Mesh mesh = ExtrudeSprite.CreateMesh (polyCol.points, frontDistance: -_MESH_COLLIDER_THICKNESS, backDistance : _MESH_COLLIDER_THICKNESS);
 
-        MeshCollider meshCol = goColouring.GetComponent<MeshCollider> ();
+        MeshCollider meshCol = goBehaviour.GetComponent<MeshCollider> ();
         meshCol.sharedMesh = mesh;
 
-        SpriteRenderer spriteRendColouring = goColouring.GetComponent<SpriteRenderer> ();
+        SpriteRenderer spriteRendColouring = goBehaviour.GetComponent<SpriteRenderer> ();
         if (spriteRendColouring.sprite == null)
             spriteRendColouring.sprite = sprite;
         else
         {
-            MeshFilter meshFilter = goColouring.GetComponent<MeshFilter> ();
+            MeshFilter meshFilter = goBehaviour.GetComponent<MeshFilter> ();
             if (meshFilter != null)
             {
                 meshFilter.mesh = mesh;
             }
         }
 
-        ParticleSystem particleSystem = goColouring.GetComponent<ParticleSystem> ();
+        ParticleSystem particleSystem = goBehaviour.GetComponent<ParticleSystem> ();
         if (particleSystem != null)
         {
             ParticleSystem.ShapeModule shapeModule = particleSystem.shape;
             shapeModule.mesh = mesh;
         }
 
-        Attackable attackable = goColouring.GetComponentInParent<Attackable> ();
+        Attackable attackable = goBehaviour.GetComponentInParent<Attackable> ();
         if (attackable != null)
         {
             if (attackable is IColouringSpellBehaviour spellBehaviour)
@@ -101,7 +101,7 @@ public class FrameDecor : Frame3D
         }
         else
         {
-            CombatEnvironnementHazard combatEnvironnementHazard = goColouring.GetComponentInParent<CombatEnvironnementHazard> ();
+            CombatEnvironnementHazard combatEnvironnementHazard = goBehaviour.GetComponentInParent<CombatEnvironnementHazard> ();
             if (combatEnvironnementHazard != null)
             {
                 if (combatEnvironnementHazard is IColouringSpellBehaviour spellBehaviour)
