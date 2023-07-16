@@ -9,7 +9,7 @@ public class AttackChoser : MonoBehaviour
     private AttackDisplayer _attackDisplayerTemplate;
 
     [SerializeField]
-    private Transform _attackContainer;
+    private Transform _attackDisplayerContainer;
 
     [SerializeField]
     private Button _validate;
@@ -53,7 +53,7 @@ public class AttackChoser : MonoBehaviour
             }
             else
             {
-                attackDisplayer = Instantiate (_attackDisplayerTemplate, _attackContainer);
+                attackDisplayer = Instantiate (_attackDisplayerTemplate, _attackDisplayerContainer);
                 _attackDisplayersInstantiated.Add (attackDisplayer);
             }
 

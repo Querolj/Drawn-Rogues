@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-[RequireComponent (typeof (Frame))]
 public class DrawedCharacter : Character
 {
     [SerializeField]

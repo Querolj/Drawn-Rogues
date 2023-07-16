@@ -2,6 +2,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class WarpText : MonoBehaviour
 {
 
@@ -30,6 +31,15 @@ public class WarpText : MonoBehaviour
 
         return newCurve;
     }
+
+#if UNITY_EDITOR
+    // test wrap
+    private void Update ()
+    {
+        if (Input.GetKey (KeyCode.LeftControl))
+            StartCoroutine (Warp ());
+    }
+#endif
 
     /// <summary>
     ///  Method to curve text along a Unity animation curve.
