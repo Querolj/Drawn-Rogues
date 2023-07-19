@@ -188,6 +188,8 @@ public class DrawedCharacter : Character
 
         GenerateColliders ();
         UpdateStats (_frameReader.GetPixelIdsAndUsagesCount (frame), resetCurrentLife);
+        Sprite sprite = Sprite.Create (frame.DrawTexture, new Rect (0, 0, frame.DrawTexture.width, frame.DrawTexture.height), new Vector2 (0.5f, 0.5f), PIXEL_PER_UNIT);
+        _renderer.sprite = sprite;
         OnDrawedCharacterUpdate?.Invoke ();
 
         // OnDrawedCharacterUpdate?.Invoke ();
@@ -207,10 +209,49 @@ public class DrawedCharacter : Character
             AddModifier (modifier, modifierInfos);
         }
 
-        OnDrawedCharacterUpdate?.Invoke ();
+        LoadFrameInfos (drawedCharacterInfos.FrameInfos);
         GenerateColliders ();
+        OnDrawedCharacterUpdate?.Invoke ();
         // UpdateStats ();
-        // GraphicUtils.SavePixelsAsPNG (_frame.DrawTexture.GetPixels (), "Test/playerInit.png", _frame.DrawTexture.width, _frame.DrawTexture.height);
+    }
+
+    private void LoadFrameInfos (FrameInfos frameInfos)
+    {
+        const int DIMENSION = 64;
+        if (frameInfos.PixelIds.Length != DIMENSION * DIMENSION)
+            throw new Exception ("frameInfos width and height does not match " + DIMENSION);
+
+        Texture2D drawTex = new Texture2D (DIMENSION, DIMENSION);
+        drawTex.filterMode = FilterMode.Point;
+        drawTex.wrapMode = TextureWrapMode.Clamp;
+        _maxPixelsAllowed = frameInfos.MaxPixelsAllowed;
+
+        Color[] pixels = new Color[DIMENSION * DIMENSION];
+        Dictionary<Colouring, Color[]> coloringsPixels = new Dictionary<Colouring, Color[]> ();
+        for (int i = 0; i < pixels.Length; i++)
+        {
+            int id = frameInfos.PixelIds[i];
+            if (CharColouringRegistry.Instance.ColouringsSourceById.ContainsKey (id))
+            {
+                if (!coloringsPixels.ContainsKey (CharColouringRegistry.Instance.ColouringsSourceById[id]))
+                    coloringsPixels.Add (CharColouringRegistry.Instance.ColouringsSourceById[id], CharColouringRegistry.Instance.ColouringsSourceById[id].Texture.GetPixels ());
+
+                int w = CharColouringRegistry.Instance.ColouringsSourceById[id].Texture.width;
+                int x = i % w;
+                int y = (i / w) % w;
+                int index = (y * w) + x;
+
+                pixels[i] = coloringsPixels[CharColouringRegistry.Instance.ColouringsSourceById[id]][index];
+            }
+        }
+
+        drawTex.SetPixels (pixels);
+        drawTex.Apply ();
+
+        Sprite sprite = Sprite.Create (drawTex, new Rect (0, 0, drawTex.width, drawTex.height), new Vector2 (0.5f, 0.5f), PIXEL_PER_UNIT);
+        _renderer.sprite = sprite;
+        GraphicUtils.SavePixelsAsPNG (drawTex.GetPixels (), "Test/playerInit.png", drawTex.width, drawTex.height);
+
     }
 
     public Action OnLevelUp;

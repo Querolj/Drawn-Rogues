@@ -9,14 +9,13 @@ public class AttackChoser : MonoBehaviour
     private AttackDisplayer _attackDisplayerTemplate;
 
     [SerializeField]
-    private Transform _attackDisplayerContainer;
+    private ToggleGroup _toggleGroup;
 
     [SerializeField]
     private Button _validate;
 
     private Attack _chosenAttack;
     private List<AttackDisplayer> _attackDisplayersInstantiated = new List<AttackDisplayer> ();
-    private List<ClickableImage> _clickableImages = new List<ClickableImage> ();
     private Action<Attack> _onAttackChosen;
 
     private void Awake ()
@@ -37,11 +36,6 @@ public class AttackChoser : MonoBehaviour
             throw new ArgumentNullException (nameof (onAttackChosen));
         _chosenAttack = null;
 
-        foreach (ClickableImage ci in _clickableImages)
-        {
-            ci.ActivateIdleImage ();
-        }
-
         int i = 0;
         foreach (Attack attack in attacks)
         {
@@ -53,23 +47,20 @@ public class AttackChoser : MonoBehaviour
             }
             else
             {
-                attackDisplayer = Instantiate (_attackDisplayerTemplate, _attackDisplayerContainer);
+                attackDisplayer = Instantiate (_attackDisplayerTemplate, _toggleGroup.gameObject.transform);
+                attackDisplayer.Toggle.group = _toggleGroup;
+                attackDisplayer.Toggle.onValueChanged.AddListener ((bool isOn) =>
+                {
+                    if (isOn)
+                    {
+                        _chosenAttack = attack;
+                    }
+                });
                 _attackDisplayersInstantiated.Add (attackDisplayer);
             }
 
             attackDisplayer.Display (attack);
-            ClickableImage clickableImage = attackDisplayer.GetComponentInChildren<ClickableImage> ();
-            _clickableImages.Add (clickableImage);
 
-            clickableImage.OnClick = () =>
-            {
-                foreach (ClickableImage ci in _clickableImages)
-                {
-                    if (ci != clickableImage)
-                        ci.ActivateIdleImage ();
-                }
-                _chosenAttack = attack;
-            };
             i++;
         }
 

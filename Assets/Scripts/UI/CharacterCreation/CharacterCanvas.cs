@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Cinemachine;
 using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
@@ -25,6 +26,9 @@ public class CharacterCanvas : MonoBehaviour
 
     [SerializeField]
     private Button _validateButton;
+
+    [SerializeField]
+    private CinemachineVirtualCamera _camera;
 
     private FrameReader _frameReader;
 
@@ -169,7 +173,9 @@ public class CharacterCanvas : MonoBehaviour
         gameObject.SetActive (true);
         _drawedCharacterToModify = dc;
         _modifiersAdded.Clear ();
+        _camera.Priority = 20;
         RemoveAllModifiersGo ();
+
         if (dc != null)
         {
             _validateButton.gameObject.SetActive (true);
@@ -201,6 +207,7 @@ public class CharacterCanvas : MonoBehaviour
     {
         _modeSwitcher.ChangeMode (ModeSwitcher.Mode.Selection);
         gameObject.SetActive (false);
+        _camera.Priority = 0;
     }
 
     private void UpdateStats (bool resetCurrentLife = true)

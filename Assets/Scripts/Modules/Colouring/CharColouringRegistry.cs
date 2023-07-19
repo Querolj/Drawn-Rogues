@@ -1,18 +1,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharColouringRegistry : MonoBehaviour
+public class CharColouringRegistry
 {
-    public static CharColouringRegistry Instance { get; private set; }
+    private static CharColouringRegistry _instance;
+    public static CharColouringRegistry Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = new CharColouringRegistry ();
+            }
+
+            return _instance;
+        }
+    }
 
     private List<CharacterColouring> _colourings;
 
     public Dictionary<int, CharacterColouring> ColouringsSourceById { get; private set; }
     public int MaxId { get; private set; }
 
-    private void Awake ()
+    private CharColouringRegistry ()
     {
-        Instance = this;
         _colourings = new List<CharacterColouring> (Resources.LoadAll<CharacterColouring> ("Colouring/Character"));
 
         if (_colourings.Count == 0)

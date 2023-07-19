@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AttackDisplayer : MonoBehaviour
 {
@@ -17,6 +18,16 @@ public class AttackDisplayer : MonoBehaviour
 
     [SerializeField]
     private TMP_Text _effects;
+
+    [SerializeField]
+    private Toggle _toggle;
+    public Toggle Toggle
+    {
+        get
+        {
+            return _toggle;
+        }
+    }
 
     public void Display (Attack attack)
     {

@@ -56,7 +56,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 67cfbd5ca813e72408e6bd993e48a8de, type: 2}
+  - {fileID: 2100000, guid: 04a4b0493142bc3499959b594e65ca1a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -101,8 +101,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _attackSelectionType: 1
-  _swordIcon: {fileID: 1072938049652625884}
-  _redCross: {fileID: 1072938049971244999}
+  _validSelectionIcon: {fileID: 1072938049652625884}
+  _invalidSelectionIcon: {fileID: 1072938049971244999}
 --- !u!65 &3553856107665545462
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -111,9 +111,17 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1072938049219070173}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 0.0002}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1072938049652625884

@@ -9,7 +9,6 @@ public class SpellButtonGenerator : MonoBehaviour
     [SerializeField]
     private SpellButton _spellButtonTemplate;
 
-    [SerializeField]
     private Drawer _drawer;
 
     private Character _lastPlayerCharacter = null;
@@ -20,6 +19,11 @@ public class SpellButtonGenerator : MonoBehaviour
     private void Init (ModeSwitcher modeSwitcher)
     {
         _modeSwitcher = modeSwitcher;
+    }
+
+    private void Awake ()
+    {
+        _drawer = FindObjectOfType<Drawer> (); // TODO: inject
     }
 
     public void GenerateButtons (DrawedCharacter playerCharacter)
