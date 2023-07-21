@@ -11,9 +11,11 @@ GameObject:
   - component: {fileID: 7207870519249538183}
   - component: {fileID: 1803782553044872708}
   - component: {fileID: 1561575053082485635}
-  m_Layer: 0
+  - component: {fileID: 6380750594029326618}
+  - component: {fileID: 2214279922952288429}
+  m_Layer: 6
   m_Name: DrawedCharacter
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -116,6 +118,54 @@ MonoBehaviour:
   _reduceEscapeChanceValue: 0.2
   _modifierLayer: {fileID: 2268071720730420520}
   _colouringSpell: []
+--- !u!65 &6380750594029326618
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2032451665636909854}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.64, y: 0.64, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &2214279922952288429
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2032451665636909854}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2268071720730420520
 GameObject:
   m_ObjectHideFlags: 0
@@ -125,7 +175,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3949694883564382294}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ModifierLayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -158,7 +208,7 @@ GameObject:
   - component: {fileID: 2992404471256334685}
   - component: {fileID: 587915763813740162}
   - component: {fileID: 3361892575399516908}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Animator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -217,9 +267,9 @@ GameObject:
   - component: {fileID: 1767281613787924014}
   - component: {fileID: 4880393115946104934}
   - component: {fileID: 6005709883124936033}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

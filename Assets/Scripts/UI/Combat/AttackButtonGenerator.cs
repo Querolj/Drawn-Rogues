@@ -1,19 +1,26 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 public class AttackButtonGenerator : MonoBehaviour
 {
     [SerializeField]
     private Button _attackButtonTemplate;
 
-    [SerializeField]
     private AttackSelectionManager _attackSelectionManager;
 
     private Character _lastPlayerCharacter = null;
     private Action _onAttackEnded;
+
+    [Inject, UsedImplicitly]
+    private void Init (AttackSelectionManager attackSelectionManager)
+    {
+        _attackSelectionManager = attackSelectionManager;
+    }
 
     public void GenerateButtons (Character playerCharacter, CombatZone combatZone, Action onAttackEnded)
     {

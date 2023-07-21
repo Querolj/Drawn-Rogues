@@ -19,8 +19,8 @@ public class FightDescription : MonoBehaviour, IPointerClickHandler, IPointerExi
     private float _contentHeight = 0;
     private bool _isZoomed = false;
 
-    private const float TOP_SCROLL_VIEW_ZOOMED = 200;
-    private const float TOP_SCROLL_VIEW_UNZOOMED = 0;
+    private const float TOP_SCROLL_VIEW_ZOOMED = -75;
+    private const float TOP_SCROLL_VIEW_UNZOOMED = -275;
 
     private void Awake ()
     {

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8473946744376720235}
   - component: {fileID: 8473946744376720232}
   - component: {fileID: 8473946744376720238}
+  - component: {fileID: 7041168664589503915}
   m_Layer: 0
   m_Name: PoisonProjectile
   m_TagString: Untagged
@@ -31,7 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8473946744376720232
 SpriteRenderer:
@@ -97,3 +98,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7eb818982bfbe24d88b16df7e3439b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7041168664589503915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8473946744376720239}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2855bcfe4924af94d91eeab10b2b4cda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _sprites:
+  - {fileID: -848872146, guid: 03437a171ab5de84eba13f41ca1d7361, type: 3}
+  - {fileID: 1379202323, guid: 03437a171ab5de84eba13f41ca1d7361, type: 3}
+  - {fileID: -1976657686, guid: 03437a171ab5de84eba13f41ca1d7361, type: 3}
+  - {fileID: -1232095211, guid: 03437a171ab5de84eba13f41ca1d7361, type: 3}
+  - {fileID: -1656802560, guid: 03437a171ab5de84eba13f41ca1d7361, type: 3}
+  - {fileID: 1671121897, guid: 03437a171ab5de84eba13f41ca1d7361, type: 3}
+  - {fileID: 1206553721, guid: 03437a171ab5de84eba13f41ca1d7361, type: 3}
+  - {fileID: -43656530, guid: 03437a171ab5de84eba13f41ca1d7361, type: 3}
+  - {fileID: 1461701459, guid: 03437a171ab5de84eba13f41ca1d7361, type: 3}
+  _frameTime: 0.025
+  _maxLoopCount: 1
+  _autoStart: 0

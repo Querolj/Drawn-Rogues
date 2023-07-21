@@ -15,12 +15,26 @@ public class MapInstaller : MonoInstaller
     [SerializeField]
     private ResizableBrush _resizableBrush;
 
+    [SerializeField]
+    private TrajectoryDrawer _trajectoryDrawer;
+
+    [SerializeField]
+    private AttackSelectionManager _attackSelectionManager;
+
     public override void InstallBindings ()
     {
         Container.Bind<ModeSwitcher> ().FromComponentsInNewPrefab (_modeSwitcher).AsSingle ();
         Container.Bind<MoveIndicator> ().FromComponentsInNewPrefab (_moveIndicatore).AsSingle ();
         Container.Bind<ActionDelayer> ().FromComponentsInNewPrefab (_actionDelayer).AsSingle ();
         Container.Bind<ResizableBrush> ().FromNewScriptableObject (_resizableBrush).AsSingle ();
+        Container.Bind<TrajectoryDrawer> ().FromComponentsInNewPrefab (_trajectoryDrawer).AsSingle ();
+        Container.Bind<AttackSelectionManager> ().FromComponentsInNewPrefab (_attackSelectionManager).AsSingle ();
+
         Container.Bind<BaseColorInventory> ().AsSingle ();
+        Container.Bind<TrajectoryCalculator> ().AsSingle ();
+
+        // Factories
+        Container.BindFactory<AttackSelection, AttackSelection, AttackSelection.Factory> ().FromFactory<PrefabFactory<AttackSelection>> ();
+
     }
 }

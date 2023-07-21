@@ -57,7 +57,7 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
     private Texture2D _drawedTex;
     private RenderTexture _rendTex;
 
-    public void Init (TurnBasedCombat turnBasedCombat, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor)
+    public void Init (TurnManager turnBasedCombat, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor)
     {
         _renderer = GetComponent<SpriteRenderer> ();
         _currentDrawTime = BRANCH_DRAW_TIME;

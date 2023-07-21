@@ -16,7 +16,8 @@
         "ParticleSystemCallback",
         "ActionDelayer",
         "Brush",
-        "BaseColor"
+        "BaseColor",
+        "Trajectory"
     ],
     "includePlatforms": [
         "Editor",

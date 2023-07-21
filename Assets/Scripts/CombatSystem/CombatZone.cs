@@ -30,7 +30,7 @@ public class CombatZone : MonoBehaviour
     [SerializeField]
     private EscapeZone _escapeTemplate;
 
-    private TurnBasedCombat _turnBasedCombat;
+    private TurnManager _turnBasedCombat;
     private RewardUI _rewardUI;
 
     private Drawer _drawer;
@@ -61,7 +61,7 @@ public class CombatZone : MonoBehaviour
 
     private void Awake ()
     {
-        _turnBasedCombat = GameObject.FindObjectOfType<TurnBasedCombat> (); // TODO : Inject
+        _turnBasedCombat = GameObject.FindObjectOfType<TurnManager> (); // TODO : Inject
         _drawer = GameObject.FindObjectOfType<Drawer> (); // TODO : Inject
         _playerController = GameObject.FindObjectOfType<PlayerController> (); // TODO : Inject
         _rewardUI = GameObject.FindObjectOfType<RewardUI> (true); // TODO : Inject
@@ -74,7 +74,7 @@ public class CombatZone : MonoBehaviour
         Vector3 mapLeftLimit = new Vector3 (_lineXMin, Utils.GetMapHeight (leftLimit), _centerPoint.z);
         mapLeftLimit.y += 0.2f;
         _escapeZoneLeft = Instantiate<EscapeZone> (_escapeTemplate, mapLeftLimit, Quaternion.identity, transform);
-        _escapeZoneLeft.GetComponent<SpriteRenderer> ().flipX = true;
+        _escapeZoneLeft.FlipIcon ();
         _escapeZoneLeft.gameObject.SetActive (false);
 
         Vector3 rightLimit = new Vector3 (_lineXMax - ESCAPE_ZONE_SIZE, 0f, _centerPoint.z);

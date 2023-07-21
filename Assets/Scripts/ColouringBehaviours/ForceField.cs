@@ -4,7 +4,7 @@ using UnityEngine;
 public class ForceField : Attackable, IColouringSpellBehaviour, IPlayerProjectileDefense
 {
 
-    private TurnBasedCombat _turnBasedCombat;
+    private TurnManager _turnBasedCombat;
     private float _waveCurrentDuration = 0f;
     private const float WAVE_MAX_DURATION = 1f;
 
@@ -15,7 +15,7 @@ public class ForceField : Attackable, IColouringSpellBehaviour, IPlayerProjectil
         _renderer.material.SetInt ("_ImpactPointReported", 0);
     }
 
-    public void Init (TurnBasedCombat turnBasedCombat, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor)
+    public void Init (TurnManager turnBasedCombat, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor)
     {
         _turnBasedCombat = turnBasedCombat;
     }

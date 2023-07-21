@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
+using Zenject;
 
 public enum AttackSelectionType
 {
@@ -15,6 +17,9 @@ public enum AttackSelectionType
 
 public class AttackSelection : MonoBehaviour
 {
+    public class Factory : PlaceholderFactory<AttackSelection, AttackSelection>
+    { }
+
     [SerializeField]
     private AttackSelectionType _attackSelectionType;
     public AttackSelectionType AttackSelectionType
@@ -53,6 +58,7 @@ public class AttackSelection : MonoBehaviour
         _material = _spriteRenderer.material;
     }
 
+    [Inject, UsedImplicitly]
     public void Init (TrajectoryCalculator trajectoryCalculator, TrajectoryDrawer trajectoryDrawer)
     {
         _trajectoryCalculator = trajectoryCalculator;

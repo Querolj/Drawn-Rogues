@@ -13,12 +13,25 @@ MonoBehaviour:
   m_Name: Lame Psn
   m_EditorClassIdentifier: 
   Name: Lame Psn
-  AnimationTemplate: {fileID: 5775562761018623581, guid: 5be2cc0f37b463b4aab351bd1a10e76b, type: 3}
+  AnimationTemplate: {fileID: 8686212205060676263, guid: 7219c051394705749954ed51ae0eb723, type: 3}
+  ParticleTemplate: {fileID: 0}
   MinDamage: 5
   MaxDamage: 8
-  Range: 0.4
+  NoDamage: 0
+  Precision: 100
+  DamageType: 1
+  _range: 1
   AttackSelectionType: 0
-  AttackAnimationType: 0
+  AttackType: 1
   Effects:
   - Effect: {fileID: 11400000, guid: a1171f3f9d7e36b40bd707d209547f29, type: 2}
     Value: 100
+  AvailableForPlayer: 1
+  RequiredLevel: 0
+  RequiredWidthAdjectives: 
+  RequiredHeightAdjectives: 
+  RequiredBaseColor: 
+  RequiredNumberOfArmsMin: -1
+  RequiredNumberOfArmsMax: -1
+  RequiredNumberOfLegsMin: -1
+  RequiredNumberOfLegsMax: -1

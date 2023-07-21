@@ -16,7 +16,10 @@ public class MoveIndicator : MonoBehaviour
     private GameObject _arrowIndicator;
 
     [SerializeField]
-    private CombatMoveIndicator _combatIndicator;
+    private CombatMoveDecal _combatDecal;
+
+    [SerializeField]
+    private GameObject _moveDecal;
 
     [SerializeField]
     private float _circleSize = 10f;
@@ -84,15 +87,17 @@ public class MoveIndicator : MonoBehaviour
     public void ActiveCombatMode (Bounds charBounds)
     {
         _boundExtendY = charBounds.extents.y;
-        _arrowIndicator.SetActive (false);
-        _combatIndicator.gameObject.SetActive (true);
-        _combatIndicator.SetSizeFromCharacter (charBounds);
+        _moveDecal.SetActive (false);
+        _combatDecal.gameObject.SetActive (true);
+        _combatDecal.SetSizeFromCharacter (charBounds);
+        _arrowIndicator.SetActive (true);
     }
 
     public void DeactivateCombatMode ()
     {
         _boundExtendY = _arrowIndicator.GetComponent<SpriteRenderer> ().bounds.extents.y;
-        _combatIndicator.gameObject.SetActive (false);
+        _moveDecal.SetActive (true);
+        _combatDecal.gameObject.SetActive (false);
         _arrowIndicator.SetActive (true);
     }
 

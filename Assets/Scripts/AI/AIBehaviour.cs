@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
+using Zenject;
 
 [RequireComponent (typeof (Character))]
 public class AIBehaviour : MonoBehaviour
@@ -9,6 +11,8 @@ public class AIBehaviour : MonoBehaviour
     protected TrajectoryCalculator _trajectoryCalculator;
     protected CharacterAnimation _characterAnimation;
     private ActionDelayer _actionDelayer;
+
+    [Inject, UsedImplicitly]
     private void Init (ActionDelayer actionDelayer)
     {
         _actionDelayer = actionDelayer;

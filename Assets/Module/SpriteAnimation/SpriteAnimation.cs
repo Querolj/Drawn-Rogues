@@ -61,7 +61,7 @@ public class SpriteAnimation : MonoBehaviour
             if (_maxLoopCount > 0 && _index + 1 >= _sprites.Count)
             {
                 _currentLoopCount++;
-                if (_currentLoopCount == _maxLoopCount)
+                if (_currentLoopCount >= _maxLoopCount)
                 {
                     OnAnimationEnded?.Invoke ();
                     DestroyImmediate (gameObject);

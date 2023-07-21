@@ -1,13 +1,15 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
+using Zenject;
 
 public class AttackSelectionManager : MonoBehaviour
 {
-    [SerializeField]
-    private TrajectoryDrawer _trajectoryDrawer;
 
     [SerializeField]
     private AttackSelection[] _attackSelectionTemplates;
+
+    private TrajectoryDrawer _trajectoryDrawer;
 
     // to sort the templates by type
     private Dictionary<AttackSelectionType, AttackSelection> _attackSelectionTemplatesByType = new Dictionary<AttackSelectionType, AttackSelection> ();
@@ -15,6 +17,14 @@ public class AttackSelectionManager : MonoBehaviour
 
     private AttackSelection _activatedAttackSelection = null;
     private TrajectoryCalculator _trajectoryCalculator = new TrajectoryCalculator ();
+    private AttackSelection.Factory _attackSelectionFactory;
+
+    [Inject, UsedImplicitly]
+    private void Init (AttackSelection.Factory attackSelectionFactory, TrajectoryDrawer trajectoryDrawer)
+    {
+        _attackSelectionFactory = attackSelectionFactory;
+        _trajectoryDrawer = trajectoryDrawer;
+    }
 
     private void Awake ()
     {
@@ -38,7 +48,8 @@ public class AttackSelectionManager : MonoBehaviour
         if (!_attackSelectionInstancesByType.ContainsKey (attackSelectionType))
         {
             AttackSelection attackSelectionTemplate = _attackSelectionTemplatesByType[attackSelectionType];
-            AttackSelection attackSelectionInstance = Instantiate (attackSelectionTemplate, transform);
+            AttackSelection attackSelectionInstance = _attackSelectionFactory.Create (attackSelectionTemplate);
+
             attackSelectionInstance.Init (_trajectoryCalculator, _trajectoryDrawer);
             attackSelectionInstance.gameObject.SetActive (false);
             _attackSelectionInstancesByType.Add (attackSelectionType, attackSelectionInstance);

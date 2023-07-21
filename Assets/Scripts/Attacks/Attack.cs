@@ -30,7 +30,7 @@ public class Attack : ScriptableObject
     public float Precision = 100;
     public DamageType DamageType;
 
-    [SerializeField, Range (1, 6)]
+    [SerializeField, Range (1, 10)]
     private int _range = 1;
     private const float RANGE_TO_METER = 0.4f;
 

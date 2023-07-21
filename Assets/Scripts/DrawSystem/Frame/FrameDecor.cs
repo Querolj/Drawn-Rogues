@@ -8,7 +8,7 @@ public class FrameDecor : Frame
     private AdvancedPolygonCollider _advancedPolygonColliderTemplate;
 
     private Drawer _drawer;
-    private TurnBasedCombat _turnBasedCombat;
+    private TurnManager _turnBasedCombat;
     private const float _MESH_COLLIDER_THICKNESS = 0.03f;
     public Bounds Bounds
     {
@@ -22,7 +22,7 @@ public class FrameDecor : Frame
     {
         base.Awake ();
         _drawer = FindAnyObjectByType<Drawer> (); // TODO : inject
-        _turnBasedCombat = FindAnyObjectByType<TurnBasedCombat> (); // TODO : inject
+        _turnBasedCombat = FindAnyObjectByType<TurnManager> (); // TODO : inject
 
         _drawer.OnDrawStrokeEnd += (c, si) =>
         {

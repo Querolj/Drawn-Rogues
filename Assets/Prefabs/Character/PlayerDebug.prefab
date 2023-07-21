@@ -115,10 +115,15 @@ MonoBehaviour:
     effectValues: []
   _outline: {fileID: 0}
   _eventsOnDeath: []
-  _attacksReferences: []
+  _attacksReferences:
+  - {fileID: 11400000, guid: 334916fb33594944cab47a2bc9c5438a, type: 2}
+  - {fileID: 11400000, guid: 5bd3379e720f99048afa30729f1fdc8b, type: 2}
+  - {fileID: 11400000, guid: c9873d97818e09f42aed54a9754c25bd, type: 2}
+  - {fileID: 11400000, guid: 8ac445d94056f3e4f923ac38300abba0, type: 2}
   _reduceEscapeChanceValue: 0.2
   _modifierLayer: {fileID: 9151200112178715415}
-  _colouringSpell: []
+  _colouringSpell:
+  - {fileID: 11400000, guid: ab90b6fe2ffebf6449483dd76b8539d9, type: 2}
   _life: 200
   _intelligence: 50
   _strenght: 50

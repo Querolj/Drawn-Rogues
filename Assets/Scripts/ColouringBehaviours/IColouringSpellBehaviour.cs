@@ -3,5 +3,5 @@ using UnityEngine;
 
 public interface IColouringSpellBehaviour
 {
-    void Init (TurnBasedCombat bg, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor);
+    void Init (TurnManager bg, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor);
 }

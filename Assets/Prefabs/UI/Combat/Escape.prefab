@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _chanceOfEscapeText: {fileID: 7340891343726748602}
+  _escapeIcon: {fileID: 6630870839680644290}
 --- !u!114 &7641159198611752064
 MonoBehaviour:
   m_ObjectHideFlags: 0

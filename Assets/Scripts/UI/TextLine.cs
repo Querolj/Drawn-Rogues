@@ -1,15 +1,10 @@
 using TMPro;
 using UnityEngine;
 
-[RequireComponent (typeof (TMP_Text))]
 public class TextLine : MonoBehaviour
 {
+    [SerializeField]
     private TMP_Text _text;
-
-    private void Awake ()
-    {
-        _text = GetComponent<TMP_Text> ();
-    }
 
     public void SetText (string text)
     {

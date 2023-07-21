@@ -51,7 +51,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private FreeDrawUI _freeDrawUI;
 
-    private TurnBasedCombat _turnBasedCombat;
+    private TurnManager _turnBasedCombat;
 
     // [SerializeField]
     private DrawedCharacter _controlledCharacter;
@@ -89,7 +89,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake ()
     {
-        _turnBasedCombat = FindObjectOfType<TurnBasedCombat> (); // TODO : inject
+        _turnBasedCombat = FindObjectOfType<TurnManager> (); // TODO : inject
 
         if (!string.IsNullOrEmpty (_playerNameToLoad)) // for debug
         {

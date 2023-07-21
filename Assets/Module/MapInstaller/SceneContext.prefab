@@ -81,3 +81,5 @@ MonoBehaviour:
   _moveIndicatore: {fileID: 5757196436348982941, guid: 3538118ba2171fd4fafed9220b2bd59b, type: 3}
   _actionDelayer: {fileID: 2143353412871971368, guid: b09f6d0f8a7d5e242af46c3865685f3e, type: 3}
   _resizableBrush: {fileID: 11400000, guid: 035fda58645500748aeb91ab54c5b928, type: 2}
+  _trajectoryDrawer: {fileID: 5123555723767774746, guid: 4948cb8478df2394c812a4a410e85ec1, type: 3}
+  _attackSelectionManager: {fileID: 721502521497670147, guid: 9ed0468ea48a02e4591a136d64ca8c0a, type: 3}
