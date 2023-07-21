@@ -13,6 +13,6 @@ public class LifeStealEffect : Effect
         user.CurrentLife = (int) Mathf.Clamp (user.CurrentLife + healAmount, 0, user.MaxLife);
         string text = coloredUserName + " devore " + coloredTargetName + " and gain for <color=\"green\"><b>" + healAmount + "</b></color> life.";
         fightDescription.Report (text);
-        PlayParticle (user.GetSpriteBounds ().center, onAnimeEnded);
+        PlayAnimation (user.GetSpriteBounds ().center, onAnimeEnded);
     }
 }

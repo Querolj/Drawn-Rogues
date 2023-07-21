@@ -21,11 +21,15 @@ public class MapInstaller : MonoInstaller
     [SerializeField]
     private AttackSelectionManager _attackSelectionManager;
 
+    [SerializeField]
+    private WorldUIContainer _worldUIContainer;
+
     public override void InstallBindings ()
     {
         Container.Bind<ModeSwitcher> ().FromComponentsInNewPrefab (_modeSwitcher).AsSingle ();
         Container.Bind<MoveIndicator> ().FromComponentsInNewPrefab (_moveIndicatore).AsSingle ();
         Container.Bind<ActionDelayer> ().FromComponentsInNewPrefab (_actionDelayer).AsSingle ();
+        Container.Bind<WorldUIContainer> ().FromComponentsInNewPrefab (_worldUIContainer).AsSingle ();
         Container.Bind<ResizableBrush> ().FromNewScriptableObject (_resizableBrush).AsSingle ();
         Container.Bind<TrajectoryDrawer> ().FromComponentsInNewPrefab (_trajectoryDrawer).AsSingle ();
         Container.Bind<AttackSelectionManager> ().FromComponentsInNewPrefab (_attackSelectionManager).AsSingle ();
@@ -35,6 +39,6 @@ public class MapInstaller : MonoInstaller
 
         // Factories
         Container.BindFactory<AttackSelection, AttackSelection, AttackSelection.Factory> ().FromFactory<PrefabFactory<AttackSelection>> ();
-
+        Container.BindFactory<GameObject, Attackable, Attackable.Factory> ().FromFactory<PrefabFactory<Attackable>> ();
     }
 }

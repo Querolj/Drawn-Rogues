@@ -83,3 +83,4 @@ MonoBehaviour:
   _resizableBrush: {fileID: 11400000, guid: 035fda58645500748aeb91ab54c5b928, type: 2}
   _trajectoryDrawer: {fileID: 5123555723767774746, guid: 4948cb8478df2394c812a4a410e85ec1, type: 3}
   _attackSelectionManager: {fileID: 721502521497670147, guid: 9ed0468ea48a02e4591a136d64ca8c0a, type: 3}
+  _worldUIContainer: {fileID: 9173465816642191538, guid: 4b281df9b5ab2ec4a8a66dceeb2ead16, type: 3}

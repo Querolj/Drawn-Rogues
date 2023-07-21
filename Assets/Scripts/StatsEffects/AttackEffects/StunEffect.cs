@@ -32,10 +32,7 @@ public class StunEffect : Effect
             TempEffect tmpEffect = ScriptableObject.Instantiate (StunTempEffect);
             tmpEffect.Init (STUN_DURATION);
             target.AddTempEffect (tmpEffect);
-            if (AnimationOnApplyTemplate != null)
-                PlayAnimation (target.GetSpriteBounds ().center, onAnimeEnded);
-            else if (ParticleOnApplyTemplate != null)
-                PlayParticle (target.GetSpriteBounds ().center, onAnimeEnded);
+            PlayAnimation (target.GetSpriteBounds ().center, onAnimeEnded);
         }
         else
         {

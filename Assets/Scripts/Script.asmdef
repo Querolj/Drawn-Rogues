@@ -17,7 +17,8 @@
         "ActionDelayer",
         "Brush",
         "BaseColor",
-        "Trajectory"
+        "Trajectory",
+        "WorldUIContainer"
     ],
     "includePlatforms": [
         "Editor",

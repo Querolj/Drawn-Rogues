@@ -32,10 +32,7 @@ public class PoisonEffect : Effect
             PoisoningTempEffect tmpEffect = ScriptableObject.Instantiate (TempEffect) as PoisoningTempEffect;
             tmpEffect.Init (POISON_DURATION);
             target.AddTempEffect (tmpEffect);
-            if (AnimationOnApplyTemplate != null)
-                PlayAnimation (target.GetSpriteBounds ().center, onAnimeEnded);
-            else if (ParticleOnApplyTemplate != null)
-                PlayParticle (target.GetSpriteBounds ().center, onAnimeEnded);
+            PlayAnimation (target.GetSpriteBounds ().center, onAnimeEnded);
         }
         else
         {

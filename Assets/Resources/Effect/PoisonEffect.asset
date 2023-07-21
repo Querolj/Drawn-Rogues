@@ -18,4 +18,4 @@ MonoBehaviour:
   EffectApplicationTimeline: 0
   ApplyConditionsOnUser: 
   ApplyConditionsOnTarget: 
-  TempEffect: {fileID: 0}
+  TempEffect: {fileID: 11400000, guid: f0e59eaf2ae1f0d4daf79162a1530dd2, type: 2}

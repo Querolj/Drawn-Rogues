@@ -14,6 +14,6 @@ public class HealEffect : Effect
         string text = coloredUserName + " heal " + coloredTargetName + " for <color=\"green\"><b>" + healAmount + "</b></color> life.";
 
         fightDescription.Report (text);
-        PlayParticle (target.GetSpriteBounds ().center, onAnimeEnded);
+        PlayAnimation (target.GetSpriteBounds ().center, onAnimeEnded);
     }
 }

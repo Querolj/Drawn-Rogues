@@ -94,10 +94,13 @@ public class CharacterCanvas : MonoBehaviour
 
     private ModeSwitcher _modeSwitcher;
 
+    private Attackable.Factory _attackableFactory;
+
     [Inject, UsedImplicitly]
-    private void Init (ModeSwitcher modeSwitcher)
+    private void Init (ModeSwitcher modeSwitcher, Attackable.Factory attackableFactory)
     {
         _modeSwitcher = modeSwitcher;
+        _attackableFactory = attackableFactory;
     }
 
     private void Awake ()
@@ -313,15 +316,14 @@ public class CharacterCanvas : MonoBehaviour
 
     private void CreateDrawedCharacter ()
     {
-        GameObject drawedCharacterGo = Instantiate (_drawedCharacterTemplate, transform.position, Quaternion.identity, null);
-        drawedCharacterGo.transform.rotation = Quaternion.identity;
-        drawedCharacterGo.transform.localScale = Vector3.one;
-        DrawedCharacter drawedCharacter = drawedCharacterGo.GetComponentInChildren<DrawedCharacter> ();
+        DrawedCharacter drawedCharacter = (DrawedCharacter) _attackableFactory.Create (_drawedCharacterTemplate);
+        GameObject drawedCharacterGo = drawedCharacter.gameObject;
         drawedCharacter.Init (_drawedCharacterFormDescription, _frame, _modifiersAdded);
         drawedCharacter.Name = _nameField.text;
 
-        CharacterPivot pivot = drawedCharacterGo.GetComponent<CharacterPivot> ();
+        CharacterPivot pivot = drawedCharacterGo.GetComponentInParent<CharacterPivot> ();
         pivot.InitForMap ();
+
         OnCharacterCreated?.Invoke (drawedCharacterGo);
         _modeSwitcher.ChangeMode (ModeSwitcher.Mode.Selection);
     }

@@ -14,7 +14,7 @@ public class BleedingTempEffect : TempEffect
     {
         float distance = Vector3.Distance (effectOwner.transform.position, LastOwnerPosition);
 
-        PlayParticle (effectOwner.transform.position,
+        PlayAnimation (effectOwner.transform.position,
             () =>
             {
                 int bleedDamage = (int) (distance * BLEED_STRENGHT);

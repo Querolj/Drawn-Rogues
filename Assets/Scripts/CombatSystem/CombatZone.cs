@@ -51,12 +51,14 @@ public class CombatZone : MonoBehaviour
     private EscapeZone _escapeZoneRight;
     private MoveIndicator _moveIndicator;
     private BaseColorInventory _baseColorPalette;
+    private WorldUIContainer _worldUIContainer;
 
     [Inject, UsedImplicitly]
-    private void Init (MoveIndicator moveIndicator, BaseColorInventory baseColorPalette)
+    private void Init (MoveIndicator moveIndicator, BaseColorInventory baseColorPalette, WorldUIContainer worldUIContainer)
     {
         _baseColorPalette = baseColorPalette;
         _moveIndicator = moveIndicator;
+        _worldUIContainer = worldUIContainer;
     }
 
     private void Awake ()
@@ -76,13 +78,14 @@ public class CombatZone : MonoBehaviour
         _escapeZoneLeft = Instantiate<EscapeZone> (_escapeTemplate, mapLeftLimit, Quaternion.identity, transform);
         _escapeZoneLeft.FlipIcon ();
         _escapeZoneLeft.gameObject.SetActive (false);
+        _worldUIContainer.AddUI (_escapeZoneLeft.transform);
 
         Vector3 rightLimit = new Vector3 (_lineXMax - ESCAPE_ZONE_SIZE, 0f, _centerPoint.z);
         Vector3 mapRightLimit = new Vector3 (_lineXMax, Utils.GetMapHeight (rightLimit), _centerPoint.z);
         mapRightLimit.y += 0.2f;
         _escapeZoneRight = Instantiate<EscapeZone> (_escapeTemplate, mapRightLimit, Quaternion.identity, transform);
         _escapeZoneRight.gameObject.SetActive (false);
-
+        _worldUIContainer.AddUI (_escapeZoneRight.transform);
     }
 
     private void SetCombatZoneLimit ()

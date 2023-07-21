@@ -55,7 +55,7 @@ public class AttackableDetector : MonoBehaviour
             if (!_instanceFound.ContainsKey (other.gameObject.GetInstanceID ()))
             {
                 attackable = other.gameObject.GetComponentInParent<Attackable> ();
-                if(attackable == null)
+                if (attackable == null)
                     Debug.LogError ("AttackableDetector: " + other.gameObject.name + " has no Attackable component");
                 _instanceFound.Add (other.gameObject.GetInstanceID (), attackable);
             }

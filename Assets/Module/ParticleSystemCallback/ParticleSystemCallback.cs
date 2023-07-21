@@ -4,7 +4,9 @@ using UnityEngine;
 [RequireComponent (typeof (ParticleSystem))]
 public class ParticleSystemCallback : MonoBehaviour
 {
-    public Action OnParticleSystemDestroyed;
+    public event Action OnParticleSystemDestroyed;
+
+    private ParticleSystem _particleSystem;
 
     void OnParticleSystemStopped ()
     {
@@ -14,6 +16,9 @@ public class ParticleSystemCallback : MonoBehaviour
 
     public void Play ()
     {
-        GetComponent<ParticleSystem> ().Play ();
+        if (_particleSystem == null)
+            _particleSystem = GetComponent<ParticleSystem> ();
+
+        _particleSystem.Play ();
     }
 }

@@ -32,10 +32,7 @@ public class BleedEffect : Effect
             tmpEffect.LastOwnerPosition = target.GetSpriteBounds ().center;
             tmpEffect.Init (BLEED_DURATION);
             target.AddTempEffect (tmpEffect);
-            if (AnimationOnApplyTemplate != null)
-                PlayAnimation (target.GetSpriteBounds ().center, onAnimeEnded);
-            else if (ParticleOnApplyTemplate != null)
-                PlayParticle (target.GetSpriteBounds ().center, onAnimeEnded);
+            PlayAnimation (target.GetSpriteBounds ().center, onAnimeEnded);
         }
         else
         {

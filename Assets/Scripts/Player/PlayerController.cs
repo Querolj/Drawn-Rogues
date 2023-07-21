@@ -78,13 +78,15 @@ public class PlayerController : MonoBehaviour
     private ModeSwitcher _modeSwitcher;
     private MoveIndicator _moveIndicator;
     private BaseColorInventory _baseColorInventory;
+    private Attackable.Factory _attackableFactory;
 
     [Inject, UsedImplicitly]
-    private void Init (ModeSwitcher modeSwitcher, MoveIndicator moveIndicator, BaseColorInventory baseColorInventory)
+    private void Init (ModeSwitcher modeSwitcher, MoveIndicator moveIndicator, BaseColorInventory baseColorInventory, Attackable.Factory attackableFactory)
     {
         _modeSwitcher = modeSwitcher;
         _moveIndicator = moveIndicator;
         _baseColorInventory = baseColorInventory;
+        _attackableFactory = attackableFactory;
     }
 
     private void Awake ()
@@ -94,7 +96,7 @@ public class PlayerController : MonoBehaviour
         if (!string.IsNullOrEmpty (_playerNameToLoad)) // for debug
         {
             SetAllColorDrop (100000);
-            LoadDrawCharacter ();
+            LoadDrawCharacterTest ();
         }
         else if (_ownedCharacters.Count == 0)
         {
@@ -118,20 +120,19 @@ public class PlayerController : MonoBehaviour
         _baseColorInventory.ColorDropsAvailable = colorDropsAvailable;
     }
 
-    private void LoadDrawCharacter ()
+    private void LoadDrawCharacterTest ()
     {
         DrawedCharacterInfos infos = Loader.LoadDrawedCharacterInfos (_playerNameToLoad);
+        DrawedCharacter drawedCharacter = (DrawedCharacter) _attackableFactory.Create (_drawedCharacterTestPrefab);
+        GameObject drawedCharacterGo = drawedCharacter.gameObject;
 
-        GameObject drawedCharacterGo = Instantiate (_drawedCharacterTestPrefab, _startPosition.position, Quaternion.identity, null);
-        drawedCharacterGo.transform.rotation = Quaternion.identity;
-        drawedCharacterGo.transform.localScale = Vector3.one;
-        _controlledCharacter = drawedCharacterGo.GetComponentInChildren<DrawedCharacter> ();
-        drawedCharacterGo.transform.position = _startPosition.position;
+        _controlledCharacter = drawedCharacter;
         _moveIndicator.SetPosition (_startPosition.position);
         _controlledCharacter.Init (infos);
 
-        CharacterPivot pivot = drawedCharacterGo.GetComponent<CharacterPivot> ();
+        CharacterPivot pivot = drawedCharacterGo.GetComponentInParent<CharacterPivot> ();
         pivot.InitForMap ();
+        pivot.transform.position = _startPosition.position;
 
         _playerVirtualCamera.Follow = _controlledCharacter.transform;
         _playerVirtualCamera.LookAt = _controlledCharacter.transform;

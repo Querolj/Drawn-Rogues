@@ -55,14 +55,31 @@ public class TempEffect : ScriptableObject
 
     protected void PlayAnimation (Vector3 position, Action onEnded)
     {
+        if (AnimationOnApplyTemplate != null)
+        {
+            PlaySpriteAnimation (position, onEnded);
+        }
+        else if (ParticleOnApplyTemplate != null)
+        {
+            PlayParticle (position, onEnded);
+        }
+        else
+        {
+            onEnded?.Invoke ();
+        }
+    }
+
+    private void PlaySpriteAnimation (Vector3 position, Action onEnded)
+    {
         SpriteAnimation anime = Instantiate<SpriteAnimation> (AnimationOnApplyTemplate, position, Quaternion.identity);
         anime.OnAnimationEnded += onEnded;
         anime.Play ();
     }
 
-    protected void PlayParticle (Vector3 position, Action onParticleEnded)
+    private void PlayParticle (Vector3 position, Action onParticleEnded)
     {
-        ParticleSystemCallback particle = GameObject.Instantiate<ParticleSystemCallback> (ParticleOnApplyTemplate, position, Quaternion.Euler (-90, 0, 0));
+        ParticleSystemCallback particle = GameObject.Instantiate<ParticleSystemCallback> (ParticleOnApplyTemplate);
+        particle.transform.position = position;
         particle.OnParticleSystemDestroyed += onParticleEnded;
         particle.Play ();
     }

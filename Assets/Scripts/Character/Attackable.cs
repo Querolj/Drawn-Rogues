@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
+using Zenject;
 
 public enum State
 {
@@ -15,6 +17,8 @@ public enum State
 
 public class Attackable : CombatEntity
 {
+    public class Factory : PlaceholderFactory<GameObject, Attackable> { }
+
     protected const float PIXEL_PER_UNIT = 100f;
 
     [SerializeField]
@@ -35,7 +39,7 @@ public class Attackable : CombatEntity
     [SerializeField]
     private int _outlineThickness;
 
-    private GameObject _canvasWorldSpace;
+    private WorldUIContainer _worldUIContainer;
 
     [SerializeField]
     private Squasher _squasher;
@@ -157,15 +161,17 @@ public class Attackable : CombatEntity
     public event Action<Attackable> OnDestroyed;
 
     private ActionDelayer _actionDelayer;
-    private void Init (ActionDelayer actionDelayer)
+
+    [Inject, UsedImplicitly]
+    private void Init (ActionDelayer actionDelayer, WorldUIContainer worldUIContainer)
     {
         _actionDelayer = actionDelayer;
+        _worldUIContainer = worldUIContainer;
     }
 
     protected virtual void Awake ()
     {
         _renderer = GetComponent<SpriteRenderer> ();
-        _canvasWorldSpace = GameObject.Find ("CanvasWorldSpace");
         if (_statsSerialized.HasAnyStats ())
             Stats.AddStats (_statsSerialized);
     }
@@ -200,7 +206,8 @@ public class Attackable : CombatEntity
         stateUIPos.y += spriteBounds.extents.y + margin;
         _stateUI = Instantiate (_stateUITemplate, stateUIPos, Quaternion.identity);
         _stateUI.Init (this);
-        _stateUI.transform.SetParent (_canvasWorldSpace.transform);
+        _worldUIContainer.AddUI (_stateUI.transform);
+        _stateUI.transform.SetParent (_worldUIContainer.transform);
         _stateUI.transform.localScale = Vector3.one;
     }
 

@@ -35,7 +35,7 @@ public class FightDescription : MonoBehaviour, IPointerClickHandler, IPointerExi
 
     public void ReportRoundStart (int roundNumber)
     {
-        string text = "------------------------------------- Starting round <b>" + roundNumber + "</b> -------------------------------------";
+        string text = "------ Starting round <b>" + roundNumber + "</b> ------";
         AddLine (text);
     }
 

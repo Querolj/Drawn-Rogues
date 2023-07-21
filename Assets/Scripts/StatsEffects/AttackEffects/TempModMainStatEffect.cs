@@ -57,7 +57,7 @@ public class TempModMainStatEffect : Effect
         }
 
         fightDescription.Report (text);
-        PlayParticle (target.transform.position, onAnimeEnded);
+        PlayAnimation (target.transform.position, onAnimeEnded);
     }
 
     private void WearOffEffect ()

@@ -54,7 +54,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7037487551317462026, guid: 50778bc0b5b17a34283657eb0491aa6d, type: 3}
       propertyPath: m_Name
-      value: ParticleSystemAnimation
+      value: PoisoningPS
+      objectReference: {fileID: 0}
+    - target: {fileID: 8932454907598944108, guid: 50778bc0b5b17a34283657eb0491aa6d, type: 3}
+      propertyPath: looping
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
