@@ -30,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &721502521497670147
 MonoBehaviour:
@@ -45,6 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _attackSelectionTemplates:
-  - {fileID: -4868288228965944231, guid: 9cfa23f027674424c87dca82bba91f5e, type: 3}
-  - {fileID: 1072938049219070163, guid: 78bcdf17002c09f47a6fdfb201c2afe2, type: 3}
-  - {fileID: 1604918353065415045, guid: 83d9c6cc57245044aa8fb405b04612a3, type: 3}
+  - {fileID: 7905058884723324420, guid: f09a88b0ad010de4b836cdc9ced7ab78, type: 3}
+  - {fileID: -1202206346881747434, guid: 2a33480fe296b1549a108f87dbf2df84, type: 3}
+  - {fileID: 3766508047533632539, guid: 0e32f7fb69323144288b010b09fd8a4d, type: 3}
+  - {fileID: 4354531276473424217, guid: 1e39c4831d0b06847ba9a6b203d80681, type: 3}
+  - {fileID: 5820645662665303300, guid: 6c41559f7d3efd04dbe7a2cb1bd6817e, type: 3}
+  - {fileID: -9146745770016009858, guid: de810a85f7816824092afeaf4a4927fc, type: 3}

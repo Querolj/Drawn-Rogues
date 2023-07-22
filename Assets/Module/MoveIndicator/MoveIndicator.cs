@@ -16,7 +16,7 @@ public class MoveIndicator : MonoBehaviour
     private GameObject _arrowIndicator;
 
     [SerializeField]
-    private CombatMoveDecal _combatDecal;
+    private CombatMoveIndicator _combatMoveIndicator;
 
     [SerializeField]
     private GameObject _moveDecal;
@@ -77,6 +77,7 @@ public class MoveIndicator : MonoBehaviour
     public void SetPosition (Vector3 position)
     {
         position.y = Utils.GetMapHeight (_arrowIndicator.transform.position) + _boundExtendY;
+        _combatMoveIndicator.transform.position = position;
         if (_arrowIndicator.activeSelf)
             position.y += _heightCurrentOffset;
 
@@ -88,8 +89,8 @@ public class MoveIndicator : MonoBehaviour
     {
         _boundExtendY = charBounds.extents.y;
         _moveDecal.SetActive (false);
-        _combatDecal.gameObject.SetActive (true);
-        _combatDecal.SetSizeFromCharacter (charBounds);
+        _combatMoveIndicator.gameObject.SetActive (true);
+        _combatMoveIndicator.SetSizeFromCharacter (charBounds);
         _arrowIndicator.SetActive (true);
     }
 
@@ -97,7 +98,7 @@ public class MoveIndicator : MonoBehaviour
     {
         _boundExtendY = _arrowIndicator.GetComponent<SpriteRenderer> ().bounds.extents.y;
         _moveDecal.SetActive (true);
-        _combatDecal.gameObject.SetActive (false);
+        _combatMoveIndicator.gameObject.SetActive (false);
         _arrowIndicator.SetActive (true);
     }
 

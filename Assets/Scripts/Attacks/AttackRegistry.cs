@@ -11,30 +11,34 @@ public class AttackRegistry : MonoBehaviour
         _attacks = Resources.LoadAll<Attack> ("Attacks").ToList ();
     }
 
-    public List<Attack> GetAttacksToChooseFrom (DrawedCharacter dc)
+    public bool TryGetAttacksToChooseFrom (DrawedCharacter dc, out List<Attack> attacksToChoseFrom)
     {
         const int NUM_OF_ATTACKS_TO_CHOOSE = 2;
-
-        List<Attack> attacksToChooseFrom = new List<Attack> ();
+        attacksToChoseFrom = new List<Attack> ();
+        List<Attack> availableAttacks = new List<Attack> ();
         foreach (Attack attack in _attacks)
         {
             if (AttackCanBeChosen (dc, attack))
-                attacksToChooseFrom.Add (attack);
+                availableAttacks.Add (attack);
         }
 
-        if (attacksToChooseFrom.Count < NUM_OF_ATTACKS_TO_CHOOSE)
-            throw new System.Exception ($"Not enough attacks found for " + dc.Name);
+        if (availableAttacks.Count < NUM_OF_ATTACKS_TO_CHOOSE)
+        {
+            return false;
+        }
 
         // Get random attacks
-        List<Attack> randomAttacks = new List<Attack> ();
         for (int i = 0; i < NUM_OF_ATTACKS_TO_CHOOSE; i++)
         {
-            int randomIndex = Random.Range (0, attacksToChooseFrom.Count);
-            randomAttacks.Add (attacksToChooseFrom[randomIndex]);
-            attacksToChooseFrom.RemoveAt (randomIndex);
+            int randomIndex = Random.Range (0, availableAttacks.Count);
+            attacksToChoseFrom.Add (availableAttacks[randomIndex]);
+            availableAttacks.RemoveAt (randomIndex);
         }
 
-        return randomAttacks;
+        if (attacksToChoseFrom.Count < 1)
+            return false;
+
+        return true;
     }
 
     private bool AttackCanBeChosen (DrawedCharacter dc, Attack attack)

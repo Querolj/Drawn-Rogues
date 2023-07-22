@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [RequireComponent (typeof (SpriteRenderer))]
-public class AtkSelectPointInRange : AttackSelection
+public class AtkSelectSingleTarget : AttackSelection
 {
     private Attackable _focusedAttackable = null;
     private Attackable _targetAttackable = null;

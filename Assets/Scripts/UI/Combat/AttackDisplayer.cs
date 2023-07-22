@@ -42,7 +42,7 @@ public class AttackDisplayer : MonoBehaviour
     {
         switch (targettingType)
         {
-            case AttackSelectionType.PointInRange:
+            case AttackSelectionType.SingleTarget:
                 return "Point in range";
             case AttackSelectionType.Projectile:
                 return "Projectile";

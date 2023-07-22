@@ -6,7 +6,7 @@ using Zenject;
 
 public enum AttackSelectionType
 {
-    PointInRange,
+    SingleTarget,
     Projectile,
     Jump,
     TrajectoryZone,

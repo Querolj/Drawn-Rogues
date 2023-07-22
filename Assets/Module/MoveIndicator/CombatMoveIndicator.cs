@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CombatMoveDecal : MonoBehaviour
+public class CombatMoveIndicator : MonoBehaviour
 {
     private Vector3 _baseScale;
 
@@ -11,6 +11,6 @@ public class CombatMoveDecal : MonoBehaviour
 
     public void SetSizeFromCharacter (Bounds charBounds)
     {
-        transform.localScale = Vector3.Scale (charBounds.size, _baseScale);
+        transform.localScale = Vector3.Scale (charBounds.size * 0.1f, _baseScale);
     }
 }

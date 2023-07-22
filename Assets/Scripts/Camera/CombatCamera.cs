@@ -46,7 +46,7 @@ public class CombatCamera : MonoBehaviour
         {
             Vector3 newPosition = transform.position + direction * cameraSpeed * Time.fixedDeltaTime;
             newPosition.x = Mathf.Clamp (newPosition.x, _bounds.min.x, _bounds.max.x);
-            newPosition.y = Mathf.Clamp (newPosition.y, _bounds.min.y, _bounds.max.y);
+            newPosition.y = Mathf.Clamp (newPosition.y, _bounds.center.y, _bounds.max.y);
             transform.position = newPosition;
         }
 

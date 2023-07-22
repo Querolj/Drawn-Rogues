@@ -364,7 +364,11 @@ public class PlayerController : MonoBehaviour
     private void ChooseNewAttack (int additionalAttackToChoose)
     {
         _controlMode = ControlMode.None;
-        List<Attack> attacks = _attackRegistry.GetAttacksToChooseFrom (_controlledCharacter);
+        if (!_attackRegistry.TryGetAttacksToChooseFrom (_controlledCharacter, out List<Attack> attacks))
+        {
+            Debug.LogWarning ("No attack found for " + _controlledCharacter.Name);
+            return;
+        }
 
         _attackChoserUI.DisplayAttackToChose (attacks, (attack) =>
         {

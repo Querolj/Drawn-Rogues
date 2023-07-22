@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1561575053082485635}
   - component: {fileID: 6380750594029326618}
   - component: {fileID: 2214279922952288429}
-  m_Layer: 6
+  m_Layer: 14
   m_Name: DrawedCharacter
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -175,7 +175,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3949694883564382294}
-  m_Layer: 6
+  m_Layer: 14
   m_Name: ModifierLayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 2992404471256334685}
   - component: {fileID: 587915763813740162}
   - component: {fileID: 3361892575399516908}
-  m_Layer: 6
+  m_Layer: 14
   m_Name: Animator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -267,7 +267,7 @@ GameObject:
   - component: {fileID: 1767281613787924014}
   - component: {fileID: 4880393115946104934}
   - component: {fileID: 6005709883124936033}
-  m_Layer: 6
+  m_Layer: 14
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
