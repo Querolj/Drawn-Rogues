@@ -367,6 +367,7 @@ public class PlayerController : MonoBehaviour
         if (!_attackRegistry.TryGetAttacksToChooseFrom (_controlledCharacter, out List<Attack> attacks))
         {
             Debug.LogWarning ("No attack found for " + _controlledCharacter.Name);
+            _controlMode = ControlMode.Map;
             return;
         }
 

@@ -56,10 +56,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: PoisoningPS
       objectReference: {fileID: 0}
-    - target: {fileID: 8932454907598944108, guid: 50778bc0b5b17a34283657eb0491aa6d, type: 3}
-      propertyPath: looping
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

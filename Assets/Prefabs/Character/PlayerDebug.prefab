@@ -126,7 +126,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ab90b6fe2ffebf6449483dd76b8539d9, type: 2}
   _life: 200
   _intelligence: 50
-  _strenght: 200
+  _strenght: 1
   _mobility: 200
   _kilogram: 30
 --- !u!1 &9151200112178715415 stripped

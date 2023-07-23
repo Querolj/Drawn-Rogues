@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: BaseMap
+  m_Name: ReliefWithGrid
   m_Shader: {fileID: -6465566751694194690, guid: 5792bfaf2d0fa5b4ab05f576f455a6f5, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
