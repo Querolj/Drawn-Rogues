@@ -72,7 +72,7 @@ public class AtkSelectTrajectory : AttackSelection
         {
             _validSelectionIcon.transform.position = targetPos;
 
-            if (_trajectoryCalculator.TryGetSmashTrajectory (_trajectoryStart, targetPos, _attackTrajectory.TrajectorySpeed,
+            if (_trajectoryCalculator.TryGetSmashTrajectory (_trajectoryStart, targetPos,
                     _attackTrajectory.TrajectoryRadius, _player.GetInstanceID (), out Attackable attackable, out _trajectoryPoints))
             {
                 if (TryGetAttackableUnderSword (out Attackable attackableUnderSword))

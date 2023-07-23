@@ -5,7 +5,7 @@ using UnityEngine;
 using Zenject;
 
 [RequireComponent (typeof (Character))]
-public class AIBehaviour : MonoBehaviour
+public abstract class AIBehaviour : MonoBehaviour
 {
     protected Character _character;
     protected TrajectoryCalculator _trajectoryCalculator;
@@ -84,9 +84,9 @@ public class AIBehaviour : MonoBehaviour
             projectileStartPosition.y += attackerBounds.extents.y;
         }
 
-        List<Vector3> trajPoints2 = GetTrajectoryToPlayer (projectileStartPosition, playerCharacter, attackInstProjectile.TrajectorySpeed,
+        List<Vector3> trajPoints = GetTrajectoryToPlayer (projectileStartPosition, playerCharacter, attackInstProjectile.TrajectorySpeed,
             attackInstProjectile.TrajectoryRadius);
-        attackInstProjectile.Execute (_character, playerCharacter, attackPos, onTurnEnd, null, trajPoints2);
+        attackInstProjectile.Execute (_character, playerCharacter, attackPos, onTurnEnd, null, trajPoints);
     }
 
     private void ExecuteTrajectoryAttack (Character playerCharacter, Action onTurnEnd, Vector3 attackPos, AttackInstTrajectory attackInstTrajectory)
@@ -117,7 +117,7 @@ public class AIBehaviour : MonoBehaviour
         Vector3 targetPos = playerBounds.center;
         targetPos.z = playerCharacter.transform.position.z;
 
-        return _trajectoryCalculator.GetCurvedTrajectory (startPos, targetPos, speed, radius, _character.gameObject.GetInstanceID ());
+        return _trajectoryCalculator.GetCurvedTrajectory (startPos, targetPos, radius, _character.gameObject.GetInstanceID (), out Attackable attackableHit);
     }
 
     protected void MoveTowardCharacter (CombatZone combatZone, Character targetCharacter, Action onTurnEnd)

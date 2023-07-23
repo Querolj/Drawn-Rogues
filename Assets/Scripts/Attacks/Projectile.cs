@@ -29,13 +29,24 @@ public class Projectile : MonoBehaviour
             throw new ArgumentNullException (nameof (onProjectileHit));
         if (projectileSpeed <= 0)
             throw new ArgumentException ("Projectile speed must be greater than 0");
-        _speed = projectileSpeed;
         _trajectoryPoints = trajectoryPoints ??
             throw new ArgumentNullException (nameof (trajectoryPoints));
 
+        _speed = projectileSpeed / TrajectoryPointsLenght ();
+        float dist = Vector3.Distance (_trajectoryPoints[0], _trajectoryPoints[_trajectoryPoints.Count - 1]);
         _baseAcceleration = _speed;
         _isProjectileDodge = isProjectileDodge;
         _isEnemyProjectile = isEnemy;
+    }
+
+    private float TrajectoryPointsLenght ()
+    {
+        float lenght = 0f;
+        for (int i = 0; i < _trajectoryPoints.Count - 1; i++)
+        {
+            lenght += Vector3.Distance (_trajectoryPoints[i], _trajectoryPoints[i + 1]);
+        }
+        return lenght;
     }
 
     private void FixedUpdate ()
@@ -43,13 +54,15 @@ public class Projectile : MonoBehaviour
         if (_projectileDestroyed)
             return;
 
-        _lerpValue += Time.fixedDeltaTime * _speed;
+        // _lerpValue += Time.fixedDeltaTime * _speed;
 
-        if (_accelerationProportionInTime > 0f)
-        {
-            _lerpValue += Time.fixedDeltaTime * _baseAcceleration * _accelerationProportionInTime;
-            _accelerationProportionInTime -= Time.fixedDeltaTime;
-        }
+        // if (_accelerationProportionInTime > 0f)
+        // {
+        //     _lerpValue += Time.fixedDeltaTime * _baseAcceleration * _accelerationProportionInTime;
+        //     _accelerationProportionInTime -= Time.fixedDeltaTime;
+        // }
+
+        _lerpValue += Mathf.SmoothStep (0f, 1f, Time.fixedDeltaTime * _speed);
 
         if (_lerpValue >= 1f)
         {
@@ -66,7 +79,7 @@ public class Projectile : MonoBehaviour
         int lerpedIndex = (int) Mathf.Lerp (0, _trajectoryPoints.Count - 1, _lerpValue);
         if (lerpedIndex > 0)
         {
-            _lerpValue += ACCELERATION_FROM_DIST * Vector3.Distance (_trajectoryPoints[lerpedIndex], _trajectoryPoints[lerpedIndex - 1]) * Time.fixedDeltaTime;
+            // _lerpValue += ACCELERATION_FROM_DIST * Vector3.Distance (_trajectoryPoints[lerpedIndex], _trajectoryPoints[lerpedIndex - 1]) * Time.fixedDeltaTime;
             _direction = _trajectoryPoints[lerpedIndex] - _trajectoryPoints[lerpedIndex - 1];
             _direction.Normalize ();
         }

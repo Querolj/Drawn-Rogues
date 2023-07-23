@@ -95,7 +95,7 @@ public class AtkSelectJump : AttackSelection
         {
             _shadowGo.transform.position = _trajectoryPoints?.Count > 0 ? _trajectoryPoints[_trajectoryPoints.Count - 1] : targetPos;
 
-            _trajectoryPoints = _trajectoryCalculator.GetCurvedTrajectory (_trajectoryStart, targetPos, 0.2f,
+            _trajectoryPoints = _trajectoryCalculator.GetCurvedTrajectory (_trajectoryStart, targetPos,
                 _radius, _player.gameObject.GetInstanceID ());
 
             UpdateIconDisplay (true);

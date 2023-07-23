@@ -88,7 +88,7 @@ public class AtkSelectProjectile : AttackSelection
         UpdateIconDisplay (isPositionInRange);
         if (isPositionInRange)
         {
-            _trajectoryPoints = _trajectoryCalculator.GetCurvedTrajectory (_projectileStartPosition, targetPos, _attackProjectile.TrajectorySpeed,
+            _trajectoryPoints = _trajectoryCalculator.GetCurvedTrajectory (_projectileStartPosition, targetPos,
                 _attackProjectile.TrajectoryRadius, _player.gameObject.GetInstanceID (), out Attackable attackable);
 
             if (attackable != null && _trajectoryPoints?.Count > 1)

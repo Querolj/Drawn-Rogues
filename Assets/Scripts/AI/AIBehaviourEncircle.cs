@@ -38,7 +38,7 @@ public class AIBehaviourEncircle : AIBehaviour
             AttackInstJump jump = AttackInstFactory.Create (_circleAttack, _character) as AttackInstJump;
             float radius = bounds.extents.x > bounds.extents.y ? bounds.extents.x : bounds.extents.y;
 
-            List<Vector3> trajPoints = _trajectoryCalculator.GetCurvedTrajectory (_character.transform.position, targetPos, 1f, radius, _character.gameObject.GetInstanceID ());
+            List<Vector3> trajPoints = _trajectoryCalculator.GetCurvedTrajectory (_character.transform.position, targetPos, radius, _character.gameObject.GetInstanceID ());
             jump.Execute (_character, null, Vector3.zero, onTurnEnd, null, trajPoints);
 
             return;

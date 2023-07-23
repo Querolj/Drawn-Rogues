@@ -91,7 +91,7 @@ public class AtkSelectTrajectoryZone : AttackSelection
             if (!_attackableDetector.gameObject.activeInHierarchy)
                 _attackableDetector.gameObject.SetActive (true);
 
-            if (_trajectoryCalculator.TryGetSmashTrajectory (_trajectoryStart, targetPos, _attackTrajectoryZone.TrajectorySpeed,
+            if (_trajectoryCalculator.TryGetSmashTrajectory (_trajectoryStart, targetPos,
                     _attackTrajectoryZone.TrajectoryRadius, _player.GetInstanceID (), out Attackable attackable, out _trajectoryPoints))
             {
                 if (TryGetAttackableUnderSword (out Attackable attackableUnderSword))
