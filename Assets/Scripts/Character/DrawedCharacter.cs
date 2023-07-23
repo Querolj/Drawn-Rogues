@@ -250,7 +250,7 @@ public class DrawedCharacter : Character
 
         Sprite sprite = Sprite.Create (drawTex, new Rect (0, 0, drawTex.width, drawTex.height), new Vector2 (0.5f, 0.5f), PIXEL_PER_UNIT);
         _renderer.sprite = sprite;
-        GraphicUtils.SavePixelsAsPNG (drawTex.GetPixels (), "Test/playerInit.png", drawTex.width, drawTex.height);
+        // GraphicUtils.SavePixelsAsPNG (drawTex.GetPixels (), "Test/playerInit.png", drawTex.width, drawTex.height);
 
     }
 
