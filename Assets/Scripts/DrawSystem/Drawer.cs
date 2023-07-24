@@ -12,7 +12,13 @@ public class Drawer : MonoBehaviour
     private Colouring _selectedColouring;
     public void SetSelectedColouring (Colouring colouring)
     {
+        if (colouring == null)
+            throw new ArgumentNullException (nameof (colouring));
+
         _selectedColouring = colouring;
+        if (_selectedColouring.HasBrushSize)
+            _resizableBrush.SetBrushSize (_selectedColouring.BrushSize);
+
         Activate (true);
     }
 
@@ -272,11 +278,7 @@ public class Drawer : MonoBehaviour
     private Dictionary<int, Frame> _framesTouchedCache = new Dictionary<int, Frame> ();
     private bool RayOnFrame (Vector3 position, Vector3 direction)
     {
-        int layer;
-        // if (_drawContext == DrawContext.Map)
-        //     layer = 1 << LayerMask.NameToLayer ("Map");
-        // else
-        layer = 1 << LayerMask.NameToLayer ("Frame3D");
+        int layer = 1 << LayerMask.NameToLayer ("Frame3D");
 
         bool touched = Physics.Raycast (position, direction, out RaycastHit hit, 100f, layer);
         if (touched)

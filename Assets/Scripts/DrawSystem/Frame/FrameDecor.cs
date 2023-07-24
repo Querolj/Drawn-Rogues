@@ -1,6 +1,8 @@
 using System;
 using DigitalRuby.AdvancedPolygonCollider;
+using JetBrains.Annotations;
 using UnityEngine;
+using Zenject;
 
 public class FrameDecor : Frame
 {
@@ -16,6 +18,14 @@ public class FrameDecor : Frame
         {
             return _renderer.bounds;
         }
+    }
+
+    private Attackable.Factory _attackableFactory;
+
+    [Inject, UsedImplicitly]
+    private void Init (Attackable.Factory attackableFactory)
+    {
+        _attackableFactory = attackableFactory;
     }
 
     protected override void Awake ()
@@ -58,11 +68,12 @@ public class FrameDecor : Frame
 
         PolygonCollider2D polyCol = advancedPolyCol.GetComponent<PolygonCollider2D> ();
 
-        GameObject goBehaviour;
         if (colouringSpell.BehaviourPrefab == null)
             throw new Exception ("could not load prefab for colouring spell " + colouringSpell.Name + ", can't generate collider for lc " + colouringSpell.Name);
 
-        goBehaviour = GameObject.Instantiate (colouringSpell.BehaviourPrefab);
+        // goBehaviour = GameObject.Instantiate (colouringSpell.BehaviourPrefab);
+        GameObject goBehaviour = _attackableFactory.Create (colouringSpell.BehaviourPrefab).gameObject;
+
         goBehaviour.transform.SetParent (gameObject.transform);
         Vector3 newLocalPos = Vector3.zero;
         newLocalPos.z = -0.01f;
@@ -111,7 +122,6 @@ public class FrameDecor : Frame
             _turnBasedCombat.ActivePlayerCharacter.LinkedCombatEntities.Add (combatEnvironnementHazard);
         }
 
-        //Set position
         Destroy (advancedPolyCol.gameObject);
     }
 

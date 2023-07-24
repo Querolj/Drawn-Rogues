@@ -40,6 +40,16 @@ public class ResizableBrush : ScriptableObject
         _activeBrush = Brushes[_indexActiveBrush];
     }
 
+    public void SetBrushSize (int size)
+    {
+        if (size < 0 || size >= Brushes.Length)
+        {
+            throw new System.ArgumentException ("Size " + size + " is out of range");
+        }
+        _indexActiveBrush = size;
+        _activeBrush = Brushes[_indexActiveBrush];
+    }
+
     public bool HasSmallestBrushActive ()
     {
         return _indexActiveBrush == 0;

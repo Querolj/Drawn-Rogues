@@ -18,10 +18,10 @@ MonoBehaviour:
   - BaseColor: 5
     TotalDrops: 1
   PixelUsages: 06000000
-  HasBrushSize: 0
+  HasBrushSize: 1
   UseTextureAsBrush: 0
-  BrushSize: 0
+  BrushSize: 7
   Texture: {fileID: 2800000, guid: 659fcf6ab1dfb6b419d03e35cd4ff372, type: 3}
   TextureUI: {fileID: 2800000, guid: 659fcf6ab1dfb6b419d03e35cd4ff372, type: 3}
   Description: 
-  BehaviourPrefab: {fileID: 8345459480788162592, guid: 95b1f23e5e9f320438902f784bcf4c71, type: 3}
+  BehaviourPrefab: {fileID: 7487989168559669234, guid: 95b1f23e5e9f320438902f784bcf4c71, type: 3}
