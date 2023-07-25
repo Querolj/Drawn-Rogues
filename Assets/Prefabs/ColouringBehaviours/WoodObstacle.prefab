@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5338031691733606747}
   - component: {fileID: 1799777335092162800}
   - component: {fileID: 6343537966354506499}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: WoodObstacle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,7 +153,7 @@ MonoBehaviour:
   _name: Wood obstacle
   _generateStateUI: 1
   _stateUITemplate: {fileID: 3672888832262447436, guid: 954c24245626a7c43923820414f698b8, type: 3}
-  _outlineThickness: 1
+  _outlineThickness: 2
   _squasher: {fileID: 0}
   _statsSerialized:
     AttackDefPassiveValues: []
@@ -175,7 +175,7 @@ GameObject:
   - component: {fileID: 6137531341804390838}
   - component: {fileID: 1999777049283050886}
   - component: {fileID: 1236274522915574731}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Outline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
