@@ -76,7 +76,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 08308958b0380c040a3dd37ef5fb1444, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -266,7 +266,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1767281613787924014}
   - component: {fileID: 4880393115946104934}
-  - component: {fileID: 6005709883124936033}
+  - component: {fileID: 5534330019507993934}
   m_Layer: 14
   m_Name: Player
   m_TagString: Player
@@ -304,7 +304,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _character: {fileID: 1561575053082485635}
   _initForMapOnStart: 1
---- !u!114 &6005709883124936033
+--- !u!114 &5534330019507993934
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

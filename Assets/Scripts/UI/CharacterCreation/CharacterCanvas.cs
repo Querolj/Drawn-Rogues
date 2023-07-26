@@ -237,7 +237,7 @@ public class CharacterCanvas : MonoBehaviour
         }
 
         Vector3 localHitPos = _modifierLayer.InverseTransformPoint (hitPos);
-        GameObject modifierGoInstance = _modifierGoInstanceFactory.Create (_modifierLayerRenderer.bounds, _modifierLayer, selectedModifier, localHitPos, isFlipped, 0f,
+        GameObject modifierGoInstance = _modifierGoInstanceFactory.CreateForCanvas (_modifierLayerRenderer.bounds, _modifierLayer, selectedModifier, localHitPos, isFlipped, 0f,
             (mod) =>
             {
                 _modifiersAdded.Remove (_modifiersAdded.Find (m => m.Modifier == mod));
@@ -266,7 +266,7 @@ public class CharacterCanvas : MonoBehaviour
         localPos.y = 0f;
         localPos.z = Mathf.Lerp (bottomLeftLocal.z, topRightLocal.z, modifierInfos.PercentagePosition.y);
 
-        GameObject modifierGoInstance = _modifierGoInstanceFactory.Create (_modifierLayerRenderer.bounds, _modifierLayer, selectedModifier,
+        GameObject modifierGoInstance = _modifierGoInstanceFactory.CreateForCanvas (_modifierLayerRenderer.bounds, _modifierLayer, selectedModifier,
             localPos, modifierInfos.IsFlipped, 1.5f,
             (mod) =>
             {

@@ -154,8 +154,8 @@ public class DrawedCharacter : Character
     {
         _modifierAdded.Add (modifierInfos);
 
-        GameObject modifierGoInstance = _modifierGoInstanceFactory.Create (Renderer.bounds, _modifierLayer.transform, modifier,
-            modifierInfos.GetLocalPosition (Renderer.bounds, new Vector3 (0.5f, 0.5f, 0f)), modifierInfos.IsFlipped);
+        GameObject modifierGoInstance = _modifierGoInstanceFactory.CreateForCharacter (_modifierLayer.transform, modifier,
+            modifierInfos.GetLocalPosition (Renderer.bounds, new Vector3 (0.5f, 0.5f, 0f)), modifierInfos.IsFlipped, transform);
 
         if (modifier.Stats?.HasAnyStats () == true)
         {

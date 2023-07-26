@@ -18,7 +18,7 @@ public class ModifierGoInstanceFactory : MonoBehaviour
         _actionDelayer = actionDelayer;
     }
 
-    public GameObject Create (Bounds renderBounds, Transform modifierLayer, Modifier modifier, Vector3 localPos, bool isFlipped, float delayLimitCalculInSec = 0f, Action<Modifier> onModifierDeleted = null)
+    public GameObject CreateForCanvas (Bounds renderBounds, Transform modifierLayer, Modifier modifier, Vector3 localPos, bool isFlipped, float delayLimitCalculInSec = 0f, Action<Modifier> onModifierDeleted = null)
     {
         GameObject go = new GameObject ("Modifier_" + modifier.Name);
         SpriteRenderer sr = go.AddComponent<SpriteRenderer> ();
@@ -64,8 +64,24 @@ public class ModifierGoInstanceFactory : MonoBehaviour
 
         sr.sprite = modifier.Sprite;
         sr.flipX = isFlipped;
-        sr.sortingOrder = 3;
         sr.transform.SetParent (modifierLayer);
+        localPos.z = 0.0001f;
+        sr.transform.localPosition = localPos;
+
+        return go;
+    }
+
+    public GameObject CreateForCharacter (Transform modifierLayer, Modifier modifier, Vector3 localPos, bool isFlipped, Transform charTransform)
+    {
+        GameObject go = new GameObject ("Modifier_" + modifier.Name);
+        SpriteDepthAjustToRotation spriteDepthAjuster = go.AddComponent<SpriteDepthAjustToRotation> ();
+        spriteDepthAjuster.Init (charTransform);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer> ();
+        sr.sprite = modifier.Sprite;
+        sr.flipX = isFlipped;
+        sr.transform.SetParent (modifierLayer);
+        localPos.z = 0.0001f;
         sr.transform.localPosition = localPos;
 
         return go;
