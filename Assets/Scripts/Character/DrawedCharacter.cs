@@ -191,7 +191,7 @@ public class DrawedCharacter : Character
         Sprite sprite = Sprite.Create (frame.DrawTexture, new Rect (0, 0, frame.DrawTexture.width, frame.DrawTexture.height), new Vector2 (0.5f, 0.5f), PIXEL_PER_UNIT);
         _renderer.sprite = sprite;
         OnDrawedCharacterUpdate?.Invoke ();
-
+        _outline.SetRenderer (_renderer);
         // OnDrawedCharacterUpdate?.Invoke ();
         // GraphicUtils.SavePixelsAsPNG (_frame.DrawTexture.GetPixels (), "Test/playerInit.png", _frame.DrawTexture.width, _frame.DrawTexture.height);
     }
@@ -212,6 +212,7 @@ public class DrawedCharacter : Character
         LoadFrameInfos (drawedCharacterInfos.FrameInfos);
         GenerateColliders ();
         OnDrawedCharacterUpdate?.Invoke ();
+        _outline.SetRenderer (_renderer);
         // UpdateStats ();
     }
 

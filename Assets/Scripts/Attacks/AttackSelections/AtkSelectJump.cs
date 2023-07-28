@@ -44,7 +44,6 @@ public class AtkSelectJump : AttackSelection
             _attackableDetector.GetComponent<SpriteRenderer> ().enabled = false;
         }
 
-        Debug.Log (_playerBounds.size.ToString ("F3"));
         _attackableDetector.transform.localScale = new Vector3 (_playerBounds.size.x / 10f, _playerBounds.size.y / 10f, 1f);
     }
 
@@ -84,6 +83,8 @@ public class AtkSelectJump : AttackSelection
 
         TryRaycastOnAttackSelectionSprite (Input.mousePosition, out Vector3 targetPos);
         targetPos.y = Utils.GetMapHeight (targetPos);
+        Debug.Log ("targetPos 2 " + targetPos.ToString ("F3"));
+
         TryTurnPlayer (targetPos);
 
         Vector3 attackableDetectorPos = targetPos + Vector3.up * _playerBounds.extents.y;

@@ -9,23 +9,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79aa1e4e185adb24ba6f9c50e4628145, type: 3}
-  m_Name: Ecrasement
+  m_Script: {fileID: 11500000, guid: 1c6c5b9ec18a12944b2d540f0a5438ba, type: 3}
+  m_Name: Heal
   m_EditorClassIdentifier: 
-  Name: Ecrasement
-  AnimationTemplate: {fileID: 8686212205060676263, guid: 37cb070c6bfea3f4db88db807237611a, type: 3}
+  Name: Heal
+  AnimationTemplate: {fileID: 0}
   ParticleTemplate: {fileID: 0}
-  MinDamage: 5
-  MaxDamage: 8
-  NoDamage: 0
+  MinDamage: 0
+  MaxDamage: 0
+  NoDamage: 1
   Precision: 100
-  DamageType: 1
+  DamageType: 0
   _range: 1
-  AttackSelectionType: 3
-  AttackType: 1
+  AttackSelectionType: 5
+  AttackType: 0
   Effects:
-  - Effect: {fileID: 11400000, guid: a1171f3f9d7e36b40bd707d209547f29, type: 2}
-    Value: 100
+  - Effect: {fileID: 11400000, guid: 1c16f96accf3c9b4197405a1bb5cf318, type: 2}
+    Value: 0.05
   AvailableForPlayer: 1
   RequiredLevel: 0
   RequiredWidthAdjectives: 
@@ -35,7 +35,3 @@ MonoBehaviour:
   RequiredNumberOfArmsMax: -1
   RequiredNumberOfLegsMin: -1
   RequiredNumberOfLegsMax: -1
-  ZoneSize: {x: 0.05, y: 0.025}
-  AttackableDetectorTemplate: {fileID: 3839747209023910754, guid: d9a7c7e467d5dff40acd58fc6408d8eb, type: 3}
-  TrajectorySpeed: 1
-  TrajectoryRadius: 0.05

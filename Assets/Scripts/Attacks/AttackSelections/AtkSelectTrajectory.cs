@@ -62,7 +62,8 @@ public class AtkSelectTrajectory : AttackSelection
         }
 
         TryRaycastOnAttackSelectionSprite (Input.mousePosition, out Vector3 targetPos);
-        targetPos.y = Utils.GetMapHeight (_validSelectionIcon.transform.position);
+        targetPos.y = Utils.GetMapHeight (targetPos);
+
         TryTurnPlayer (targetPos);
 
         bool isPositionInRange = IsPositionInAttackRange (targetPos);

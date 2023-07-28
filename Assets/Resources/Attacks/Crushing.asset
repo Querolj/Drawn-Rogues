@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aee3db55abb5944d94b3a6c86bb8954, type: 3}
+  m_Name: Crushing
+  m_EditorClassIdentifier: 
+  Name: Crushing
+  AnimationTemplate: {fileID: 8686212205060676263, guid: 37cb070c6bfea3f4db88db807237611a, type: 3}
+  ParticleTemplate: {fileID: 0}
+  MinDamage: 5
+  MaxDamage: 8
+  NoDamage: 0
+  Precision: 100
+  DamageType: 0
+  _range: 2
+  AttackSelectionType: 6
+  AttackType: 1
+  Effects: []
+  AvailableForPlayer: 1
+  RequiredLevel: 0
+  RequiredWidthAdjectives: 
+  RequiredHeightAdjectives: 
+  RequiredBaseColor: 
+  RequiredNumberOfArmsMin: -1
+  RequiredNumberOfArmsMax: -1
+  RequiredNumberOfLegsMin: -1
+  RequiredNumberOfLegsMax: -1
+  TrajectorySpeed: 0.4
+  TrajectoryRadius: 0.05

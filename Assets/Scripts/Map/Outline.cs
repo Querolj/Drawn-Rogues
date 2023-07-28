@@ -5,16 +5,16 @@ public class Outline : MonoBehaviour
 {
     private SpriteRenderer _renderer;
     private Material _material;
-    public int OutlineThickness
-    {
-        get;
-        set;
-    } = 1;
+
+    [SerializeField]
+    private int _outlineThickness;
 
     private void Awake ()
     {
         _renderer = GetComponent<SpriteRenderer> ();
         _material = _renderer.material;
+        _material.SetFloat ("_OutlineThickness", _outlineThickness);
+
         DeactivateOutline ();
     }
 
@@ -28,7 +28,6 @@ public class Outline : MonoBehaviour
     {
         _renderer.enabled = true;
         _material.SetColor ("_OutlineColor", color);
-        _material.SetFloat ("_OutlineThickness", OutlineThickness);
     }
 
     public void DeactivateOutline ()

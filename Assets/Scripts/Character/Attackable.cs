@@ -184,7 +184,6 @@ public class Attackable : CombatEntity
         if (_outline != null)
         {
             _outline.SetRenderer (_renderer);
-            _outline.OutlineThickness = _outlineThickness;
         }
 
         if (_renderer.sprite != null)

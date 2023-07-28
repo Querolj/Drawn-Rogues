@@ -49,14 +49,13 @@ public class AttackInstTrajectory : AttackInstance
                 return;
             }
 
-            target.Squasher.SquashHorizontally (0.6f, 0.4f, 0.2f);
+            target.Squasher?.SquashHorizontally (0.6f, 0.4f, 0.2f);
 
             if (AnimationTemplate != null)
                 PlayAtkTouchedAnimation (target.transform.position, () => InflictDamage (target, attackInstCopy));
             else if (ParticleTemplate != null)
                 PlayAtkTouchedParticle (target.transform.position, () => InflictDamage (target, attackInstCopy));
             EndAttack (attacker, trajectory);
-
         });
     }
 

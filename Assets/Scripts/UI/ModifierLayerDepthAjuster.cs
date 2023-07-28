@@ -5,6 +5,9 @@ public class ModifierLayerDepthAjuster : MonoBehaviour
     [SerializeField]
     private CharacterMovement _characterMove;
 
+    [SerializeField]
+    private bool _behindCharacter = false;
+
     private void Awake ()
     {
         if (_characterMove == null)
@@ -13,7 +16,8 @@ public class ModifierLayerDepthAjuster : MonoBehaviour
 
     private void Update ()
     {
-        float newDepth = 0.0001f * (_characterMove.DirectionRight ? -1 : 1);
+        int factor = _behindCharacter ? -1 : 1;
+        float newDepth = 0.0001f * (_characterMove.DirectionRight ? -factor : factor);
         if (transform.localPosition.z != newDepth)
             transform.localPosition = new Vector3 (transform.localPosition.x, transform.localPosition.y, newDepth);
     }

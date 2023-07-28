@@ -73,6 +73,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1614101736617449513}
   m_SourcePrefab: {fileID: 100100000, guid: 99a279f4509d6e54eb7278c7e766f207, type: 3}
+--- !u!114 &863070234400948420 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7673125499798634235, guid: 99a279f4509d6e54eb7278c7e766f207, type: 3}
+  m_PrefabInstance: {fileID: 7027400144137207359}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 879319e7f73e709458951afea022d2fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &5701979679958082771 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3361892575399516908, guid: 99a279f4509d6e54eb7278c7e766f207, type: 3}
@@ -113,13 +124,11 @@ MonoBehaviour:
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
     effectValues: []
-  _outline: {fileID: 0}
+  _outline: {fileID: 863070234400948420}
   _eventsOnDeath: []
   _attacksReferences:
-  - {fileID: 11400000, guid: 334916fb33594944cab47a2bc9c5438a, type: 2}
+  - {fileID: 11400000, guid: 39a435e0b4849504bada3babfbe867ea, type: 2}
   - {fileID: 11400000, guid: 5bd3379e720f99048afa30729f1fdc8b, type: 2}
-  - {fileID: 11400000, guid: c9873d97818e09f42aed54a9754c25bd, type: 2}
-  - {fileID: 11400000, guid: 8ac445d94056f3e4f923ac38300abba0, type: 2}
   _reduceEscapeChanceValue: 0.2
   _modifierLayer: {fileID: 9151200112178715415}
   _colouringSpell:
