@@ -64,7 +64,6 @@ public class ModifierGoInstanceFactory : MonoBehaviour
 
         sr.sprite = modifier.Sprite;
         sr.flipX = isFlipped;
-        sr.sortingOrder = 3;
         sr.transform.SetParent (modifierLayer);
         sr.transform.localPosition = localPos;
 
