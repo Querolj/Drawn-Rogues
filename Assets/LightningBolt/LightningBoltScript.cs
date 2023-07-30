@@ -183,8 +183,9 @@ namespace DigitalRuby.LightningBolt
                     // add two new segments
                     if (_2DMode)
                     {
-                        start.z = transform.position.z + 0.001f;
-                        end.z = transform.position.z + 0.001f;
+                        start.z = transform.position.z;
+                        midPoint.z = transform.position.z;
+                        end.z = transform.position.z;
                     }
 
                     segments.Add (new KeyValuePair<Vector3, Vector3> (start, midPoint));

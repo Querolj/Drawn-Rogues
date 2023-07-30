@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d0f369dc78a0524ead5a7b5f03d2165, type: 3}
+  m_Name: StaticCloud
+  m_EditorClassIdentifier: 
+  _id: 3
+  Name: Static Cloud
+  BaseColorsUsedPerPixel:
+  - BaseColor: 3
+    TotalDrops: 1
+  PixelUsages: 06000000
+  HasBrushSize: 1
+  UseTextureAsBrush: 0
+  BrushSize: 7
+  Texture: {fileID: 2800000, guid: b834cb631b2245b4a81f49fe487e52e7, type: 3}
+  TextureUI: {fileID: 2800000, guid: 4978ed16ffbdc9f4fb618ab58964143b, type: 3}
+  Description: 
+  BehaviourPrefab: {fileID: 8866088654456203402, guid: 956ed26a7f5847b46aaaedb43f9bb552, type: 3}

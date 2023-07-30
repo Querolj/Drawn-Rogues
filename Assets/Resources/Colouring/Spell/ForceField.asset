@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d0f369dc78a0524ead5a7b5f03d2165, type: 3}
+  m_Name: ForceField
+  m_EditorClassIdentifier: 
+  _id: 2
+  Name: ForceField
+  BaseColorsUsedPerPixel:
+  - BaseColor: 2
+    TotalDrops: 1
+  PixelUsages: 06000000
+  HasBrushSize: 1
+  UseTextureAsBrush: 0
+  BrushSize: 5
+  Texture: {fileID: 2800000, guid: b25f4cb662b7912428bcd4c13ea010e2, type: 3}
+  TextureUI: {fileID: 2800000, guid: 10d435fdd7b56ff498afa8892bf847d0, type: 3}
+  Description: 
+  BehaviourPrefab: {fileID: 3076634171962712240, guid: b2d6dbbafe50dad4681f2e746bdfa2e3, type: 3}

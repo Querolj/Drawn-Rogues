@@ -10,7 +10,7 @@ public class FrameDecor : Frame
     private AdvancedPolygonCollider _advancedPolygonColliderTemplate;
 
     private Drawer _drawer;
-    private TurnManager _turnBasedCombat;
+    private TurnManager _turnManager;
     private const float _MESH_COLLIDER_THICKNESS = 0.03f;
     public Bounds Bounds
     {
@@ -20,19 +20,19 @@ public class FrameDecor : Frame
         }
     }
 
-    private Attackable.Factory _attackableFactory;
+    private CombatEntity.Factory _combatEntityFactory;
 
     [Inject, UsedImplicitly]
-    private void Init (Attackable.Factory attackableFactory)
+    private void Init (CombatEntity.Factory combatEntityFactory)
     {
-        _attackableFactory = attackableFactory;
+        _combatEntityFactory = combatEntityFactory;
     }
 
     protected override void Awake ()
     {
         base.Awake ();
         _drawer = FindAnyObjectByType<Drawer> (); // TODO : inject
-        _turnBasedCombat = FindAnyObjectByType<TurnManager> (); // TODO : inject
+        _turnManager = FindAnyObjectByType<TurnManager> (); // TODO : inject
 
         _drawer.OnDrawStrokeEnd += (c, si) =>
         {
@@ -72,7 +72,7 @@ public class FrameDecor : Frame
             throw new Exception ("could not load prefab for colouring spell " + colouringSpell.Name + ", can't generate collider for lc " + colouringSpell.Name);
 
         // goBehaviour = GameObject.Instantiate (colouringSpell.BehaviourPrefab);
-        GameObject goBehaviour = _attackableFactory.Create (colouringSpell.BehaviourPrefab).gameObject;
+        GameObject goBehaviour = _combatEntityFactory.Create (colouringSpell.BehaviourPrefab).gameObject;
 
         goBehaviour.transform.SetParent (gameObject.transform);
         Vector3 newLocalPos = Vector3.zero;
@@ -108,7 +108,7 @@ public class FrameDecor : Frame
         if (attackable != null)
         {
             if (attackable is IColouringSpellBehaviour spellBehaviour)
-                spellBehaviour.Init (_turnBasedCombat, _drawer.LastStrokeDrawUVs, this);
+                spellBehaviour.Init (_turnManager, _drawer.LastStrokeDrawUVs, this);
         }
         else
         {
@@ -116,10 +116,10 @@ public class FrameDecor : Frame
             if (combatEnvironnementHazard != null)
             {
                 if (combatEnvironnementHazard is IColouringSpellBehaviour spellBehaviour)
-                    spellBehaviour.Init (_turnBasedCombat, _drawer.LastStrokeDrawUVs, this);
+                    spellBehaviour.Init (_turnManager, _drawer.LastStrokeDrawUVs, this);
             }
 
-            _turnBasedCombat.ActivePlayerCharacter.LinkedCombatEntities.Add (combatEnvironnementHazard);
+            _turnManager.ActivePlayerCharacter.LinkedCombatEntities.Add (combatEnvironnementHazard);
         }
 
         Destroy (advancedPolyCol.gameObject);

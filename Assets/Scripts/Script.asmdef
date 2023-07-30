@@ -18,7 +18,8 @@
         "Brush",
         "BaseColor",
         "Trajectory",
-        "WorldUIContainer"
+        "WorldUIContainer",
+        "LightningBolt"
     ],
     "includePlatforms": [
         "Editor",

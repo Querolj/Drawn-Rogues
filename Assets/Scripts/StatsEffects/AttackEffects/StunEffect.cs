@@ -8,7 +8,7 @@ public class StunEffect : Effect
 {
     private const int STUN_DURATION = 1;
 
-    public TempEffect StunTempEffect;
+    public StunTempEffect StunTempEffect;
 
     protected override void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightDescription fightDescription, Action onAnimeEnded)
     {

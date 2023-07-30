@@ -133,6 +133,8 @@ MonoBehaviour:
   _modifierLayer: {fileID: 9151200112178715415}
   _colouringSpell:
   - {fileID: 11400000, guid: ab90b6fe2ffebf6449483dd76b8539d9, type: 2}
+  - {fileID: 11400000, guid: 4bb0692e1c0bc6941940b39723fdf3fa, type: 2}
+  - {fileID: 11400000, guid: 7b073087bff36d448a189c9c5b30b92a, type: 2}
   _life: 200
   _intelligence: 50
   _strenght: 1

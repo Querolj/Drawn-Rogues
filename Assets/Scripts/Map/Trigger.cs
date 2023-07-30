@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent (typeof (Collider))]
 public class Trigger : MonoBehaviour
 {
     public event Action<Collider> OnDetect;
+    public event Action<Collider> OnExit;
+
     private MeshRenderer _renderer;
     private Collider _collider;
     public Bounds Bounds
@@ -23,9 +26,21 @@ public class Trigger : MonoBehaviour
             _collider = GetComponent<Collider> ();
     }
 
+    private HashSet<int> _idsDetected = new HashSet<int> ();
     private void OnTriggerEnter (Collider other)
     {
+        int id = other.gameObject.GetInstanceID ();
+        if (_idsDetected.Contains (id))
+            return;
+
+        _idsDetected.Add (id);
         OnDetect?.Invoke (other);
+    }
+
+    private void OnTriggerExit (Collider other)
+    {
+        _idsDetected.Remove (other.gameObject.GetInstanceID ());
+        OnExit?.Invoke (other);
     }
 
     public void HideRenderer ()

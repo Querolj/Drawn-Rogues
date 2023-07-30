@@ -17,8 +17,6 @@ public enum State
 
 public class Attackable : CombatEntity
 {
-    public class Factory : PlaceholderFactory<GameObject, Attackable> { }
-
     protected const float PIXEL_PER_UNIT = 100f;
 
     [SerializeField]
