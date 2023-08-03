@@ -4,4 +4,5 @@ using UnityEngine;
 public class ColouringSpell : Colouring
 {
     public GameObject BehaviourPrefab;
+    public bool ClearMetadataOnFrame = false;
 }

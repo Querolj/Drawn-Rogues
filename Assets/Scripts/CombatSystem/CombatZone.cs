@@ -145,7 +145,7 @@ public class CombatZone : MonoBehaviour
 
             // set the context to draw on the map
             _drawer.StopBrushDrawingPrediction ();
-            _drawer.CancelCurrentDraw ();
+            _drawer.StopCurrentDrawing ();
 
             // show the combat zone
             DrawCombatZoneLineOnMap ();

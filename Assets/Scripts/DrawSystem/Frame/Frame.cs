@@ -88,7 +88,8 @@ public class Frame : MonoBehaviour
         }
     }
 
-    protected Color[] _initialPixels;
+    protected Color[] _clearPixels;
+    protected Color[] _mainTexPixels;
 
     protected int _currentPixelsAllowed = -1;
     public int CurrentPixelsAllowed
@@ -152,7 +153,8 @@ public class Frame : MonoBehaviour
         _pixelUsages = new int[_width * _height];
         _pixelTimestamps = new int[Width * Height];
 
-        _initialPixels = new Color[_width * _height];
+        _clearPixels = new Color[_width * _height];
+        _mainTexPixels = ((Texture2D) _renderer.material.mainTexture).GetPixels ();
 
         _mat.SetTexture ("_DrawTex", _drawTexture);
         _mat.SetFloat ("Width", _width);
@@ -192,13 +194,16 @@ public class Frame : MonoBehaviour
         _drawOnFrameCs.SetTexture (kernel, "BrushTex", brush.Texture);
     }
 
-    public void Clear ()
+    public void ClearMetadata ()
     {
         _pixelIds = new int[Width * Height];
         _pixelUsages = new int[Width * Height];
         _pixelTimestamps = new int[Width * Height];
+    }
 
-        _drawTexture.SetPixels (0, 0, Width, Height, _initialPixels, 0);
+    public void ClearDrawTexture ()
+    {
+        _drawTexture.SetPixels (0, 0, Width, Height, _clearPixels, 0);
         _drawTexture.Apply ();
     }
 
@@ -215,10 +220,12 @@ public class Frame : MonoBehaviour
 
     private Vector2Int _previousMousePosFrameSpace = Vector2Int.zero;
 
-    // return number of pixels drawn
-    public int Draw (Vector2 coordinate, int colouringId, Texture2D texture, List<BaseColorDrops> baseColorDrops,
-        PixelUsage pixelUsage, bool isNewStroke, ResizableBrush resizableBrush, int maxDrawablePixCount, out StrokeInfo strokeInfo)
+    // return false if can't draw on the given position on the frame
+    public bool TryDraw (Vector2 coordinate, int colouringId, Texture2D texture, List<BaseColorDrops> baseColorDrops,
+        PixelUsage pixelUsage, bool isNewStroke, ResizableBrush resizableBrush, int maxDrawablePixCount,
+        out StrokeInfo strokeInfo, out int totalPixelDraw)
     {
+        totalPixelDraw = 0;
         if (resizableBrush == null)
             throw new ArgumentNullException (nameof (resizableBrush));
 
@@ -233,7 +240,27 @@ public class Frame : MonoBehaviour
 
         maxDrawablePixCount = Mathf.Min (_currentPixelsAllowed, maxDrawablePixCount);
         if (maxDrawablePixCount == 0)
-            return 0;
+            return false;
+
+        // check if we draw on transparency
+        if (_disallowDrawOnTransparency)
+        {
+            int x1 = (int) (coordinate.x * _width);
+            int y1 = (int) (coordinate.y * _height);
+            int index = y1 * _width + x1;
+
+            if (_pixelTimestamps[index] != 0 && _pixelTimestamps[index] != _currentPixelTimestamp)
+            {
+                Debug.Log ("Can't draw on other drawing");
+                return false;
+            }
+
+            if (_mainTexPixels[index].a == 0)
+            {
+                Debug.Log ("Can't draw on transparency");
+                return false;
+            }
+        }
 
         int initialAvailablePixels = maxDrawablePixCount;
 
@@ -296,7 +323,6 @@ public class Frame : MonoBehaviour
 
         Vector2Int mousePosFrameSpace = GetMousePosFrameSpace (coordinate);
         float leapSize = 0.34f;
-        int pixelAddedSum = 0;
 
         if (_previousMousePosFrameSpace == Vector2Int.zero)
         {
@@ -320,7 +346,7 @@ public class Frame : MonoBehaviour
                     {
                         ReleaseBuffers (pixelIdsBuffer, pixelUsagesBuffer, pixelTimestampsBuffer, downBorderTouchedBuffer);
                         _currentPixelsAllowed -= Mathf.Clamp (initialAvailablePixels - maxDrawablePixCount, 0, _maxPixelsAllowed);
-                        return pixelAddedSum;
+                        return true;
                     }
 
                     freePixelCount = CountDrawablePixelsUnderBrush (new Vector2Int (lerpedMousePosX, lerpedMousePosY), resizableBrush.ActiveBrush);
@@ -335,7 +361,7 @@ public class Frame : MonoBehaviour
                 {
                     ReleaseBuffers (pixelIdsBuffer, pixelUsagesBuffer, pixelTimestampsBuffer, downBorderTouchedBuffer);
                     _currentPixelsAllowed -= Mathf.Clamp (initialAvailablePixels - maxDrawablePixCount, 0, _maxPixelsAllowed);
-                    return pixelAddedSum;
+                    return true;
                 }
             }
 
@@ -351,12 +377,11 @@ public class Frame : MonoBehaviour
             ComputeBuffer pixelsAddedBuffer = new ComputeBuffer (1, sizeof (int));
             pixelsAddedBuffer.SetData (pixelsAdded);
             cs.SetBuffer (kernel, "PixelsAdded", pixelsAddedBuffer);
-
             cs.Dispatch (kernel, x, y, z);
 
             // get pixels added
             pixelsAddedBuffer.GetData (pixelsAdded);
-            pixelAddedSum += pixelsAdded[0];
+            totalPixelDraw += pixelsAdded[0];
             maxDrawablePixCount -= pixelsAdded[0];
             pixelsAdded[0] = 0;
 
@@ -383,8 +408,8 @@ public class Frame : MonoBehaviour
             strokeInfo.DownBorderTouched = downBorderTouched[0] > 0;
         }
 
-        _currentStrokeInfo.AddPixels (pixelAddedSum);
-        _onPixelsAdded?.Invoke (baseColorDrops, pixelAddedSum);
+        _currentStrokeInfo.AddPixels (totalPixelDraw);
+        _onPixelsAdded?.Invoke (baseColorDrops, totalPixelDraw);
 
         for (int i = 1; i < colorUsageTouchedInt.Length; i++)
         {
@@ -411,7 +436,7 @@ public class Frame : MonoBehaviour
             downBorderTouchedBuffer.Release ();
         }
 
-        return pixelAddedSum;
+        return true;
     }
 
     private int CountDrawablePixelsUnderBrush (Vector2Int mouseCoordinate, Brush brush)
@@ -473,38 +498,4 @@ public class Frame : MonoBehaviour
         _currentPixelsAllowed = frame.CurrentPixelsAllowed;
         _maxPixelsAllowed = frame.MaxPixelsAllowed;
     }
-
-    // public void InitByFrameInfos (FrameInfos frameInfos)
-    // {
-    //     if (frameInfos.PixelIds.Length != Width * Height)
-    //         throw new Exception ("texInfos dimensions does not match with frame, len is : " + frameInfos.PixelIds.Length);
-
-    //     _pixelIds = frameInfos.PixelIds;
-    //     _pixelUsages = frameInfos.PixelUsages;
-    //     _pixelTimestamps = frameInfos.PixelTimestamps;
-    //     _currentPixelsAllowed = frameInfos.CurrentPixelsAllowed;
-    //     _maxPixelsAllowed = frameInfos.MaxPixelsAllowed;
-
-    //     Color[] pixels = new Color[Width * Height];
-    //     Dictionary<Colouring, Color[]> coloringsPixels = new Dictionary<Colouring, Color[]> ();
-    //     for (int i = 0; i < pixels.Length; i++)
-    //     {
-    //         int id = _pixelIds[i];
-    //         if (CharColouringRegistry.Instance.ColouringsSourceById.ContainsKey (id))
-    //         {
-    //             if (!coloringsPixels.ContainsKey (CharColouringRegistry.Instance.ColouringsSourceById[id]))
-    //                 coloringsPixels.Add (CharColouringRegistry.Instance.ColouringsSourceById[id], CharColouringRegistry.Instance.ColouringsSourceById[id].Texture.GetPixels ());
-
-    //             int w = CharColouringRegistry.Instance.ColouringsSourceById[id].Texture.width;
-    //             int x = i % w;
-    //             int y = (i / w) % w;
-    //             int index = (y * w) + x;
-
-    //             pixels[i] = coloringsPixels[CharColouringRegistry.Instance.ColouringsSourceById[id]][index];
-    //         }
-    //     }
-
-    //     DrawTexture.SetPixels (pixels);
-    //     DrawTexture.Apply ();
-    // }
 }

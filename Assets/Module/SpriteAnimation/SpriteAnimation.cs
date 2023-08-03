@@ -37,10 +37,14 @@ public class SpriteAnimation : MonoBehaviour
     [SerializeField]
     private bool _autoStart = false;
 
+    [SerializeField]
+    private bool _dontDestroyOnAnimeEnd = false;
+
     private float _currentFrameTime;
     private int _index = 0;
     public event Action OnAnimationEnded;
     private bool _start = false;
+    private bool _isEnded = false;
     private int _currentLoopCount = 0;
 
     private void Awake ()
@@ -52,7 +56,7 @@ public class SpriteAnimation : MonoBehaviour
 
     private void Update ()
     {
-        if (!_start)
+        if (!_start || _isEnded)
             return;
 
         _currentFrameTime -= Time.deltaTime;
@@ -64,7 +68,9 @@ public class SpriteAnimation : MonoBehaviour
                 if (_currentLoopCount >= _maxLoopCount)
                 {
                     OnAnimationEnded?.Invoke ();
-                    DestroyImmediate (gameObject);
+                    _isEnded = true;
+                    if (!_dontDestroyOnAnimeEnd)
+                        DestroyImmediate (gameObject);
                     return;
                 }
             }

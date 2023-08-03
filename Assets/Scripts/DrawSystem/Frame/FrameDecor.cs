@@ -40,12 +40,18 @@ public class FrameDecor : Frame
             {
                 return;
             }
-            GenerateColliderForColoring (c as ColouringSpell);
-            Clear ();
+
+            if (c is ColouringSpell colouringSpell)
+            {
+                InitColouringSpell (colouringSpell);
+                ClearDrawTexture ();
+                if (colouringSpell.ClearMetadataOnFrame)
+                    ClearMetadata ();
+            }
         };
     }
 
-    public void GenerateColliderForColoring (ColouringSpell colouringSpell)
+    public void InitColouringSpell (ColouringSpell colouringSpell)
     {
         int id = colouringSpell.Id;
         if (!TryGenerateSpriteFromFrame (colouringSpell, out Sprite sprite))

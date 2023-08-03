@@ -19,7 +19,8 @@
         "BaseColor",
         "Trajectory",
         "WorldUIContainer",
-        "LightningBolt"
+        "LightningBolt",
+        "FX"
     ],
     "includePlatforms": [
         "Editor",

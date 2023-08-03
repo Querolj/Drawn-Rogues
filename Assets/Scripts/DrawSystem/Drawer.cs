@@ -113,6 +113,8 @@ public class Drawer : MonoBehaviour
     }
     private StrokeValidation _strokeValidation;
     private bool disalowDrawUntilNewStroke = false;
+    private bool _stopDraw = false;
+
     private bool _activateDrawer = false;
     #endregion
 
@@ -173,8 +175,9 @@ public class Drawer : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyUp (KeyCode.Mouse0))
+        if (Input.GetKeyUp (KeyCode.Mouse0) || _stopDraw)
         {
+            _stopDraw = false;
             if (_drawStartedWithBrush)
             {
                 if (_strokeValidation != null && !_strokeValidation.IsValid)
@@ -332,8 +335,15 @@ public class Drawer : MonoBehaviour
 
         DoForAllFrames ((frame, uv) =>
         {
-            int pixelsAdded = frame.Draw (uv, _selectedColouring.Id, _selectedColouring.Texture, _selectedColouring.BaseColorsUsedPerPixel,
-                _bodyPartSelection.GetPixelUsageFromSelectedBodyPart (), drawStrokeJustStarting, _resizableBrush, maxDrawablePixCount, out _currentStrokeInfo);
+            bool drawDone = frame.TryDraw (uv, _selectedColouring.Id, _selectedColouring.Texture, _selectedColouring.BaseColorsUsedPerPixel,
+                _bodyPartSelection.GetPixelUsageFromSelectedBodyPart (), drawStrokeJustStarting, _resizableBrush, maxDrawablePixCount,
+                out _currentStrokeInfo, out int pixelsAdded);
+
+            if (!drawDone)
+            {
+                StopCurrentDrawing ();
+                return;
+            }
 
             if (pixelsAdded <= 0)
                 return;
@@ -434,9 +444,11 @@ public class Drawer : MonoBehaviour
         return _coordinateByFocusedFrame.ContainsKey (frame);
     }
 
-    public void CancelCurrentDraw ()
+    public void StopCurrentDrawing ()
     {
         disalowDrawUntilNewStroke = true;
+        OnDrawStrokeEnd?.Invoke (_selectedColouring, _currentStrokeInfo);
+        _drawStartedWithBrush = false;
     }
 
     #region Undo & stroke reset

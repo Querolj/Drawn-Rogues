@@ -19,6 +19,9 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
     [SerializeField]
     private Color _branchColor;
 
+    [SerializeField]
+    private SpriteAnimation _flowerGrowTemplate;
+
     private SpriteRenderer _renderer;
     private ComputeShader _drawBranchCs;
     private int _kernelCS;
@@ -26,8 +29,8 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
     private const float MIN_BRANCH_ANGLE = 30f;
     private const float MAX_BRANCH_ANGLE = 65f;
 
-    private const float MIN_BRANCH_PIX_LENGTH = 8f;
-    private const float MAX_BRANCH_PIX_LENGTH = 14f;
+    private const float MIN_BRANCH_PIX_LENGTH = 14f;
+    private const float MAX_BRANCH_PIX_LENGTH = 20f;
     private Vector3Int _groupThreadCS;
 
     private const float FORK_RANGE_MIN = 0.4f; // In % of branch length 
@@ -35,27 +38,55 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
 
     private class BranchFork
     {
-        public Vector2 Origin;
-        public Vector2 Direction;
-        public float Length;
+        private static int _idCount = 0;
+
+        public int Id { get; }
+
+        public Vector2 Origin { get; }
+        public Vector2 Direction { get; }
+        public float Length { get; }
         public float StartLerpValue = 0f;
         public bool HasForked = false;
         public Vector2Int CurrentPositionInPixel = Vector2Int.zero;
-        public bool IsOutOfTrunk = false; // It comes true when the branch reach the first alpha pixel
+        public Vector2 TipPoint { get; }
 
-        public Vector2 TipPoint
+        public BranchFork (Vector2 origin, Vector2 direction, float length)
         {
-            get
-            {
-                return Origin + Direction * Length;
-            }
+            _idCount++;
+            Id = _idCount;
+            Origin = origin;
+            Direction = direction;
+            Length = length;
+            TipPoint = Origin + Direction * Length;
         }
     }
+
     private List<BranchFork> _branchForksLevel1 = new List<BranchFork> ();
     private List<BranchFork> _branchForksLevel2 = new List<BranchFork> ();
 
     private Texture2D _drawedTex;
     private RenderTexture _rendTex;
+    private Color[] _drawedTexInitialPixels;
+    private int[] _branchIds;
+
+    // Flower grow 
+    private int _totalFlowerGrown = 0;
+    private int _totalFlowerExpected = 0;
+    private bool _growFinished = false;
+    private Vector2 _bottonLeftFlowerPos;
+    private Vector2 _topRightFlowerPos;
+    private List<Vector3> _flowerPositions = new List<Vector3> ();
+
+    // Healing
+    [SerializeField]
+    private AreaOfEffect2D _healingAreaOfEffectFxRemplate;
+
+    public override void ExecuteTurn (Action onTurnEnded) { }
+
+    private void OnTriggerEnter (Collider other)
+    {
+
+    }
 
     public void Init (TurnManager turnBasedCombat, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor)
     {
@@ -63,6 +94,8 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
         _currentDrawTime = BRANCH_DRAW_TIME;
         _lastStep = 1;
         _currentStep = 1;
+        _drawedTexInitialPixels = frameDecor.DrawTexture.GetPixels ();
+        _branchIds = new int[_drawedTexInitialPixels.Length];
 
         // set draw texture
         _drawedTex = new Texture2D (frameDecor.Width, frameDecor.Height, TextureFormat.RGBA32, false);
@@ -88,7 +121,7 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
         _drawBranchCs.SetFloats ("BrushColor", new float[4] { _branchColor.r, _branchColor.g, _branchColor.b, _branchColor.a });
 
         const float stepSizeInPixel = 6f;
-        Vector2 lastPixelPos = new Vector2 (-1, -1);
+        Vector2 lastPixelPos = lastStrokeDrawUVs[0];
 
         _groupThreadCS.x = GraphicUtils.GetComputeShaderDispatchCount (frameDecor.Width, 32);
         _groupThreadCS.y = GraphicUtils.GetComputeShaderDispatchCount (frameDecor.Height, 32);
@@ -101,29 +134,26 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
         foreach (Vector2 uv in lastStrokeDrawUVs)
         {
             Vector2 pixelPos = new Vector2 ((int) (uv.x * frameDecor.DrawTexture.width), (int) (uv.y * frameDecor.DrawTexture.height));
-            if (lastPixelPos.x != -1 && Vector2.Distance (lastPixelPos, pixelPos) < stepSizeInPixel)
+            if (Vector2.Distance (lastPixelPos, pixelPos) < stepSizeInPixel)
             {
                 continue;
             }
 
             Vector2 mainBranchDirection = (pixelPos - lastPixelPos).normalized;
-            float branchAngle = UnityEngine.Random.Range (MIN_BRANCH_ANGLE, MAX_BRANCH_ANGLE);
             orientation = !orientation;
-
-            if (!orientation)
-            {
-                branchAngle *= -1;
-            }
-
+            float branchAngle = UnityEngine.Random.Range (MIN_BRANCH_ANGLE, MAX_BRANCH_ANGLE) * (orientation ? 1 : -1);
             Vector2 branchDirection = Quaternion.Euler (0, 0, branchAngle) * mainBranchDirection;
             float branchLength = UnityEngine.Random.Range (MIN_BRANCH_PIX_LENGTH, MAX_BRANCH_PIX_LENGTH);
-            BranchFork branchFork = new BranchFork ();
-            branchFork.Origin = lastPixelPos;
-            branchFork.Direction = branchDirection;
-            branchFork.Length = branchLength;
+
+            if (!TryGetBranchInitialPos (branchDirection, pixelPos, out Vector2 branchPos))
+            {
+                continue;
+            }
+
+            BranchFork branchFork = new BranchFork (branchPos, branchDirection, branchLength);
             _branchForksLevel1.Add (branchFork);
 
-            lastPixelPos = pixelPos;
+            lastPixelPos = branchPos;
             lastOrientation = orientation;
         }
 
@@ -131,6 +161,24 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
 
         _renderer.sprite = Sprite.Create (_drawedTex, new Rect (0, 0, _drawedTex.width, _drawedTex.height), new Vector2 (0.5f, 0.5f));
         _renderer.material.mainTexture = _drawedTex;
+    }
+
+    private bool TryGetBranchInitialPos (Vector2 branchDirection, Vector2 branchOrigin, out Vector2 branchPos)
+    {
+        branchPos = branchOrigin;
+        const int MAX_PIXEL_DIST_IN_TRONK = 4;
+
+        for (int i = 0; i < MAX_PIXEL_DIST_IN_TRONK; i++)
+        {
+            branchPos = branchOrigin + branchDirection * i;
+            Color pixelColor = _drawedTexInitialPixels[(int) branchPos.x + (int) branchPos.y * _drawedTex.width];
+            if (pixelColor.a < 0.99f)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void Update ()
@@ -146,24 +194,28 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
         }
 
         _lastStep = _currentStep;
+
+        if (!_growFinished && _currentStep == DRAW_STEPS_MAX && _totalFlowerExpected == _totalFlowerGrown)
+            OnGrowFinished ();
     }
 
     private void UpdateBranchesDrawing (int currentStep, ref List<BranchFork> branchForks)
     {
-
-        float lerpValue = (float) currentStep / DRAW_STEPS_MAX;
-        float oldLerpValue = (float) (currentStep - 1) / DRAW_STEPS_MAX;
+        float nextLerp = (float) currentStep / DRAW_STEPS_MAX;
+        float oldLerp = (float) (currentStep - 1) / DRAW_STEPS_MAX;
         // Debug.Log ("UpdateBranchesDrawing, oldLerpValue " + oldLerpValue + ", lerpValue : " + lerpValue);
 
-        float smoothStep = (lerpValue - oldLerpValue) / 4f;
+        float step = (nextLerp - oldLerp) / 4f;
         List<BranchFork> branchCreated = new List<BranchFork> ();
         List<BranchFork> branchToRemove = new List<BranchFork> ();
 
         foreach (BranchFork branchFork in branchForks)
         {
-            for (float i = oldLerpValue; i <= lerpValue + 0.0001f; i += smoothStep)
+            bool stopGrow = false;
+
+            for (float currentLerp = oldLerp; currentLerp <= nextLerp + 0.0001f; currentLerp += step)
             {
-                float branchLerpValue = i;
+                float branchLerpValue = currentLerp;
                 if (branchFork.StartLerpValue >= 1f)
                     branchLerpValue = 1f;
                 else if (branchLerpValue < branchFork.StartLerpValue)
@@ -174,21 +226,47 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
                     branchLerpValue = Mathf.Clamp01 (branchLerpValue);
                 }
 
-                bool branchTouched = DrawBranchPart (branchFork, _branchForkBrush, branchLerpValue);
-                if (!branchTouched && !branchFork.IsOutOfTrunk && branchLerpValue > 0.6f)
+                Vector2 brushPosF = Vector2.Lerp (branchFork.Origin, branchFork.TipPoint, branchLerpValue);
+                Vector2Int brushPos = new Vector2Int ((int) brushPosF.x, (int) brushPosF.y);
+
+                // Check if current brush position is available
+                if (branchFork.CurrentPositionInPixel.x == brushPos.x && branchFork.CurrentPositionInPixel.y == brushPos.y)
+                    continue;
+
+                branchFork.CurrentPositionInPixel = new Vector2Int (brushPos.x, brushPos.y);
+                int index = branchFork.CurrentPositionInPixel.x + branchFork.CurrentPositionInPixel.y * _drawedTex.width;
+
+                if (currentLerp == oldLerp && _drawedTexInitialPixels[index].a > 0.99f && _branchIds[index] != branchFork.Id)
+                    stopGrow = true;
+
+                if (!stopGrow)
                 {
-                    branchFork.IsOutOfTrunk = true;
+                    // Check if next brush position is available
+                    Vector2 nextBrushPosF = Vector2.Lerp (branchFork.Origin, branchFork.TipPoint, branchLerpValue + step);
+                    Vector2Int nextBrushPos = new Vector2Int ((int) nextBrushPosF.x, (int) nextBrushPosF.y);
+                    int nextIndex = nextBrushPos.x + nextBrushPos.y * _drawedTex.width;
+                    if (_drawedTexInitialPixels[nextIndex].a > 0.99f && _branchIds[nextIndex] != branchFork.Id)
+                        stopGrow = true;
                 }
-                else if (branchFork.IsOutOfTrunk && branchTouched)
+
+                if (stopGrow)
                 {
                     branchToRemove.Add (branchFork);
                     break;
                 }
 
-                if (TryForkBranch (branchFork, branchLerpValue, i, out BranchFork newFork))
+                DrawBranchPart (branchFork, _branchForkBrush);
+
+                if (TryForkBranch (branchFork, branchLerpValue, currentLerp, out BranchFork newFork))
                 {
                     branchCreated.Add (newFork);
                 }
+            }
+
+            if (!stopGrow && currentStep == DRAW_STEPS_MAX)
+            {
+                GrowFlower (branchFork);
+                _totalFlowerExpected++;
             }
         }
 
@@ -196,8 +274,90 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
         branchForks.RemoveAll (branchToRemove.Contains);
         ApplyDrawTex ();
 
-        if (lerpValue >= 0.99f)
+        if (nextLerp >= 0.99f)
             GraphicUtils.SavePixelsAsPNG (_drawedTex.GetPixels (), "Test/Branch.png", _drawedTex.width, _drawedTex.height);
+    }
+
+    private void GrowFlower (BranchFork branchFork)
+    {
+        // get the world position of the flower
+        // Get the flower position in % relative to the drawed texture
+        Vector3 flowerWorldLocalPos = new Vector3 (branchFork.CurrentPositionInPixel.x / (float) _drawedTex.width, branchFork.CurrentPositionInPixel.y / (float) _drawedTex.height, 0f);
+
+        // scale the flower position to the drawed texture size in world space
+        flowerWorldLocalPos.Scale (new Vector3 ((float) _drawedTex.width / 100f, (float) _drawedTex.height / 100f, 0f));
+
+        // move the flower position to the center of the drawed texture (assume the pivot of the drawed texture is 0.5, 0.5).
+        // So, substract by half the drawed texture size divided by 100 (assume a pixel is 0.01 world unit)
+        flowerWorldLocalPos -= new Vector3 ((float) _drawedTex.width / 200f, (float) _drawedTex.height / 200f, 0f);
+
+        // put the flower in front of the drawed texture
+        flowerWorldLocalPos.z = -0.0001f;
+
+        SpriteAnimation flowerAnimation = Instantiate (_flowerGrowTemplate);
+        flowerAnimation.transform.SetParent (transform);
+        flowerAnimation.transform.localPosition = flowerWorldLocalPos;
+        flowerAnimation.OnAnimationEnded += () => _totalFlowerGrown++;
+
+        Vector3 flowerWorldPos = transform.TransformPoint (flowerWorldLocalPos);
+        _flowerPositions.Add (flowerWorldPos);
+
+        if (_totalFlowerExpected == 0)
+        {
+            _bottonLeftFlowerPos = flowerWorldPos;
+            _topRightFlowerPos = flowerWorldPos;
+        }
+        else
+        {
+            // recheck if flower position is the new bottom left or top right
+            if (flowerWorldPos.x < _bottonLeftFlowerPos.x)
+                _bottonLeftFlowerPos.x = flowerWorldPos.x;
+            if (flowerWorldPos.y < _bottonLeftFlowerPos.y)
+                _bottonLeftFlowerPos.y = flowerWorldPos.y;
+
+            if (flowerWorldPos.x > _topRightFlowerPos.x)
+                _topRightFlowerPos.x = flowerWorldPos.x;
+            if (flowerWorldPos.y > _topRightFlowerPos.y)
+                _topRightFlowerPos.y = flowerWorldPos.y;
+        }
+    }
+
+    private void OnGrowFinished ()
+    {
+        _growFinished = true;
+        Debug.Log ("OnGrowFinished");
+
+        AreaOfEffect2D healingAreaOfEffectFx = Instantiate (_healingAreaOfEffectFxRemplate, transform);
+        // get the dimension in world, and convert it to pixel by * 100
+        Vector2Int dimension = new Vector2Int ((int) Mathf.Abs ((_topRightFlowerPos.x - _bottonLeftFlowerPos.x) * 100), (int) Mathf.Abs ((_topRightFlowerPos.y - _bottonLeftFlowerPos.y) * 100));
+        Debug.Log ("_topRightFlowerPos " + _topRightFlowerPos.ToString ("F3") + ", _bottonLeftFlowerPos " + _bottonLeftFlowerPos.ToString ("F3"));
+        Debug.Log ("dimension : " + dimension);
+
+        Vector3 areaPos = (_topRightFlowerPos + _bottonLeftFlowerPos) / 2f;
+        areaPos.z = transform.position.z - 0.0002f; // Display just in front of flowers
+        healingAreaOfEffectFx.transform.position = areaPos;
+
+        float radius = -1;
+        foreach (Vector3 flowerPos in _flowerPositions)
+        {
+            radius = Mathf.Max (radius, Vector3.Distance (flowerPos, areaPos));
+        }
+
+        healingAreaOfEffectFx.Init (dimension, radius);
+    }
+
+    private bool ShouldStopGrow (BranchFork branchFork)
+    {
+        int i = branchFork.CurrentPositionInPixel.x + branchFork.CurrentPositionInPixel.y * _drawedTex.width;
+
+        if (_drawedTexInitialPixels[i].a > 0.99f && _branchIds[i] != branchFork.Id)
+        {
+            Debug.Log ("Branch is out of trunk, branchFork.CurrentPositionInPixel : ");
+            // branchFork.IsOutOfTrunk = true;
+            return true;
+        }
+
+        return false;
     }
 
     private bool TryForkBranch (BranchFork branchToFork, float branchLerpValue, float mainLerpValue, out BranchFork newBranch)
@@ -212,10 +372,10 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
         branchToFork.HasForked = true;
         float forkRange = UnityEngine.Random.Range (FORK_RANGE_MIN, FORK_RANGE_MAX);
 
-        newBranch = new BranchFork ();
-        newBranch.Origin = branchToFork.Origin + branchToFork.Direction * forkRange * branchToFork.Length;
-        newBranch.Direction = Quaternion.Euler (0, 0, UnityEngine.Random.Range (MIN_BRANCH_ANGLE, MAX_BRANCH_ANGLE)) * branchToFork.Direction;
-        newBranch.Length = UnityEngine.Random.Range (MIN_BRANCH_PIX_LENGTH, MAX_BRANCH_PIX_LENGTH) / 2f;
+        newBranch = new BranchFork (branchToFork.Origin + branchToFork.Direction * forkRange * branchToFork.Length,
+            Quaternion.Euler (0, 0, UnityEngine.Random.Range (MIN_BRANCH_ANGLE, MAX_BRANCH_ANGLE)) * branchToFork.Direction,
+            UnityEngine.Random.Range (MIN_BRANCH_PIX_LENGTH, MAX_BRANCH_PIX_LENGTH) / 2f);
+
         newBranch.StartLerpValue = branchLerpValue;
         newBranch.HasForked = true;
 
@@ -223,14 +383,12 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
     }
 
     // return false if the branch needs to stop growing
-    private bool DrawBranchPart (BranchFork branchFork, Brush brush, float lerpValue)
+    private bool DrawBranchPart (BranchFork branchFork, Brush brush)
     {
-        Vector2 branchTipPoint = branchFork.TipPoint;
-        Vector2 brushPos = Vector2.Lerp (branchFork.Origin, branchTipPoint, lerpValue);
-        if (branchFork.CurrentPositionInPixel.x == (int) brushPos.x && branchFork.CurrentPositionInPixel.y == (int) brushPos.y)
-            return true;
+        // Debug.Log ("DrawBranchPart, branchFork.CurrentPositionInPixel : " + branchFork.CurrentPositionInPixel + ", brushPos : " + brushPos);
+        int i = branchFork.CurrentPositionInPixel.x + branchFork.CurrentPositionInPixel.y * _drawedTex.width;
+        _branchIds[i] = branchFork.Id;
 
-        branchFork.CurrentPositionInPixel = new Vector2Int ((int) brushPos.x, (int) brushPos.y);
         _drawBranchCs.SetInt ("BrushPosX", branchFork.CurrentPositionInPixel.x);
         _drawBranchCs.SetInt ("BrushPosY", branchFork.CurrentPositionInPixel.y);
 
@@ -249,7 +407,11 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
 
         _drawBranchCs.Dispatch (_kernelCS, _groupThreadCS.x, _groupThreadCS.y, _groupThreadCS.z);
 
-        return branchTouched[0] == 1;
+        branchTouchedBuffer.GetData (branchTouched);
+        branchTouchedBuffer.Dispose ();
+
+        return true;
+        // return branchTouched[0] == 1;
     }
 
     private void ApplyDrawTex ()
@@ -262,10 +424,4 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
         _renderer.material.mainTexture = _drawedTex;
     }
 
-    public override void ExecuteTurn (Action onTurnEnded) { }
-
-    private void OnCollisionEnter (Collision other)
-    {
-
-    }
 }

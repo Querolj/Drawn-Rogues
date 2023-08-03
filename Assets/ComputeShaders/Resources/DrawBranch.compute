@@ -39,8 +39,8 @@ void DrawBranch (int3 id : SV_DispatchThreadID)
     // }
 
     int2 brushOrigin = GetBrushOrigin();
-
-    if(ShouldDraw(brushOrigin, id) && Equals(BrushTex[id.xy - brushOrigin].r, 0))
+    
+    if(ShouldDraw(brushOrigin, id) && !Equals(BrushTex[id.xy - brushOrigin].a, 0))
     {
         DrawnTex[id.xy] = BrushColor;
     }

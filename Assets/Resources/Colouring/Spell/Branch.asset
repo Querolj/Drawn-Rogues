@@ -10,19 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3d0f369dc78a0524ead5a7b5f03d2165, type: 3}
-  m_Name: WoodObstacle
+  m_Name: Branch
   m_EditorClassIdentifier: 
-  _id: 1
-  Name: Obstacle de bois
+  _id: 4
+  Name: Healing Branch
   BaseColorsUsedPerPixel:
   - BaseColor: 5
     TotalDrops: 1
   PixelUsages: 06000000
   HasBrushSize: 1
-  UseTextureAsBrush: 0
-  BrushSize: 7
-  Texture: {fileID: 2800000, guid: 659fcf6ab1dfb6b419d03e35cd4ff372, type: 3}
-  TextureUI: {fileID: 2800000, guid: 659fcf6ab1dfb6b419d03e35cd4ff372, type: 3}
+  UseTextureAsBrush: 1
+  BrushSize: 1
+  Texture: {fileID: 2800000, guid: af364dbdebdf8264b9b9d7ccf36f9059, type: 3}
+  TextureUI: {fileID: 2800000, guid: af364dbdebdf8264b9b9d7ccf36f9059, type: 3}
   Description: 
-  BehaviourPrefab: {fileID: 7487989168559669234, guid: 95b1f23e5e9f320438902f784bcf4c71, type: 3}
-  ClearMetadataOnFrame: 1
+  BehaviourPrefab: {fileID: 5844198395475296544, guid: aa2afc727faa3cf499f8f8276c89d2ec, type: 3}
