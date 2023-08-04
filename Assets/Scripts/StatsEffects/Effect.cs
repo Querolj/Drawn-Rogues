@@ -16,7 +16,7 @@ public class Effect : ScriptableObject
         AttackIsProjectile,
     }
 
-    public string Name;
+    public string EffectName;
     public SpriteAnimation AnimationOnApplyTemplate;
     public ParticleSystemCallback ParticleOnApplyTemplate;
     public Timeline EffectApplicationTimeline;
@@ -147,7 +147,7 @@ public class Effect : ScriptableObject
 
     public override string ToString ()
     {
-        return Name + " " + InitialValue;
+        return EffectName + " " + InitialValue;
     }
 
     public virtual Effect GetCopy ()
@@ -178,6 +178,6 @@ public class EffectSerialized
 
     public override string ToString ()
     {
-        return Effect.Name + " " + Value;
+        return Effect.EffectName + " " + Value;
     }
 }

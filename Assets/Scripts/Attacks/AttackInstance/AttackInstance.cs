@@ -72,19 +72,19 @@ public class AttackInstance
     private void MergeEffectsAndPassiveFromOwner (Attack attack)
     {
         // instantiate effects
-        foreach (EffectSerialized effectWithValue in attack.Effects)
+        foreach (EffectSerialized effectWithValue in attack.EffectsSerialized)
         {
             Effect effectInstance = effectWithValue.GetInstance ();
-            _effectInstancesByName.Add (effectInstance.name, effectInstance);
+            _effectInstancesByName.Add (effectInstance.EffectName, effectInstance);
         }
 
         // merge effect from owner with effects
         foreach (Effect effect in _owner.Stats.EffectByNames.Values)
         {
-            if (!_effectInstancesByName.ContainsKey (effect.name))
-                _effectInstancesByName.Add (effect.name, effect);
+            if (!_effectInstancesByName.ContainsKey (effect.EffectName))
+                _effectInstancesByName.Add (effect.EffectName, effect);
             else
-                _effectInstancesByName[effect.name].AddToInitialValue (effect.InitialValue);
+                _effectInstancesByName[effect.EffectName].AddToInitialValue (effect.InitialValue);
         }
 
         // alter attack with owner offensive passives
@@ -92,6 +92,18 @@ public class AttackInstance
         {
             attackOffPassive.AlterAttack (this);
         }
+    }
+
+    // Used by some drawn spell
+    public void ApplyMultiplierToEffect (string effectName, float mult)
+    {
+        if (string.IsNullOrEmpty (effectName))
+            throw new ArgumentNullException (nameof (effectName));
+
+        if (!_effectInstancesByName.ContainsKey (effectName))
+            throw new ArgumentException ("Effect " + effectName + " not found");
+
+        _effectInstancesByName[effectName].SetInitialValue (_effectInstancesByName[effectName].InitialValue * mult);
     }
 
     protected void PlayAtkTouchedAnimation (Vector3 position, Action onAnimeEnded)

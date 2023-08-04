@@ -62,7 +62,6 @@ public class CombatUI : MonoBehaviour
         _turnManager.OnCombatInitiated += (combatZone) =>
         {
             gameObject.SetActive (combatZone != null);
-            _playerController.InitForCombat (_turnManager.CurrentCombatZone);
             ActivateActionsToggle (false);
         };
 
@@ -70,7 +69,6 @@ public class CombatUI : MonoBehaviour
         {
             gameObject.SetActive (false);
             ActivateActionsToggle (false);
-            _playerController.StopCombatMode ();
         };
 
         _turnManager.OnPlayerTurnStart += () =>
@@ -109,8 +107,6 @@ public class CombatUI : MonoBehaviour
             {
                 _spellButtonGen.gameObject.SetActive (false);
                 _attackButtonGen.gameObject.SetActive (true);
-                if (_turnManager.ActivePlayerCharacter == null)
-                    Debug.Log ("Active player character is null");
                 _attackButtonGen.GenerateButtons (_turnManager.ActivePlayerCharacter, _turnManager.CurrentCombatZone, () => _turnManager.EndTurn (_playerController.ControlledCharacter));
             }
             else
@@ -126,8 +122,6 @@ public class CombatUI : MonoBehaviour
             {
                 _attackButtonGen.gameObject.SetActive (false);
                 _spellButtonGen.gameObject.SetActive (true);
-                if (_turnManager.ActivePlayerCharacter == null)
-                    Debug.Log ("Active player character is null");
                 _spellButtonGen.GenerateButtons (_turnManager.ActivePlayerCharacter);
             }
             else
@@ -141,7 +135,6 @@ public class CombatUI : MonoBehaviour
             if (_drawToggle.isOn)
             {
                 _modeSwitcher.ChangeMode (ModeSwitcher.Mode.Selection);
-                _turnManager.EndTurn (_playerController.ControlledCharacter);
             }
         };
 

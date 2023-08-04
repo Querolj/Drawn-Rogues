@@ -7,7 +7,7 @@ using Zenject;
 
 public class Drawer : MonoBehaviour
 {
-    private Dictionary<Frame, Vector2> _coordinateByFocusedFrame = new Dictionary<Frame, Vector2> ();
+    private (Frame, Vector2) _coordinateByFocusedFrame;
 
     private Colouring _selectedColouring;
     public void SetSelectedColouring (Colouring colouring)
@@ -140,7 +140,12 @@ public class Drawer : MonoBehaviour
     private void Start ()
     {
         OnDrawStrokeStart += ResetStrokeValidation;
-        OnDrawStrokeEnd += CommitToUndoStack;
+        OnDrawStrokeEnd += (c, si) =>
+        {
+            if (_coordinateByFocusedFrame.Item1 != null)
+                CommitToUndoStack ();
+        };
+
         ResetStrokeValidation ();
     }
 
@@ -168,9 +173,9 @@ public class Drawer : MonoBehaviour
         SetFocusedFrame (Input.mousePosition);
         if (!disalowDrawUntilNewStroke && Input.GetKey (KeyCode.Mouse0) && Vector2.Distance (_lastDrawedPosition, Input.mousePosition) > _DISTANCE_TO_REACH_UNTIL_DRAW_IN_PIXEL)
         {
-            if (_coordinateByFocusedFrame.Count > 0)
+            if (_coordinateByFocusedFrame.Item1 != null)
             {
-                DrawOnFocusedFrames (leftMouseDown);
+                DrawOnFocusedFrame (leftMouseDown);
                 _lastDrawedPosition = Input.mousePosition;
             }
         }
@@ -200,7 +205,7 @@ public class Drawer : MonoBehaviour
             _resizableBrush.ChangeBrushFromIndexOffset (Input.mouseScrollDelta.y < 0 ? -1 : 1);
         }
 
-        DoForAllFrames ((frame, uv) =>
+        ExecuteActionForFrame ((frame, uv) =>
         {
             frame.UpdateBrushDrawingPrediction (uv);
         });
@@ -209,7 +214,7 @@ public class Drawer : MonoBehaviour
     private Dictionary<int, Frame> _frameByInstancesFound = new Dictionary<int, Frame> ();
     private void SetFocusedFrame (Vector3 screenPos)
     {
-        _coordinateByFocusedFrame.Clear ();
+        _coordinateByFocusedFrame.Item1 = null;
 
         // Remap so (0, 0) is the center of the window,
         // and the edges are at -0.5 and +0.5.
@@ -264,18 +269,8 @@ public class Drawer : MonoBehaviour
         RayOnFrame (_mainCamera.transform.position, direction);
         // Debug.DrawRay (topRight, direction * 100, Color.red, 10f);
 
-        InitFocusedFrames ();
-    }
-
-    private void InitFocusedFrames ()
-    {
-        foreach (Frame frame in _coordinateByFocusedFrame.Keys)
-        {
-            if (!_initedFrames.Contains (frame))
-            {
-                InitFrame (frame);
-            }
-        }
+        if (_coordinateByFocusedFrame.Item1 != null && !_initedFrames.Contains (_coordinateByFocusedFrame.Item1))
+            InitFrame (_coordinateByFocusedFrame.Item1);
     }
 
     private Dictionary<int, Frame> _framesTouchedCache = new Dictionary<int, Frame> ();
@@ -299,8 +294,8 @@ public class Drawer : MonoBehaviour
             else
                 frame = _framesTouchedCache[id];
 
-            if (!_coordinateByFocusedFrame.ContainsKey (frame))
-                _coordinateByFocusedFrame.Add (frame, hit.textureCoord);
+            _coordinateByFocusedFrame.Item1 = frame;
+            _coordinateByFocusedFrame.Item2 = hit.textureCoord;
         }
 
         return touched;
@@ -318,9 +313,9 @@ public class Drawer : MonoBehaviour
         _resizableBrush.SetBiggestBrushPossible (maxDrawablePix);
     }
 
-    private void DrawOnFocusedFrames (bool drawStrokeJustStarting)
+    private void DrawOnFocusedFrame (bool drawStrokeJustStarting)
     {
-        if (_coordinateByFocusedFrame == null)
+        if (_coordinateByFocusedFrame.Item1 == null)
             throw new ArgumentNullException (nameof (_coordinateByFocusedFrame));
 
         if (!AllowStartDraw ())
@@ -333,7 +328,7 @@ public class Drawer : MonoBehaviour
         if (drawStrokeJustStarting)
             _lastStrokeDrawUVs.Clear ();
 
-        DoForAllFrames ((frame, uv) =>
+        ExecuteActionForFrame ((frame, uv) =>
         {
             bool drawDone = frame.TryDraw (uv, _selectedColouring.Id, _selectedColouring.Texture, _selectedColouring.BaseColorsUsedPerPixel,
                 _bodyPartSelection.GetPixelUsageFromSelectedBodyPart (), drawStrokeJustStarting, _resizableBrush, maxDrawablePixCount,
@@ -378,33 +373,30 @@ public class Drawer : MonoBehaviour
         return true;
     }
 
-    private void DoForAllFrames (System.Action<Frame, Vector2> drawAction, bool drawStrokeJustStarting = false)
+    private void ExecuteActionForFrame (System.Action<Frame, Vector2> drawAction, bool drawStrokeJustStarting = false)
     {
         if (drawAction == null)
             throw new ArgumentNullException ((nameof (drawAction)));
 
-        if (_coordinateByFocusedFrame == null || _coordinateByFocusedFrame.Count == 0)
+        if (_coordinateByFocusedFrame.Item1 == null)
             return;
 
         // Add frame pixels to the undo history
-        List < (Frame, Color[]) > framePixels = null;
+        // List < (Frame, Color[]) > framePixels = null;
         if (drawStrokeJustStarting)
         {
-            framePixels = new List < (Frame, Color[]) > ();
-            foreach (Frame frame in _coordinateByFocusedFrame.Keys)
-            {
-                framePixels.Add ((frame, frame.DrawTexture.GetPixels ()));
-            }
+            // framePixels = new List < (Frame, Color[]) > ();
+
+            // foreach (Frame frame in _coordinateByFocusedFrame.Keys)
+            // {
+            //     framePixels.Add ((frame, frame.DrawTexture.GetPixels ()));
+            // }
 
             OnDrawStrokeStart.Invoke ();
         }
 
         // Launch the actions
-        foreach ((Frame frame, Vector2 uv) in _coordinateByFocusedFrame)
-        {
-            drawAction.Invoke (frame, uv);
-        }
-
+        drawAction.Invoke (_coordinateByFocusedFrame.Item1, _coordinateByFocusedFrame.Item2);
     }
 
     private void InitFrame (Frame frame)
@@ -424,31 +416,27 @@ public class Drawer : MonoBehaviour
         _activateDrawer = activate;
         if (!_activateDrawer)
         {
-            foreach (Frame frame in _coordinateByFocusedFrame.Keys)
-            {
-                frame.StopBrushDrawingPrediction ();
-            }
+            if (_coordinateByFocusedFrame.Item1 != null)
+                _coordinateByFocusedFrame.Item1.StopBrushDrawingPrediction ();
         }
     }
 
     public void StopBrushDrawingPrediction ()
     {
-        DoForAllFrames ((frame, uv) =>
+        ExecuteActionForFrame ((frame, uv) =>
         {
             frame.StopBrushDrawingPrediction ();
         });
     }
 
-    public bool IsFrameFocused (Frame frame)
-    {
-        return _coordinateByFocusedFrame.ContainsKey (frame);
-    }
-
     public void StopCurrentDrawing ()
     {
+        if (!_drawStartedWithBrush)
+            return;
+
         disalowDrawUntilNewStroke = true;
-        OnDrawStrokeEnd?.Invoke (_selectedColouring, _currentStrokeInfo);
         _drawStartedWithBrush = false;
+        OnDrawStrokeEnd?.Invoke (_selectedColouring, _currentStrokeInfo);
     }
 
     #region Undo & stroke reset
@@ -461,10 +449,10 @@ public class Drawer : MonoBehaviour
         }
     }
 
-    private void CommitToUndoStack (Colouring ci, StrokeInfo currentStrokeInfo)
+    private void CommitToUndoStack ()
     {
         // Debug.Log ("Commit to undo stack");
-        _drawerStateToPush = new DrawerState (_baseColorInventory, _coordinateByFocusedFrame.Keys.ToList ());
+        _drawerStateToPush = new DrawerState (_baseColorInventory, _coordinateByFocusedFrame.Item1);
     }
 
     private void PushToUndoStack ()
@@ -489,7 +477,6 @@ public class Drawer : MonoBehaviour
         catch (InvalidOperationException) { return; }
 
         DrawerState drawerState = _drawerStateHistory.Pop ();
-        List<Frame> frames = _coordinateByFocusedFrame.Keys.ToList ();
         drawerState.Apply (ref _baseColorInventory);
         _drawerStateToPush = null;
         OnUndo?.Invoke ();

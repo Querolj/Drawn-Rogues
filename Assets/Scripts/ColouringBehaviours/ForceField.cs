@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -10,27 +11,16 @@ public class ForceField : Attackable, IColouringSpellBehaviour, IPlayerProjectil
     private float _waveCurrentDuration = 0f;
     private const float WAVE_MAX_DURATION = 1f;
 
-    protected override void Awake ()
-    {
-        base.Awake ();
-        _waveCurrentDuration = WAVE_MAX_DURATION;
-        _renderer.material.SetInt ("_ImpactPointReported", 0);
-    }
-
-    public void Init (TurnManager turnManager, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor)
+    public void Init (TurnManager turnManager, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor, Action onInitDone = null)
     {
         _turnManager = turnManager;
-    }
 
-    protected override void Start ()
-    {
-        base.Start ();
+        _waveCurrentDuration = WAVE_MAX_DURATION;
 
-        //Set life
-        if(_turnManager== null)
-            Debug.LogError("_turnManager null");
         _maxLife = (int) ((float) _turnManager.ActivePlayerCharacter.Stats.Intelligence * 0.1f);
         _currentLife = _maxLife;
+
+        onInitDone?.Invoke ();
     }
 
     protected override void Update ()
@@ -47,22 +37,6 @@ public class ForceField : Attackable, IColouringSpellBehaviour, IPlayerProjectil
 
             _renderer.material.SetFloat ("_WaveDuration", _waveCurrentDuration);
         }
-    }
-
-    private Vector2 WorldToRendererSpace (Vector3 point)
-    {
-        Vector3 worldOrigin = _renderer.bounds.center - _renderer.bounds.extents;
-        Vector3 worldOriginTop = _renderer.bounds.center + _renderer.bounds.extents;
-
-        float distX = worldOriginTop.x - worldOrigin.x;
-        float x = point.x - worldOrigin.x;
-        x /= distX;
-
-        float distY = worldOriginTop.y - worldOrigin.y;
-        float y = point.y - worldOrigin.y;
-        y /= distY;
-
-        return new Vector2 (x, y);
     }
 
     public void ReportImpactPoint (Vector2 impactPoint)

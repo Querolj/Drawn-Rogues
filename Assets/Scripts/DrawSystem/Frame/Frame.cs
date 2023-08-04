@@ -251,13 +251,11 @@ public class Frame : MonoBehaviour
 
             if (_pixelTimestamps[index] != 0 && _pixelTimestamps[index] != _currentPixelTimestamp)
             {
-                Debug.Log ("Can't draw on other drawing");
                 return false;
             }
 
             if (_mainTexPixels[index].a == 0)
             {
-                Debug.Log ("Can't draw on transparency");
                 return false;
             }
         }

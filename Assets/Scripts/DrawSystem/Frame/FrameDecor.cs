@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DigitalRuby.AdvancedPolygonCollider;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -9,7 +10,6 @@ public class FrameDecor : Frame
     [SerializeField]
     private AdvancedPolygonCollider _advancedPolygonColliderTemplate;
 
-    private Drawer _drawer;
     private TurnManager _turnManager;
     private const float _MESH_COLLIDER_THICKNESS = 0.03f;
     public Bounds Bounds
@@ -31,27 +31,10 @@ public class FrameDecor : Frame
     protected override void Awake ()
     {
         base.Awake ();
-        _drawer = FindAnyObjectByType<Drawer> (); // TODO : inject
         _turnManager = FindAnyObjectByType<TurnManager> (); // TODO : inject
-
-        _drawer.OnDrawStrokeEnd += (c, si) =>
-        {
-            if (si.FrameTouched != this)
-            {
-                return;
-            }
-
-            if (c is ColouringSpell colouringSpell)
-            {
-                InitColouringSpell (colouringSpell);
-                ClearDrawTexture ();
-                if (colouringSpell.ClearMetadataOnFrame)
-                    ClearMetadata ();
-            }
-        };
     }
 
-    public void InitColouringSpell (ColouringSpell colouringSpell)
+    public void InitColouringSpell (ColouringSpell colouringSpell, List<Vector2> lastStrokeDrawUVs, Action onInitDone = null)
     {
         int id = colouringSpell.Id;
         if (!TryGenerateSpriteFromFrame (colouringSpell, out Sprite sprite))
@@ -114,7 +97,7 @@ public class FrameDecor : Frame
         if (attackable != null)
         {
             if (attackable is IColouringSpellBehaviour spellBehaviour)
-                spellBehaviour.Init (_turnManager, _drawer.LastStrokeDrawUVs, this);
+                spellBehaviour.Init (_turnManager, lastStrokeDrawUVs, this, onInitDone);
         }
         else
         {
@@ -122,7 +105,7 @@ public class FrameDecor : Frame
             if (combatEnvironnementHazard != null)
             {
                 if (combatEnvironnementHazard is IColouringSpellBehaviour spellBehaviour)
-                    spellBehaviour.Init (_turnManager, _drawer.LastStrokeDrawUVs, this);
+                    spellBehaviour.Init (_turnManager, lastStrokeDrawUVs, this, onInitDone);
             }
 
             _turnManager.ActivePlayerCharacter.LinkedCombatEntities.Add (combatEnvironnementHazard);

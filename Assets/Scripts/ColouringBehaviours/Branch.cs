@@ -22,6 +22,13 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
     [SerializeField]
     private SpriteAnimation _flowerGrowTemplate;
 
+    [SerializeField]
+    private Attack _healingAttack;
+
+    [SerializeField]
+    private AreaOfEffect2D _healingAreaOfEffectFxRemplate;
+
+    private TurnManager _turnManager;
     private SpriteRenderer _renderer;
     private ComputeShader _drawBranchCs;
     private int _kernelCS;
@@ -35,6 +42,9 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
 
     private const float FORK_RANGE_MIN = 0.4f; // In % of branch length 
     private const float FORK_RANGE_MAX = 0.6f;
+
+    private Action _onInitDone;
+    private List<Attackable> _attackableInRange = new List<Attackable> ();
 
     private class BranchFork
     {
@@ -77,19 +87,57 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
     private Vector2 _topRightFlowerPos;
     private List<Vector3> _flowerPositions = new List<Vector3> ();
 
-    // Healing
-    [SerializeField]
-    private AreaOfEffect2D _healingAreaOfEffectFxRemplate;
-
-    public override void ExecuteTurn (Action onTurnEnded) { }
-
-    private void OnTriggerEnter (Collider other)
+    private void Awake ()
     {
+        _turnManager = FindObjectOfType<TurnManager> (); // TODO : inject
+    }
+
+    public override void ExecuteTurn (Action onTurnEnded)
+    {
+        if (_totalFlowerGrown == 0)
+        {
+            onTurnEnded?.Invoke ();
+            return;
+        }
+
+        if (_attackableInRange.Count == 0)
+        {
+            onTurnEnded?.Invoke ();
+            return;
+        }
+
+        string healingEffectName = _healingAttack.EffectsSerialized[0].Effect.EffectName;
+        float mult = 1 + (_totalFlowerGrown * 0.075f);
+
+        int attackableLeft = _attackableInRange.Count;
+        foreach (Attackable attackable in _attackableInRange)
+        {
+            if (attackable.WillBeDestroyed)
+                continue;
+            Character character = attackable as Character;
+            if (character == null)
+                continue;
+
+            AttackInstance attackInstance = AttackInstFactory.Create (_healingAttack, character);
+            attackInstance.ApplyMultiplierToEffect (healingEffectName, mult);
+
+            attackInstance.Execute (character,
+                character,
+                character.GetSpriteBounds ().center,
+                () =>
+                {
+                    attackableLeft--;
+                    if (attackableLeft <= 0)
+                        onTurnEnded?.Invoke ();
+                });
+        }
 
     }
 
-    public void Init (TurnManager turnBasedCombat, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor)
+    public void Init (TurnManager turnBasedCombat, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor, Action onInitDone = null)
     {
+        _onInitDone = onInitDone;
+
         _renderer = GetComponent<SpriteRenderer> ();
         _currentDrawTime = BRANCH_DRAW_TIME;
         _lastStep = 1;
@@ -236,7 +284,8 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
                 branchFork.CurrentPositionInPixel = new Vector2Int (brushPos.x, brushPos.y);
                 int index = branchFork.CurrentPositionInPixel.x + branchFork.CurrentPositionInPixel.y * _drawedTex.width;
 
-                if (currentLerp == oldLerp && _drawedTexInitialPixels[index].a > 0.99f && _branchIds[index] != branchFork.Id)
+                if (currentLerp == oldLerp && index >= 0 && index < _drawedTexInitialPixels.Length &&
+                    _drawedTexInitialPixels[index].a > 0.99f && _branchIds[index] != branchFork.Id)
                     stopGrow = true;
 
                 if (!stopGrow)
@@ -245,7 +294,8 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
                     Vector2 nextBrushPosF = Vector2.Lerp (branchFork.Origin, branchFork.TipPoint, branchLerpValue + step);
                     Vector2Int nextBrushPos = new Vector2Int ((int) nextBrushPosF.x, (int) nextBrushPosF.y);
                     int nextIndex = nextBrushPos.x + nextBrushPos.y * _drawedTex.width;
-                    if (_drawedTexInitialPixels[nextIndex].a > 0.99f && _branchIds[nextIndex] != branchFork.Id)
+                    if (nextIndex >= 0 && nextIndex < _drawedTexInitialPixels.Length &&
+                        _drawedTexInitialPixels[nextIndex].a > 0.99f && _branchIds[nextIndex] != branchFork.Id)
                         stopGrow = true;
                 }
 
@@ -325,14 +375,10 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
     private void OnGrowFinished ()
     {
         _growFinished = true;
-        Debug.Log ("OnGrowFinished");
 
         AreaOfEffect2D healingAreaOfEffectFx = Instantiate (_healingAreaOfEffectFxRemplate, transform);
         // get the dimension in world, and convert it to pixel by * 100
         Vector2Int dimension = new Vector2Int ((int) Mathf.Abs ((_topRightFlowerPos.x - _bottonLeftFlowerPos.x) * 100), (int) Mathf.Abs ((_topRightFlowerPos.y - _bottonLeftFlowerPos.y) * 100));
-        Debug.Log ("_topRightFlowerPos " + _topRightFlowerPos.ToString ("F3") + ", _bottonLeftFlowerPos " + _bottonLeftFlowerPos.ToString ("F3"));
-        Debug.Log ("dimension : " + dimension);
-
         Vector3 areaPos = (_topRightFlowerPos + _bottonLeftFlowerPos) / 2f;
         areaPos.z = transform.position.z - 0.0002f; // Display just in front of flowers
         healingAreaOfEffectFx.transform.position = areaPos;
@@ -344,6 +390,35 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
         }
 
         healingAreaOfEffectFx.Init (dimension, radius);
+        healingAreaOfEffectFx.OnTransitionFinished += () => _onInitDone?.Invoke ();
+        healingAreaOfEffectFx.OnTriggerEnterCircle += OnTriggerEnter;
+        healingAreaOfEffectFx.OnTriggerExitCircle += OnTriggerExit;
+    }
+
+    private void OnTriggerEnter (Collider other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer ("Attackable"))
+        {
+            Debug.Log ("OnTriggerEnter");
+            Attackable attackable = other.gameObject.GetComponent<Attackable> ();
+            if (_attackableInRange.Contains (attackable))
+                return;
+
+            _attackableInRange.Add (attackable);
+        }
+    }
+
+    private void OnTriggerExit (Collider other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer ("Attackable"))
+        {
+            Debug.Log ("OnTriggerEnter");
+            Attackable attackable = other.gameObject.GetComponent<Attackable> ();
+            if (!_attackableInRange.Contains (attackable))
+                return;
+
+            _attackableInRange.Remove (attackable);
+        }
     }
 
     private bool ShouldStopGrow (BranchFork branchFork)
@@ -351,11 +426,7 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
         int i = branchFork.CurrentPositionInPixel.x + branchFork.CurrentPositionInPixel.y * _drawedTex.width;
 
         if (_drawedTexInitialPixels[i].a > 0.99f && _branchIds[i] != branchFork.Id)
-        {
-            Debug.Log ("Branch is out of trunk, branchFork.CurrentPositionInPixel : ");
-            // branchFork.IsOutOfTrunk = true;
             return true;
-        }
 
         return false;
     }
@@ -411,7 +482,6 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
         branchTouchedBuffer.Dispose ();
 
         return true;
-        // return branchTouched[0] == 1;
     }
 
     private void ApplyDrawTex ()

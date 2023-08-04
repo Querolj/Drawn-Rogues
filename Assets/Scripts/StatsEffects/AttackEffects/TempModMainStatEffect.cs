@@ -24,7 +24,7 @@ public class TempModMainStatEffect : Effect
         string coloredTargetName = fightDescription.GetColoredAttackableName (target);
         int id = GetInstanceID ();
 
-        if (target.TempEffects.ContainsKey (TempEffect.Timeline.EndTurn) && target.TempEffects[TempEffect.Timeline.EndTurn].Find (x => x.Name == Name) != null)
+        if (target.TempEffects.ContainsKey (TempEffect.Timeline.EndTurn) && target.TempEffects[TempEffect.Timeline.EndTurn].Find (x => x.Name == EffectName) != null)
         {
             fightDescription.Report (coloredUserName + " can't alter " + coloredTargetName + " stats as its stats are already altered by the same effect.");
             onAnimeEnded?.Invoke ();
@@ -33,7 +33,7 @@ public class TempModMainStatEffect : Effect
 
         _targetChar.Stats.AddMainStatModifier (id, MainStat, OperationType, _alteredValue);
         TempEffect tmpEffect = new TempEffect ();
-        tmpEffect.Name = Name;
+        tmpEffect.Name = EffectName;
         tmpEffect.Init (TurnDuration + 1, WearOffEffect, TempEffect.Timeline.EndTurn, Icon);
         target.AddTempEffect (tmpEffect);
 

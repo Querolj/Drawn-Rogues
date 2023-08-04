@@ -36,7 +36,7 @@ public class Attack : ScriptableObject
 
     public AttackSelectionType AttackSelectionType;
     public AttackType AttackType;
-    public EffectSerialized[] Effects;
+    public EffectSerialized[] EffectsSerialized;
 
     #region Required conditions
     public bool AvailableForPlayer = true;
@@ -58,7 +58,7 @@ public class Attack : ScriptableObject
     public string GetEffectsString ()
     {
         string effectsString = "";
-        foreach (EffectSerialized effect in Effects)
+        foreach (EffectSerialized effect in EffectsSerialized)
         {
             effectsString += effect.ToString () + "\n";
         }

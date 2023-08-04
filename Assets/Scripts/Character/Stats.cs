@@ -352,7 +352,7 @@ public class Stats
 
         foreach (EffectSerialized effectSerialized in statsSerialized?.effectValues)
         {
-            string effectName = effectSerialized.Effect.Name;
+            string effectName = effectSerialized.Effect.EffectName;
             if (_EffectByNames.ContainsKey (effectName))
             {
                 _EffectByNames[effectName].AddToInitialValue (effectSerialized.Value * multiplicator);
@@ -361,7 +361,7 @@ public class Stats
             {
                 Effect effect = effectSerialized.GetInstance ();
                 effect.SetInitialValue (effectSerialized.Value * multiplicator);
-                _EffectByNames.Add (effectSerialized.Effect.Name, effect);
+                _EffectByNames.Add (effectSerialized.Effect.EffectName, effect);
             }
         }
     }
@@ -390,7 +390,7 @@ public class Stats
 
         foreach (EffectSerialized effectSerialized in statsSerialized.effectValues)
         {
-            string effectName = effectSerialized.Effect.Name;
+            string effectName = effectSerialized.Effect.EffectName;
             if (_EffectByNames.ContainsKey (effectName))
             {
                 _EffectByNames[effectName].SetInitialValue (effectSerialized.Value * multiplicator);
@@ -399,7 +399,7 @@ public class Stats
             {
                 Effect effect = effectSerialized.GetInstance ();
                 effect.SetInitialValue (effectSerialized.Value * multiplicator);
-                _EffectByNames.Add (effectSerialized.Effect.Name, effect);
+                _EffectByNames.Add (effectSerialized.Effect.EffectName, effect);
             }
         }
     }

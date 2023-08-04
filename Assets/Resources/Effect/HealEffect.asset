@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fcd795f0852d6e44896dbdb8a37b920, type: 3}
   m_Name: HealEffect
   m_EditorClassIdentifier: 
-  Name: Healing
+  EffectName: Healing
   AnimationOnApplyTemplate: {fileID: 0}
   ParticleOnApplyTemplate: {fileID: 2360609805107684380, guid: 33f8038a14b9b8a48843abf74902bb73, type: 3}
   EffectApplicationTimeline: 0

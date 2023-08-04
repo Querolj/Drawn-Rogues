@@ -11,7 +11,7 @@ public class EffectPassive : Passive
         bool alters = false;
         foreach (Effect effectToAlter in EffectsToAlter)
         {
-            if (effectToAlter.Name == effect.Name)
+            if (effectToAlter.EffectName == effect.EffectName)
             {
                 alters = true;
                 break;

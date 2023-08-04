@@ -70,10 +70,10 @@ public class Attackable : CombatEntity
             Dictionary<string, Effect> effectsInstByNames = new Dictionary<string, Effect> ();
             foreach (Effect effect in Stats.EffectByNames.Values)
             {
-                if (!effectsInstByNames.ContainsKey (effect.Name))
-                    effectsInstByNames.Add (effect.Name, effect.GetCopy ());
+                if (!effectsInstByNames.ContainsKey (effect.EffectName))
+                    effectsInstByNames.Add (effect.EffectName, effect.GetCopy ());
                 else
-                    effectsInstByNames[effect.Name].AddToInitialValue (effect.InitialValue);
+                    effectsInstByNames[effect.EffectName].AddToInitialValue (effect.InitialValue);
             }
 
             return effectsInstByNames;

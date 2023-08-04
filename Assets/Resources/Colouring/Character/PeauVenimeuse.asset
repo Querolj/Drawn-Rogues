@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4944c349d99b02c4cbe6204b1a6f92a2, type: 3}
   m_Name: PeauVenimeuse
   m_EditorClassIdentifier: 
-  _id: 2
+  _id: 5
   Name: Peau Venimeuse
   BaseColorsUsedPerPixel:
   - BaseColor: 4

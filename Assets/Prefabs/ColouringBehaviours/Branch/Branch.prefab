@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7439509407960102187}
   - component: {fileID: 8654596349458736441}
   - component: {fileID: 3358392556541521307}
+  - component: {fileID: 6357928850858177935}
   m_Layer: 0
   m_Name: Branch
   m_TagString: Untagged
@@ -103,6 +104,7 @@ MonoBehaviour:
     _texture: {fileID: 2800000, guid: a07c0f7f4caf8fc408798d069c2c73c0, type: 3}
   _branchColor: {r: 0.56078434, g: 0.3372549, b: 0.23137255, a: 1}
   _flowerGrowTemplate: {fileID: 2641789340316387489, guid: ae42880b307aa974c8eee60711d2e717, type: 3}
+  _healingAttack: {fileID: 11400000, guid: 4027e861db90e0d479d9a2e9aca9d0ee, type: 2}
   _healingAreaOfEffectFxRemplate: {fileID: 6955839148532654118, guid: f1d1a3b8477117441a56fc6b471f5f2f, type: 3}
 --- !u!64 &3358392556541521307
 MeshCollider:
@@ -126,3 +128,24 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!135 &6357928850858177935
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5844198395475296544}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}

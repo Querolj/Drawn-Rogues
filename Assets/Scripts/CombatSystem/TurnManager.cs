@@ -36,6 +36,10 @@ public class TurnManager : MonoBehaviour
     private Stack<CombatEntity> _combatEntitiesLeftToPlay;
 
     private ActionDelayer _actionDelayer;
+    private bool _inCombat = false;
+    public bool InCombat { get { return _inCombat; } }
+
+    private const float SECONDS_BETWEEN_APPLY_EFFECTS = 0.5f;
 
     [Inject, UsedImplicitly]
     private void Init (ActionDelayer actionDelayer)
@@ -64,7 +68,9 @@ public class TurnManager : MonoBehaviour
         if (combatZone.EnemiesInZone.Count == 0)
             throw new System.ArgumentException ("No enemies in combat zone", nameof (combatZone));
 
+        _playerController.InitForCombat (_currentCombatZone);
         OnCombatInitiated?.Invoke (combatZone);
+        _inCombat = true;
         StartCoroutine (TryStartNewRound ());
     }
 
@@ -89,7 +95,8 @@ public class TurnManager : MonoBehaviour
     {
         if (character == null)
             throw new ArgumentNullException (nameof (character));
-
+        Debug.Log ("Start turn : " + character.Name);
+        
         if (!character.CanPlayTurn ())
         {
             _enemyTurnIndicator.Hide ();
@@ -127,6 +134,7 @@ public class TurnManager : MonoBehaviour
 
     public void EndTurn (Character lastTurnCharacter)
     {
+        Debug.Log ("End turn");
         ApplyAllTempEffects (new Stack<Attackable> (new List<Attackable> { lastTurnCharacter }), TempEffect.Timeline.EndTurn, () =>
         {
             NextTurn ();
@@ -135,6 +143,7 @@ public class TurnManager : MonoBehaviour
 
     private void NextTurn ()
     {
+        Debug.Log ("Next turn");
         if (HasCombatEnded ())
         {
             EndCombat ();
@@ -200,6 +209,8 @@ public class TurnManager : MonoBehaviour
     private void EndCombat ()
     {
         _fightDescription.Report ("Combat ended!");
+        _inCombat = false;
+        _playerController.StopCombatMode ();
         OnCombatEnded?.Invoke (_currentCombatZone);
         _currentCombatZone.EndFight ();
     }
@@ -207,11 +218,12 @@ public class TurnManager : MonoBehaviour
     public void EscapeFight ()
     {
         _fightDescription.Report ("Escaped!");
+        _inCombat = false;
+        _playerController.StopCombatMode ();
         OnCombatEnded?.Invoke (_currentCombatZone);
         _currentCombatZone.EscapeFight ();
     }
 
-    private const float SECONDS_BETWEEN_APPLY_ALL_EFFECTS = 0.5f;
     private void ApplyAllTempEffects (Stack<Attackable> attackables, TempEffect.Timeline timeline, Action onAllTempEffectsApplied)
     {
         if (attackables.Count == 0)
@@ -227,7 +239,7 @@ public class TurnManager : MonoBehaviour
             return;
         }
 
-        _actionDelayer.ExecuteInSeconds (SECONDS_BETWEEN_APPLY_ALL_EFFECTS, () =>
+        _actionDelayer.ExecuteInSeconds (SECONDS_BETWEEN_APPLY_EFFECTS, () =>
         {
             attackable.ApplyTempEffects (() => ApplyAllTempEffects (attackables, timeline, onAllTempEffectsApplied), _fightDescription, timeline);
         });

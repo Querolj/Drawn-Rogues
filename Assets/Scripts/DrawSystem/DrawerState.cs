@@ -65,22 +65,17 @@ public class BaseColorPaletteState
 
 public class DrawerState
 {
-    private List<FrameState> _frameStates;
+    private FrameState _frameState;
     private BaseColorPaletteState _paletteState;
 
-    public DrawerState (BaseColorInventory palette, List<Frame> frames)
+    public DrawerState (BaseColorInventory palette, Frame frame)
     {
         if (palette == null)
             throw new ArgumentNullException (nameof (palette));
-        if (frames == null)
-            throw new ArgumentNullException (nameof (frames));
-        _frameStates = new List<FrameState> ();
+        if (frame == null)
+            throw new ArgumentNullException (nameof (frame));
 
-        for (int i = 0; i < frames.Count; i++)
-        {
-            Frame frame = frames[i];
-            _frameStates.Add (new FrameState (ref frame));
-        }
+        _frameState = new FrameState (ref frame);
         _paletteState = new BaseColorPaletteState (palette);
 
     }
@@ -91,10 +86,6 @@ public class DrawerState
             throw new ArgumentNullException (nameof (palette));
 
         _paletteState.Apply (ref palette);
-        for (int i = 0; i < _frameStates.Count; i++)
-        {
-            _frameStates[i].Apply ();
-        }
+        _frameState.Apply ();
     }
-
 }

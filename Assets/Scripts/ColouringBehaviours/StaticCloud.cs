@@ -46,7 +46,7 @@ public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
 
     private float _xMinBounds = float.MaxValue, _xMaxBounds = float.MinValue;
 
-    public void Init (TurnManager turnManager, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor)
+    public void Init (TurnManager turnManager, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor, Action onInitDone = null)
     {
         _renderer = GetComponent<SpriteRenderer> ();
         _lightningBolt = Instantiate (_lightningBoltTemplate);
@@ -229,7 +229,8 @@ public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
 
         _damageMultiplier = (float) averageThickness / 14f; // 14f is the average thickness of the brush used
         _damageMultiplier = Mathf.Clamp (_damageMultiplier, 1f, _damageMultiplier);
-        Debug.Log ("_damageMultiplier: " + _damageMultiplier);
+
+        onInitDone?.Invoke ();
     }
 
     private void Update ()

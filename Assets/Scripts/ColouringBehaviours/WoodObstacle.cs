@@ -1,33 +1,16 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class WoodObstacle : Attackable
+public class WoodObstacle : Attackable, IColouringSpellBehaviour
 {
-    private Vector2 _initialPos;
-
-    [SerializeField]
-    private float _fallDownSpeed = 0.1f;
-    private bool _fallDown = true;
-    private Rigidbody _rigidbody;
-
     private const float KG_PER_PIXEL = 0.3f;
 
-    protected override void Awake ()
+    public void Init (TurnManager bg, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor, Action onInitDone = null)
     {
-        base.Awake ();
-        _rigidbody = GetComponent<Rigidbody> ();
-        _initialPos = transform.position;
-    }
-
-    protected override void Start ()
-    {
-        base.Start ();
-
         ComputeShader countPixCs = Resources.Load<ComputeShader> ("CountOpaquePixels");
         if (countPixCs == null)
-        {
-            Debug.LogError (nameof (countPixCs) + "null, it was not loaded (not found?)");
-            return;
-        }
+            throw new Exception (nameof (countPixCs) + "null, it was not loaded (not found?)");
 
         int kernel = countPixCs.FindKernel ("CSMain");
 
@@ -52,27 +35,7 @@ public class WoodObstacle : Attackable
 
         // Set kilogram
         Stats.Kilogram = pixelCount * KG_PER_PIXEL;
-    }
 
-    protected override void Update ()
-    {
-        base.Update ();
-    }
-
-    private void FixedUpdate ()
-    {
-        // if (_fallDown)
-        // {
-        //     transform.position = transform.position + Vector3.down * _fallDownSpeed;
-        // }
-    }
-
-    private void OnCollisionEnter (Collision other)
-    {
-        if (other.gameObject.layer == LayerMask.NameToLayer ("Map"))
-        {
-            _fallDown = false;
-            // _rigidbody.useGravity = true;
-        }
+        onInitDone?.Invoke ();
     }
 }
