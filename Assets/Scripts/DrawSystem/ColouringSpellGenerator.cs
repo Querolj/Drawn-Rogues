@@ -40,8 +40,7 @@ public class ColouringSpellGenerator : MonoBehaviour
                 frameDecor.InitColouringSpell (colouringSpell, _drawer.LastStrokeDrawUVs);
 
             frameDecor.ClearDrawTexture ();
-            if (colouringSpell.ClearMetadataOnFrame)
-                frameDecor.ClearMetadata ();
+            frameDecor.ClearMetadata ();
         };
     }
 }

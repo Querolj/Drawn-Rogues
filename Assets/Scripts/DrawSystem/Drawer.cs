@@ -163,19 +163,28 @@ public class Drawer : MonoBehaviour
         }
     }
 
+    private bool _leftMouseJustPressed = false;
     void Update ()
     {
         if (_selectedColouring == null || !_activateDrawer)
             return;
 
-        bool leftMouseDown = Input.GetKeyDown (KeyCode.Mouse0);
+        if (Input.GetKeyDown (KeyCode.Mouse0))
+        {
+            _leftMouseJustPressed = true;
+        }
+        else if (_coordinateByFocusedFrame.Item1 != null)
+        {
+            _leftMouseJustPressed = false;
+        }
 
         SetFocusedFrame (Input.mousePosition);
+
         if (!disalowDrawUntilNewStroke && Input.GetKey (KeyCode.Mouse0) && Vector2.Distance (_lastDrawedPosition, Input.mousePosition) > _DISTANCE_TO_REACH_UNTIL_DRAW_IN_PIXEL)
         {
             if (_coordinateByFocusedFrame.Item1 != null)
             {
-                DrawOnFocusedFrame (leftMouseDown);
+                DrawOnFocusedFrame (_leftMouseJustPressed);
                 _lastDrawedPosition = Input.mousePosition;
             }
         }
@@ -183,6 +192,7 @@ public class Drawer : MonoBehaviour
         if (Input.GetKeyUp (KeyCode.Mouse0) || _stopDraw)
         {
             _stopDraw = false;
+            _leftMouseJustPressed = false;
             if (_drawStartedWithBrush)
             {
                 if (_strokeValidation != null && !_strokeValidation.IsValid)
@@ -297,6 +307,11 @@ public class Drawer : MonoBehaviour
             _coordinateByFocusedFrame.Item1 = frame;
             _coordinateByFocusedFrame.Item2 = hit.textureCoord;
         }
+        else
+        {
+            _coordinateByFocusedFrame.Item1 = null;
+            _coordinateByFocusedFrame.Item2 = Vector2.zero;
+        }
 
         return touched;
     }
@@ -326,7 +341,10 @@ public class Drawer : MonoBehaviour
         // check pixel left on the char 
 
         if (drawStrokeJustStarting)
+        {
+            Debug.Log ("Draw stroke just starting");
             _lastStrokeDrawUVs.Clear ();
+        }
 
         ExecuteActionForFrame ((frame, uv) =>
         {

@@ -53,7 +53,7 @@ public class CombatUI : MonoBehaviour
         _drawer = FindAnyObjectByType<Drawer> (); // TODO : inject
 
         gameObject.SetActive (false);
-        ActivateActionsToggle (false);
+        ActivateActionsToggleGOs (false);
         // _vacuumer.OnVacuumDone += () =>
         // {
         //     _turnManager.EndTurn (_playerController.ControlledCharacter);
@@ -62,30 +62,31 @@ public class CombatUI : MonoBehaviour
         _turnManager.OnCombatInitiated += (combatZone) =>
         {
             gameObject.SetActive (combatZone != null);
-            ActivateActionsToggle (false);
+            ActivateActionsToggleGOs (false);
         };
 
         _turnManager.OnCombatEnded += (combatZone) =>
         {
             gameObject.SetActive (false);
-            ActivateActionsToggle (false);
+            ActivateActionsToggleGOs (false);
         };
 
         _turnManager.OnPlayerTurnStart += () =>
         {
-            ActivateActionsToggle (true);
+            ActivateActionsToggleGOs (true);
             _turnAnnouncer.SetText (_turnManager.ActivePlayerCharacter, true);
         };
 
         _turnManager.OneEnemyTurnStart += (character) =>
         {
             _attackSelectionManager.DeactivateCurrentAttackSelection ();
-            ActivateActionsToggle (false);
+            ActivateActionsToggleGOs (false);
             _turnAnnouncer.SetText (character, false);
         };
 
         _endPlayerTurnButton.onClick.AddListener (() =>
         {
+            OffAllToggles ();
             _playerController.PauseCombatMove ();
             _attackSelectionManager.DeactivateCurrentAttackSelection ();
             _turnManager.EndTurn (_playerController.ControlledCharacter);
@@ -140,6 +141,7 @@ public class CombatUI : MonoBehaviour
 
         _artefactToggle.onValueChanged.AddListener ((value) =>
         {
+            // OffAllToggles ();
             // if (_artefactToggle.isOn)
             // {
             //     _vacuumer.ActivateVacuumer (_turnManager.CurrentCombatZone);
@@ -151,7 +153,15 @@ public class CombatUI : MonoBehaviour
         });
     }
 
-    private void ActivateActionsToggle (bool activate)
+    private void OffAllToggles ()
+    {
+        _moveToggle.isOn = false;
+        _attackToggle.isOn = false;
+        _drawToggle.isOn = false;
+        _artefactToggle.isOn = false;
+    }
+
+    private void ActivateActionsToggleGOs (bool activate)
     {
         _moveToggle.enabled = activate;
         _attackToggle.enabled = activate;

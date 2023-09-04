@@ -1,0 +1,46 @@
+#pragma kernel Collapse
+#include "Utils.cginc"
+
+RWTexture2D<float4> DrawnTex;
+Buffer<int> HeightLimits;
+RWStructuredBuffer<int> HasPixelMoved;
+
+uint Width;
+uint Height;
+
+bool IsPixelColored (int3 id)
+{
+    return DrawnTex[id.xy].w > 0.01;
+}
+
+[numthreads (32, 32, 1)]
+void Collapse (int3 id : SV_DispatchThreadID)
+{
+    if (!IsPixelColored (id))
+        return;
+    
+    int nextY = id.y - 1;
+    if(nextY < 0 || nextY <= HeightLimits[id.x])
+        return;
+    
+    // Is there an empty pixel in the direction to move the current pixel?
+    if(IsPixelColored (int3 (id.x, nextY, 0)))
+        return;
+
+    int2 freePosition = int2 (id.x, nextY);
+    int2 pixelToMove = int2 (id.x, id.y);
+    HasPixelMoved[0] = 1;
+    
+    // check pixels above to move a whole bunch of pixels at once
+    for(uint i = 1; i < Height; i++)
+    {
+        if(!IsPixelColored (int3 (id.x, id.y + i, 0)))
+        {
+            pixelToMove = int2 (id.x, id.y + i - 1);
+            break; 
+        } 
+    }
+
+    DrawnTex[freePosition] = DrawnTex[pixelToMove];
+    DrawnTex[pixelToMove] = float4 (0, 0, 0, 0);
+}

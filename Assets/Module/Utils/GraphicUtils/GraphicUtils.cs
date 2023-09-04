@@ -7,6 +7,11 @@ public class GraphicUtils
 
     private static ComputeShader _calculateSpriteBoundsCs;
 
+    /// <summary>
+    /// Returns the sprite bounds of a texture.
+    /// </summary>
+    /// <param name="texture"></param>
+    /// <returns></returns>
     public static Vector4 GetTextureBorder (Texture2D texture)
     {
         _calculateSpriteBoundsCs = Resources.Load<ComputeShader> ("CalculateSpriteRect");

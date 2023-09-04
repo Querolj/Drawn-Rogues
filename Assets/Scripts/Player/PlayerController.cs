@@ -245,6 +245,7 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateMoveOnFreeDraw ()
     {
+        return;
         if (Utils.TryGetMouseToMapPosition (out Vector3 mouseToMapPosition) && _moveIndicator.gameObject.activeSelf && !Utils.IsPointerOverUIElement ())
         {
             if (Mathf.Abs (mouseToMapPosition.z - _lockedZ) <= ALLOW_CLICK_DISTANCE_Z)
@@ -308,7 +309,7 @@ public class PlayerController : MonoBehaviour
         _controlMode = ControlMode.FreeDecorDraw;
         _freeDrawUI.gameObject.SetActive (true);
         _freeDrawUI.Init (_controlledCharacter);
-        _moveIndicator.ActiveCombatMode (_controlledCharacter.GetSpriteBounds ());
+        // _moveIndicator.ActiveCombatMode (_controlledCharacter.GetSpriteBounds ());
     }
 
     private void StopFreeDrawMode ()

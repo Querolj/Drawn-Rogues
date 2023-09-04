@@ -25,3 +25,4 @@ MonoBehaviour:
   TextureUI: {fileID: 2800000, guid: 4978ed16ffbdc9f4fb618ab58964143b, type: 3}
   Description: 
   BehaviourPrefab: {fileID: 8866088654456203402, guid: 956ed26a7f5847b46aaaedb43f9bb552, type: 3}
+  ClearMetadataOnFrame: 1

@@ -55,8 +55,6 @@ public class FrameDecor : Frame
 
         advancedPolyCol.RecalculatePolygon ();
 
-        PolygonCollider2D polyCol = advancedPolyCol.GetComponent<PolygonCollider2D> ();
-
         if (colouringSpell.BehaviourPrefab == null)
             throw new Exception ("could not load prefab for colouring spell " + colouringSpell.Name + ", can't generate collider for lc " + colouringSpell.Name);
 
@@ -69,6 +67,7 @@ public class FrameDecor : Frame
         goBehaviour.transform.localPosition = newLocalPos;
         goBehaviour.transform.localRotation = Quaternion.identity;
 
+        PolygonCollider2D polyCol = advancedPolyCol.GetComponent<PolygonCollider2D> ();
         Mesh mesh = ExtrudeSprite.CreateMesh (polyCol.points, frontDistance: -_MESH_COLLIDER_THICKNESS, backDistance : _MESH_COLLIDER_THICKNESS);
 
         MeshCollider meshCol = goBehaviour.GetComponent<MeshCollider> ();

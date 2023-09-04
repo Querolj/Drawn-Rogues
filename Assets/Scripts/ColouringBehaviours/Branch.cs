@@ -45,6 +45,7 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
 
     private Action _onInitDone;
     private List<Attackable> _attackableInRange = new List<Attackable> ();
+    private bool _branchTouchingGround = false;
 
     private class BranchFork
     {
@@ -94,6 +95,12 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
 
     public override void ExecuteTurn (Action onTurnEnded)
     {
+        if (!_branchTouchingGround)
+        {
+            onTurnEnded?.Invoke ();
+            return;
+        }
+
         if (_totalFlowerGrown == 0)
         {
             onTurnEnded?.Invoke ();
@@ -134,10 +141,49 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
 
     }
 
-    public void Init (TurnManager turnBasedCombat, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor, Action onInitDone = null)
+    private bool IsMainBranchTouchingGround (List<Vector2> strokeDrawUVs, FrameDecor frameDecor)
     {
-        _onInitDone = onInitDone;
+        //Convert firstPointWorld to world position
+        Vector3 firstPointWorld = frameDecor.Bounds.center;
+        firstPointWorld += new Vector3 (strokeDrawUVs[0].x * frameDecor.Bounds.size.x, strokeDrawUVs[0].y * frameDecor.Bounds.size.y, 0f);
+        firstPointWorld -= new Vector3 (frameDecor.Bounds.extents.x, frameDecor.Bounds.extents.y, 0f);
+        firstPointWorld.z = frameDecor.transform.position.z;
+        firstPointWorld.y += 0.1f;
+        if (Physics.Raycast (firstPointWorld, Vector3.down, out RaycastHit hitFirstPoint, 0.15f, LayerMask.GetMask ("Map")))
+        {
+            return true;
+        }
 
+        // Convert lastPointWorld to world position
+        Vector3 lastPointWorld = frameDecor.Bounds.center;
+        lastPointWorld += new Vector3 (strokeDrawUVs[strokeDrawUVs.Count - 1].x * frameDecor.Bounds.size.x, strokeDrawUVs[strokeDrawUVs.Count - 1].y * frameDecor.Bounds.size.y, 0f);
+        lastPointWorld -= new Vector3 (frameDecor.Bounds.extents.x, frameDecor.Bounds.extents.y, 0f);
+        lastPointWorld.z = frameDecor.transform.position.z;
+        lastPointWorld.y += 0.1f;
+        if (Physics.Raycast (lastPointWorld, Vector3.down, out RaycastHit hitLastPoint, 0.15f, LayerMask.GetMask ("Map")))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public void Init (TurnManager turnBasedCombat, List<Vector2> strokeDrawUVs, FrameDecor frameDecor, Action onInitDone = null)
+    {
+        if (!IsMainBranchTouchingGround (strokeDrawUVs, frameDecor))
+        {
+            Debug.Log ("Branch not touching ground, aborting");
+            Rigidbody rigidbody = GetComponent<Rigidbody> ();
+            rigidbody.isKinematic = false;
+
+            onInitDone?.Invoke ();
+            return;
+        }
+
+        GetComponent<Collider> ().enabled = false;
+
+        _branchTouchingGround = true;
+        _onInitDone = onInitDone;
         _renderer = GetComponent<SpriteRenderer> ();
         _currentDrawTime = BRANCH_DRAW_TIME;
         _lastStep = 1;
@@ -160,16 +206,18 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
 
         _kernelCS = _drawBranchCs.FindKernel ("DrawBranch");
 
-        _rendTex = new RenderTexture (_drawedTex.width, _drawedTex.height, 0, RenderTextureFormat.ARGB32);
-        _rendTex.filterMode = FilterMode.Point;
-        _rendTex.enableRandomWrite = true;
+        _rendTex = new RenderTexture (_drawedTex.width, _drawedTex.height, 0, RenderTextureFormat.ARGB32)
+        {
+            filterMode = FilterMode.Point,
+            enableRandomWrite = true
+        };
         Graphics.Blit (_drawedTex, _rendTex);
         _drawBranchCs.SetTexture (_kernelCS, "DrawnTex", _rendTex);
 
         _drawBranchCs.SetFloats ("BrushColor", new float[4] { _branchColor.r, _branchColor.g, _branchColor.b, _branchColor.a });
 
         const float stepSizeInPixel = 6f;
-        Vector2 lastPixelPos = lastStrokeDrawUVs[0];
+        Vector2 lastPixelPos = strokeDrawUVs[0];
 
         _groupThreadCS.x = GraphicUtils.GetComputeShaderDispatchCount (frameDecor.Width, 32);
         _groupThreadCS.y = GraphicUtils.GetComputeShaderDispatchCount (frameDecor.Height, 32);
@@ -179,7 +227,7 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
         bool lastOrientation = true;
 
         // Fork branches level 1
-        foreach (Vector2 uv in lastStrokeDrawUVs)
+        foreach (Vector2 uv in strokeDrawUVs)
         {
             Vector2 pixelPos = new Vector2 ((int) (uv.x * frameDecor.DrawTexture.width), (int) (uv.y * frameDecor.DrawTexture.height));
             if (Vector2.Distance (lastPixelPos, pixelPos) < stepSizeInPixel)
@@ -219,7 +267,11 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
         for (int i = 0; i < MAX_PIXEL_DIST_IN_TRONK; i++)
         {
             branchPos = branchOrigin + branchDirection * i;
-            Color pixelColor = _drawedTexInitialPixels[(int) branchPos.x + (int) branchPos.y * _drawedTex.width];
+            int index = (int) branchPos.x + (int) branchPos.y * _drawedTex.width;
+            if (index < 0 || index >= _drawedTexInitialPixels.Length)
+                return false;
+
+            Color pixelColor = _drawedTexInitialPixels[index];
             if (pixelColor.a < 0.99f)
             {
                 return true;
@@ -231,6 +283,9 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
 
     private void Update ()
     {
+        if (!_branchTouchingGround)
+            return;
+
         _currentDrawTime -= Time.deltaTime;
         if (_currentStep < DRAW_STEPS_MAX && _currentDrawTime <= BRANCH_DRAW_TIME - ((float) BRANCH_DRAW_TIME * (float) _currentStep / (float) DRAW_STEPS_MAX))
         {
@@ -399,7 +454,6 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
     {
         if (other.gameObject.layer == LayerMask.NameToLayer ("Attackable"))
         {
-            Debug.Log ("OnTriggerEnter");
             Attackable attackable = other.gameObject.GetComponent<Attackable> ();
             if (_attackableInRange.Contains (attackable))
                 return;
@@ -412,7 +466,6 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
     {
         if (other.gameObject.layer == LayerMask.NameToLayer ("Attackable"))
         {
-            Debug.Log ("OnTriggerEnter");
             Attackable attackable = other.gameObject.GetComponent<Attackable> ();
             if (!_attackableInRange.Contains (attackable))
                 return;
@@ -458,6 +511,9 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
     {
         // Debug.Log ("DrawBranchPart, branchFork.CurrentPositionInPixel : " + branchFork.CurrentPositionInPixel + ", brushPos : " + brushPos);
         int i = branchFork.CurrentPositionInPixel.x + branchFork.CurrentPositionInPixel.y * _drawedTex.width;
+        if (i < 0 || i >= _drawedTexInitialPixels.Length)
+            return false;
+
         _branchIds[i] = branchFork.Id;
 
         _drawBranchCs.SetInt ("BrushPosX", branchFork.CurrentPositionInPixel.x);
