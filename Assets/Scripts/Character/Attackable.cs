@@ -318,7 +318,7 @@ public class Attackable : CombatEntity
 
     }
 
-    public virtual void ReceiveDamage (int damageAmount)
+    public void ReceiveDamage (int damageAmount)
     {
         _currentLife -= damageAmount;
         _currentLife = Mathf.Clamp (_currentLife, 0, MaxLife);

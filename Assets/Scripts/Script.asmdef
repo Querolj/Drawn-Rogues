@@ -20,7 +20,8 @@
         "Trajectory",
         "WorldUIContainer",
         "LightningBolt",
-        "FX"
+        "FX",
+        "EventMap"
     ],
     "includePlatforms": [
         "Editor",

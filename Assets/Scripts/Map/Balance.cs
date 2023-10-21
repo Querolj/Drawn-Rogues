@@ -13,7 +13,7 @@ public class Balance : MonoBehaviour
     private float _kilogramMax = 100;
 
     [SerializeField]
-    private GameObject _button;
+    private GameObject _bell;
 
     [SerializeField]
     private EventMap _eventBridge;
@@ -36,12 +36,12 @@ public class Balance : MonoBehaviour
             transformToLerp.Init ();
         }
 
-        _initialButtonYPosition = _button.transform.position.y;
+        _initialButtonYPosition = _bell.transform.position.y;
     }
 
     private float GetButtonOffset ()
     {
-        return Mathf.Abs (_button.transform.position.y - _initialButtonYPosition);
+        return Mathf.Abs (_bell.transform.position.y - _initialButtonYPosition);
     }
 
     private void LateUpdate ()
@@ -153,7 +153,13 @@ public class TransformToLerp
     private Vector3 _targetLocation;
 
     [SerializeField]
+    private bool _lerpLocation = true;
+
+    [SerializeField]
     private Vector3 _targetEulerAngles;
+
+    [SerializeField]
+    private bool _lerpRotation = false;
 
     [SerializeField]
     private bool _localSpace = true;
@@ -163,6 +169,12 @@ public class TransformToLerp
 
     public void Init ()
     {
+        if (!_lerpLocation && !_lerpRotation)
+        {
+            Debug.LogWarning ("TransformToLerp " + _transformToLerp.name + " has no lerp enabled");
+            return;
+        }
+
         if (_localSpace)
         {
             _initialLocation = _transformToLerp.localPosition;
@@ -179,13 +191,19 @@ public class TransformToLerp
     {
         if (_localSpace)
         {
-            _transformToLerp.localPosition = Vector3.Lerp (_initialLocation, _targetLocation, lerpSpeed);
-            _transformToLerp.localEulerAngles = Vector3.Lerp (_initialAngles, _targetEulerAngles, lerpSpeed);
+            if (_lerpLocation)
+                _transformToLerp.localPosition = Vector3.Lerp (_initialLocation, _targetLocation, lerpSpeed);
+
+            if (_lerpRotation)
+                _transformToLerp.localEulerAngles = Vector3.Lerp (_initialAngles, _targetEulerAngles, lerpSpeed);
         }
         else
         {
-            _transformToLerp.position = Vector3.Lerp (_initialLocation, _targetLocation, lerpSpeed);
-            _transformToLerp.eulerAngles = Vector3.Lerp (_initialAngles, _targetEulerAngles, lerpSpeed);
+            if (_lerpLocation)
+                _transformToLerp.position = Vector3.Lerp (_initialLocation, _targetLocation, lerpSpeed);
+
+            if (_lerpRotation)
+                _transformToLerp.eulerAngles = Vector3.Lerp (_initialAngles, _targetEulerAngles, lerpSpeed);
         }
     }
 }
