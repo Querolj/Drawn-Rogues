@@ -21,7 +21,8 @@
         "WorldUIContainer",
         "LightningBolt",
         "FX",
-        "EventMap"
+        "EventMap",
+        "Sirenix.OdinInspector.Modules.UnityMathematics"
     ],
     "includePlatforms": [
         "Editor",

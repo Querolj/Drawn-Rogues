@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-
+using Sirenix.OdinInspector;
 /*
  /!\ No passive alter any temp effect yet (not needed for now)
 */
@@ -14,6 +14,7 @@ public class TempEffect : ScriptableObject
         StartTurn,
         EndTurn
     }
+
     public string Name;
     public SpriteAnimation AnimationOnApplyTemplate;
     public ParticleSystemCallback ParticleOnApplyTemplate;
