@@ -21,6 +21,5 @@ public class DrawedCharacterDebug : DrawedCharacter
     {
         Stats = new Stats (_life, _intelligence, _strenght, _mobility, _kilogram);
         base.Awake ();
-        SetMaxAndCurrentLife ();
     }
 }

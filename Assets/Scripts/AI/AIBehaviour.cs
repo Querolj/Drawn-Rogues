@@ -35,7 +35,7 @@ public abstract class AIBehaviour : MonoBehaviour
 
         Vector3 attackPos = ((Bounds) playerCharacter.GetSpriteBounds ()).center;
         attackPos.z = _character.transform.position.z;
-        AttackInstance attackInstance = AttackInstFactory.Create (attack, _character);
+        AttackInstance attackInstance = AttackInstance.Factory.Create (attack, _character);
         attackInstance.OnAttackStarted += _characterAnimation.PlayAttackAnimation;
 
         if ((_character.CharMovement.DirectionRight && playerCharacter.transform.position.x < _character.transform.position.x) ||

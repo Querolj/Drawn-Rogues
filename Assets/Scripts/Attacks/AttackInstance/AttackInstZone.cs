@@ -54,7 +54,7 @@ public class AttackInstZone : AttackInstance
             bool isDodged = DodgeTest (attackInstCopy);
             if (isDodged)
             {
-                _fightDescription.ReportAttackDodge (_attacker, attackable, attackInstCopy);
+                _fightDescription.ReportAttackDodge (_attacker.Description, attackable.Description, attackInstCopy.Name, _attacker.tag);
                 TryInvokeCallback ();
                 continue;
             }

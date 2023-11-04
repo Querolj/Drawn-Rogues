@@ -1,23 +1,5 @@
 using UnityEngine;
 
-public enum AttackType
-{
-    None,
-    Melee,
-    Projectile,
-}
-
-public enum DamageType
-{
-    None,
-    Physical,
-    Fire,
-    Water,
-    Poison,
-    Electric,
-    Heal
-}
-
 public class Attack : ScriptableObject
 {
     public string Name;

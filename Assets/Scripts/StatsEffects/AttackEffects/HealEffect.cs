@@ -6,11 +6,11 @@ public class HealEffect : Effect
 {
     protected override void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightDescription fightDescription, Action onAnimeEnded)
     {
-        string coloredUserName = fightDescription.GetColoredAttackableName (user);
-        string coloredTargetName = fightDescription.GetColoredAttackableName (target);
-        int healAmount = (int) (_alteredValue * user.MaxLife);
-
-        user.CurrentLife = (int) Mathf.Clamp (user.CurrentLife + healAmount, 0, user.MaxLife);
+        string coloredUserName = fightDescription.GetColoredAttackableName (user.Description, user.tag);
+        string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description, target.tag);
+        int healAmount = (int) (_alteredValue * user.Stats.Life);
+        user.Stats.AttackableState.Heal (healAmount);
+        
         string text = coloredUserName + " heal " + coloredTargetName + " for <color=\"green\"><b>" + healAmount + "</b></color> life.";
 
         fightDescription.Report (text);

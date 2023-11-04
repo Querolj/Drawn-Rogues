@@ -10,8 +10,8 @@ public class BleedEffect : Effect
 
     protected override void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightDescription fightDescription, Action onAnimeEnded)
     {
-        string coloredUserName = fightDescription.GetColoredAttackableName (user);
-        string coloredTargetName = fightDescription.GetColoredAttackableName (target);
+        string coloredUserName = fightDescription.GetColoredAttackableName (user.Description, user.tag);
+        string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description, target.tag);
 
         if (TargetHasTempEffect (target, BleedingEffect, TempEffect.Timeline.EndTurn))
         {
@@ -23,8 +23,8 @@ public class BleedEffect : Effect
         const string bleed = "<color=\"red\"><b>bleed</b></color>";
         if (UnityEngine.Random.Range (0, 100f) < _alteredValue)
         {
-            if (!target.HasState (State.Bleed))
-                target.AddState (State.Bleed);
+            if (!target.Stats.AttackableState.HasState (State.Bleed))
+                target.Stats.AttackableState.AddState (State.Bleed);
 
             fightDescription.Report (coloredUserName + " make " + coloredTargetName + " " + bleed + " for <b>" + BLEED_DURATION + "</b> turns!");
 

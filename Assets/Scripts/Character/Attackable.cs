@@ -6,36 +6,16 @@ using JetBrains.Annotations;
 using UnityEngine;
 using Zenject;
 
-public enum State
-{
-    Poisonned,
-    Stunned,
-    Burn,
-    Paralyzed,
-    Bleed
-}
-
+[RequireComponent (typeof (AttackableDescription))]
 public class Attackable : CombatEntity
 {
     protected const float PIXEL_PER_UNIT = 100f;
-
-    [SerializeField]
-    protected string _name;
-    public string Name
-    {
-        get { return _name; }
-        set { _name = value; }
-    }
-
     [SerializeField]
     private bool _generateStateUI = true;
 
     [SerializeField]
     private AttackableStatesUI _stateUITemplate;
     protected AttackableStatesUI _stateUI;
-
-    [SerializeField]
-    private int _outlineThickness;
 
     private WorldUIContainer _worldUIContainer;
 
@@ -66,7 +46,6 @@ public class Attackable : CombatEntity
     {
         get
         {
-
             Dictionary<string, Effect> effectsInstByNames = new Dictionary<string, Effect> ();
             foreach (Effect effect in Stats.EffectByNames.Values)
             {
@@ -86,12 +65,6 @@ public class Attackable : CombatEntity
         get { return _tempEffects; }
     }
 
-    private HashSet<string> _uniqueEffectNames = new HashSet<string> ();
-    public HashSet<string> UniqueEffectNames
-    {
-        get { return _uniqueEffectNames; }
-    }
-
     public List<TempEffect> TempEffectsList
     {
         get { return _tempEffects.Values.SelectMany (x => x).ToList (); }
@@ -104,18 +77,10 @@ public class Attackable : CombatEntity
     private int _hightLightDir = 1;
     private float _currentLerpColorHightLight = 0f;
     protected Bounds _bounds;
-
-    protected int _maxLife;
-    public int MaxLife
+    protected AttackableDescription _description;
+    public AttackableDescription Description
     {
-        get { return _maxLife; }
-    }
-
-    protected int _currentLife;
-    public int CurrentLife
-    {
-        get { return _currentLife; }
-        set { _currentLife = value; }
+        get { return _description; }
     }
 
     public Sprite Sprite
@@ -126,35 +91,15 @@ public class Attackable : CombatEntity
         }
     }
 
-    private bool _willBeDestroyed = false;
+    protected bool _willBeDestroyed = false;
     private bool _destroyed = false;
-
+    private const float DEATH_DELAY = 0.5f;
     public bool WillBeDestroyed
     {
         get { return _willBeDestroyed; }
     }
 
-    private HashSet<State> _states = new HashSet<State> ();
-
-    public bool HasState (State state)
-    {
-        return _states.Contains (state);
-    }
-
-    public void AddState (State state)
-    {
-        _states.Add (state);
-        _stateUI.UpdateStateIcons ();
-    }
-
-    public void RemoveState (State state)
-    {
-        _states.Remove (state);
-        _stateUI.UpdateStateIcons ();
-    }
-
     public event Action<Attackable> OnMouseEntered;
-
     public event Action<Attackable> OnMouseExited;
     public event Action<Attackable> OnDestroyed;
 
@@ -169,9 +114,17 @@ public class Attackable : CombatEntity
 
     protected virtual void Awake ()
     {
+        _description = GetComponent<AttackableDescription> ();
         _renderer = GetComponent<SpriteRenderer> ();
         if (_statsSerialized.HasAnyStats ())
+        {
             Stats.AddStats (_statsSerialized);
+            Stats.AttackableState.OnLifeReachZero += () =>
+            {
+                _willBeDestroyed = true;
+                StartCoroutine (DestroyInSeconds (DEATH_DELAY));
+            };
+        }
     }
 
     protected virtual void Start ()
@@ -210,14 +163,12 @@ public class Attackable : CombatEntity
 
     protected virtual void Update ()
     {
+        if (_destroyed)
+            return;
+
         if (_hightLightSprite)
         {
             HightLightSprite ();
-        }
-
-        if (!_destroyed && _stateUI?.CurrentValue <= 0.0001f)
-        {
-            StartCoroutine (DestroyInSeconds (0.5f));
         }
     }
 
@@ -274,10 +225,8 @@ public class Attackable : CombatEntity
 
         Vector3 boundsSize = new Vector3 (border.z - border.x, border.w - border.y, 0f);
         Vector3 boundsCenter = transform.position;
-        //  Debug.Log (Name + ", pos  " + boundsCenter.ToString ("F4"));
         boundsCenter -= _renderer.sprite.bounds.extents;
         boundsCenter += new Vector3 (border.x, border.y, 0f);
-        // Debug.Log (Name + ", pos 2  " + boundsCenter.ToString ("F4"));
         boundsCenter += boundsSize / 2f;
         _bounds = new Bounds (boundsCenter, boundsSize);
         // _bounds = RotateBounds (new Bounds (boundsCenter, boundsSize), transform.eulerAngles);
@@ -316,16 +265,6 @@ public class Attackable : CombatEntity
         }
         return new Bounds ((newMin + newMax) / 2f, newMax - newMin);
 
-    }
-
-    public void ReceiveDamage (int damageAmount)
-    {
-        _currentLife -= damageAmount;
-        _currentLife = Mathf.Clamp (_currentLife, 0, MaxLife);
-        if (_currentLife == 0)
-        {
-            _willBeDestroyed = true;
-        }
     }
 
     public void FadeSprite ()

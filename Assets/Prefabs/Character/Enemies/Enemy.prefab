@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 7443770227485021697}
   - component: {fileID: 3902306808929999562}
   - component: {fileID: 1340687628109405550}
+  - component: {fileID: 5857378246848022300}
   m_Layer: 14
   m_Name: SpriteCharacter
   m_TagString: Enemy
@@ -133,10 +134,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LinkedCombatEntities: []
-  _name: 
   _generateStateUI: 1
   _stateUITemplate: {fileID: 3672888832262447436, guid: 954c24245626a7c43923820414f698b8, type: 3}
-  _outlineThickness: 1
   _squasher: {fileID: 2676327745246727445}
   _statsSerialized:
     AttackDefPassiveValues: []
@@ -201,6 +200,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.28, y: 0.28, z: 0.2}
   m_Center: {x: 0, y: -0.000000014901161, z: 0}
+--- !u!114 &5857378246848022300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4898511978951924373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cdebf15bf31d454dad578b8a527cb26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _displayName: EnemyName
 --- !u!1 &5762931556849621094
 GameObject:
   m_ObjectHideFlags: 0

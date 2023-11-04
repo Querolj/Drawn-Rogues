@@ -22,7 +22,11 @@
         "LightningBolt",
         "FX",
         "EventMap",
-        "Sirenix.OdinInspector.Modules.UnityMathematics"
+        "Sirenix.OdinInspector.Modules.UnityMathematics",
+        "EntityDescriptions",
+        "FightDescription",
+        "AttackTypeDefinition",
+        "AttackableState"
     ],
     "includePlatforms": [
         "Editor",

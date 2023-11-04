@@ -12,8 +12,8 @@ public class StunEffect : Effect
 
     protected override void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightDescription fightDescription, Action onAnimeEnded)
     {
-        string coloredUserName = fightDescription.GetColoredAttackableName (user);
-        string coloredTargetName = fightDescription.GetColoredAttackableName (target);
+        string coloredUserName = fightDescription.GetColoredAttackableName (user.Description, user.tag);
+        string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description, target.tag);
 
         if (TargetHasTempEffect (target, StunTempEffect, TempEffect.Timeline.StartTurn))
         {
@@ -24,8 +24,8 @@ public class StunEffect : Effect
 
         if (UnityEngine.Random.Range (0, 100f) < _alteredValue)
         {
-            if (!target.HasState (State.Stunned))
-                target.AddState (State.Stunned);
+            if (!target.Stats.AttackableState.HasState (State.Stunned))
+                target.Stats.AttackableState.AddState (State.Stunned);
 
             fightDescription.Report (coloredUserName + " <b>stunned</b> " + coloredTargetName + " for <b>" + STUN_DURATION + "</b> turns!");
 

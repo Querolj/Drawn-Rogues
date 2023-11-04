@@ -9,7 +9,7 @@ public class AttackInstTrajectoryZone : AttackInstance
     public float TrajectorySpeed = 1f;
     public float TrajectoryRadius = 1f;
 
-    public AttackInstTrajectoryZone (Attack attack, Character owner, FightDescription fightDescription) : base (attack, owner, fightDescription)
+    public AttackInstTrajectoryZone (Attack attack, Character owner, FightDescription fightDescription) : base (attack, owner)
     {
         AttackTrajectoryZone attackTrajectoryZone = attack as AttackTrajectoryZone ??
             throw new ArgumentException (nameof (attack) + " must be of type " + nameof (AttackTrajectoryZone));
@@ -66,7 +66,7 @@ public class AttackInstTrajectoryZone : AttackInstance
                 bool isDodged = DodgeTest (attackInstCopy);
                 if (isDodged)
                 {
-                    _fightDescription.ReportAttackDodge (_attacker, attackable, attackInstCopy);
+                    _fightDescription.ReportAttackDodge (_attacker.Description, attackable.Description, attackInstCopy.Name, _attacker.tag);
                     TryInvokeCallback ();
                     continue;
                 }

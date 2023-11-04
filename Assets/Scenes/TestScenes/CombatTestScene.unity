@@ -656,6 +656,10 @@ PrefabInstance:
       propertyPath: _attacksReferences.Array.data[0]
       value: 
       objectReference: {fileID: 11400000, guid: 5bd3379e720f99048afa30729f1fdc8b, type: 2}
+    - target: {fileID: 346851320128268328, guid: bc67e32e3527ecb42b5b31c1e0abffcb, type: 3}
+      propertyPath: _statsSerialized.AttackDefPassiveValues.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2408461067115193889, guid: bc67e32e3527ecb42b5b31c1e0abffcb, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -999,8 +1003,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 382031024}
   m_HandleRect: {fileID: 382031023}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: 1
+  m_Size: 0
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2343,6 +2347,7 @@ MonoBehaviour:
   _content: {fileID: 1217893110}
   _lineTemplate: {fileID: 7604628327802994728, guid: bc1ee4e9671f83e44b32fb41aa3901a2, type: 3}
   _scrollViewRect: {fileID: 378877975}
+  _playerTag: Player
 --- !u!1 &381633817
 GameObject:
   m_ObjectHideFlags: 0
@@ -8009,7 +8014,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 3711.703}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1217893112
@@ -8210,6 +8215,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a05a283f8f1f56c4b9edab28ccc83690, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _lerpSpeed: 0.1
+  _transformToLerps: []
+  _kilogramMax: 100
+  _bell: {fileID: 0}
+  _eventBridge: {fileID: 0}
 --- !u!1 &1239873328
 GameObject:
   m_ObjectHideFlags: 0

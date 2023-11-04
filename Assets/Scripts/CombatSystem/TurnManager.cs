@@ -95,12 +95,12 @@ public class TurnManager : MonoBehaviour
     {
         if (character == null)
             throw new ArgumentNullException (nameof (character));
-        Debug.Log ("Start turn : " + character.Name);
-        
+        Debug.Log ("Start turn : " + character.Description.DisplayName);
+
         if (!character.CanPlayTurn ())
         {
             _enemyTurnIndicator.Hide ();
-            _fightDescription.Report (character.Name + " can't play this turn");
+            _fightDescription.Report (character.Description.DisplayName + " can't play this turn");
             EndTurn (character);
             yield return null;
         }
@@ -116,7 +116,7 @@ public class TurnManager : MonoBehaviour
             }
             else if (!character.WillBeDestroyed)
             {
-                Debug.Log ("Enemy turn : " + character.Name);
+                Debug.Log ("Enemy turn : " + character.Description.DisplayName);
                 _enemyTurnIndicator.SetOnCharacter (character);
 
                 OneEnemyTurnStart?.Invoke (character);

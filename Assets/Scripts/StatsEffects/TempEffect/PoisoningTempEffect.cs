@@ -9,9 +9,9 @@ public class PoisoningTempEffect : TempEffect
         PlayAnimation (effectOwner.transform.position,
             () =>
             {
-                int poisonDamage = (int) (effectOwner.MaxLife * 0.1f);
-                fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner) + " took <b>" + poisonDamage + "</b> damage from poisoning.");
-                effectOwner.ReceiveDamage (poisonDamage);
+                int poisonDamage = (int) (effectOwner.Stats.Life * 0.1f);
+                fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner.Description, effectOwner.tag) + " took <b>" + poisonDamage + "</b> damage from poisoning.");
+                effectOwner.Stats.AttackableState.ReceiveDamage (poisonDamage);
                 DecrementTurn (effectOwner, fightDescription);
                 onAnimeEnded?.Invoke ();
             });
@@ -20,9 +20,9 @@ public class PoisoningTempEffect : TempEffect
     protected override void OnEffectWearsOff (Attackable effectOwner, FightDescription fightDescription)
     {
         base.OnEffectWearsOff (effectOwner, fightDescription);
-        if (effectOwner.HasState (State.Poisonned))
-            effectOwner.RemoveState (State.Poisonned);
+        if (effectOwner.Stats.AttackableState.HasState (State.Poisonned))
+            effectOwner.Stats.AttackableState.RemoveState (State.Poisonned);
 
-        fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner) + " is no longuer poisonned!");
+        fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner.Description, effectOwner.tag) + " is no longuer poisonned!");
     }
 }

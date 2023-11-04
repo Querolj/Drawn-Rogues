@@ -108,7 +108,6 @@ public class DrawedCharacter : Character
 
         OnStatsChanged?.Invoke ();
         // Debug.Log (Stats.ToString ());
-        SetMaxAndCurrentLife (resetCurrentLife);
     }
 
     public void GenerateColliders ()
@@ -196,9 +195,9 @@ public class DrawedCharacter : Character
         // GraphicUtils.SavePixelsAsPNG (_frame.DrawTexture.GetPixels (), "Test/playerInit.png", _frame.DrawTexture.width, _frame.DrawTexture.height);
     }
 
-    public void Init (DrawedCharacterInfos drawedCharacterInfos)
+    public void InitFromLoad (DrawedCharacterInfos drawedCharacterInfos)
     {
-        _name = drawedCharacterInfos.Name;
+        _description.DisplayName = drawedCharacterInfos.Name;
         _drawedCharacterFormDescription = drawedCharacterInfos.DrawedCharacterFormDescription;
         _modifierAdded = new List<ModifierInfos> ();
         foreach (ModifierInfos modifierInfos in drawedCharacterInfos.ModifierInfos)

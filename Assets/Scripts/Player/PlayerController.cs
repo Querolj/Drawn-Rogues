@@ -128,7 +128,7 @@ public class PlayerController : MonoBehaviour
 
         _controlledCharacter = drawedCharacter;
         _moveIndicator.SetPosition (_startPosition.position);
-        _controlledCharacter.Init (infos);
+        _controlledCharacter.InitFromLoad (infos);
 
         CharacterPivot pivot = drawedCharacterGo.GetComponentInParent<CharacterPivot> ();
         pivot.InitForMap ();
@@ -367,7 +367,7 @@ public class PlayerController : MonoBehaviour
         _controlMode = ControlMode.None;
         if (!_attackRegistry.TryGetAttacksToChooseFrom (_controlledCharacter, out List<Attack> attacks))
         {
-            Debug.LogWarning ("No attack found for " + _controlledCharacter.Name);
+            Debug.LogWarning ("No attack found for " + _controlledCharacter.Description.DisplayName);
             _controlMode = ControlMode.Map;
             return;
         }

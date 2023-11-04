@@ -21,7 +21,6 @@ public class SpriteCharacter : Character
     {
         Stats = new Stats (_life, _intelligence, _strenght, _mobility, _kilogram);
         base.Awake ();
-        SetMaxAndCurrentLife ();
     }
 
     public override Bounds GetSpriteBounds ()

@@ -60,11 +60,11 @@ public class AttackableStatesUI : MonoBehaviour
         yield return new WaitForEndOfFrame ();
         yield return new WaitForEndOfFrame ();
 
-        _sliderHealthBar.maxValue = _attackable.MaxLife;
+        _sliderHealthBar.maxValue = _attackable.Stats.Life;
         _sliderHealthBar.minValue = 0;
-        _sliderHealthBar.value = _attackable.CurrentLife;
-        _maxLifeText.text = _attackable.MaxLife.ToString ();
-        _currentLifeText.text = _attackable.CurrentLife.ToString ();
+        _sliderHealthBar.value = _attackable.Stats.AttackableState.CurrentLife;
+        _maxLifeText.text = _attackable.Stats.Life.ToString ();
+        _currentLifeText.text = _attackable.Stats.AttackableState.CurrentLife.ToString ();
         UpdateBarColor ();
         _initialized = true;
     }
@@ -81,7 +81,7 @@ public class AttackableStatesUI : MonoBehaviour
         if (!_initialized)
             return;
 
-        if (!_changeSliderValue && _attackable.CurrentLife != _sliderHealthBar.value)
+        if (!_changeSliderValue && _attackable.Stats.AttackableState.CurrentLife != _sliderHealthBar.value)
         {
             _changeSliderValue = true;
             _lastTargetValue = _sliderHealthBar.value;
@@ -91,7 +91,7 @@ public class AttackableStatesUI : MonoBehaviour
         if (_changeSliderValue)
         {
             _lerp += Time.deltaTime / _lerpTotalTime;
-            _sliderHealthBar.value = Mathf.Lerp (_lastTargetValue, _attackable.CurrentLife, _lerp);
+            _sliderHealthBar.value = Mathf.Lerp (_lastTargetValue, _attackable.Stats.AttackableState.CurrentLife, _lerp);
             if (_lerp >= 1f)
             {
                 _changeSliderValue = false;

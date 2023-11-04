@@ -33,7 +33,7 @@ public class MapInstaller : MonoInstaller
         Container.Bind<ResizableBrush> ().FromNewScriptableObject (_resizableBrush).AsSingle ();
         Container.Bind<TrajectoryDrawer> ().FromComponentsInNewPrefab (_trajectoryDrawer).AsSingle ();
         Container.Bind<AttackSelectionManager> ().FromComponentsInNewPrefab (_attackSelectionManager).AsSingle ();
-
+        Container.Bind<FightDescription> ().AsSingle ();
         Container.Bind<BaseColorInventory> ().AsSingle ();
         Container.Bind<TrajectoryCalculator> ().AsSingle ();
 

@@ -21,7 +21,7 @@ public class AIBehaviourAgressive : AIBehaviour
 
         if (reachableAttacks.Count == 0)
         {
-            fightDescription.Report (fightDescription.GetColoredAttackableName (_character) + " moved.");
+            fightDescription.Report (fightDescription.GetColoredAttackableName (_character.Description, _character.tag) + " moved.");
             MoveTowardCharacter (combatZone, playerCharacter, onTurnEnd);
         }
         else

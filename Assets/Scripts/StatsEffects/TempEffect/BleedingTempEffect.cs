@@ -19,8 +19,8 @@ public class BleedingTempEffect : TempEffect
             {
                 int bleedDamage = (int) (distance * BLEED_STRENGHT);
                 bleedDamage = Mathf.Clamp (bleedDamage, 1, bleedDamage);
-                fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner) + " took <b>" + bleedDamage + "</b> damage from " + bleeding + ".");
-                effectOwner.ReceiveDamage (bleedDamage);
+                fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner.Description, effectOwner.tag) + " took <b>" + bleedDamage + "</b> damage from " + bleeding + ".");
+                effectOwner.Stats.AttackableState.ReceiveDamage (bleedDamage);
                 DecrementTurn (effectOwner, fightDescription);
                 LastOwnerPosition = effectOwner.transform.position;
                 onAnimeEnded?.Invoke ();
@@ -30,9 +30,9 @@ public class BleedingTempEffect : TempEffect
     protected override void OnEffectWearsOff (Attackable effectOwner, FightDescription fightDescription)
     {
         base.OnEffectWearsOff (effectOwner, fightDescription);
-        if (effectOwner.HasState (State.Bleed))
-            effectOwner.RemoveState (State.Bleed);
+        if (effectOwner.Stats.AttackableState.HasState (State.Bleed))
+            effectOwner.Stats.AttackableState.RemoveState (State.Bleed);
 
-        fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner) + " is no longuer " + bleeding + "!");
+        fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner.Description, effectOwner.tag) + " is no longuer " + bleeding + "!");
     }
 }

@@ -103,13 +103,6 @@ public class Character : Attackable
         return Stats.Mobility;
     }
 
-    public void SetMaxAndCurrentLife (bool resetCurrentLife = true)
-    {
-        _maxLife = Stats.Life;
-        if (resetCurrentLife)
-            _currentLife = _maxLife;
-    }
-
     public bool HasAI ()
     {
         return _ai != null;
@@ -126,7 +119,7 @@ public class Character : Attackable
     public bool CanPlayTurn ()
     {
         bool canPlayTurn = true;
-        canPlayTurn = !HasState (State.Stunned);
+        canPlayTurn = !Stats.AttackableState.HasState (State.Stunned);
 
         return canPlayTurn;
     }

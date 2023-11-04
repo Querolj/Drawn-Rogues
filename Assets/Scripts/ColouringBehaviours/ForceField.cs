@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
-using Zenject;
 
 public class ForceField : Attackable, IColouringSpellBehaviour, IPlayerProjectileDefense
 {
@@ -17,8 +15,7 @@ public class ForceField : Attackable, IColouringSpellBehaviour, IPlayerProjectil
 
         _waveCurrentDuration = WAVE_MAX_DURATION;
 
-        _maxLife = (int) ((float) _turnManager.ActivePlayerCharacter.Stats.Intelligence * 0.1f);
-        _currentLife = _maxLife;
+        Stats.Life = (int) ((float) _turnManager.ActivePlayerCharacter.Stats.Intelligence * 0.1f);
 
         onInitDone?.Invoke ();
     }

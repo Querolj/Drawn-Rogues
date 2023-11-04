@@ -13,7 +13,7 @@ public class StunTempEffect : TempEffect
             PlayAnimation (effectOwner.transform.position,
                 () =>
                 {
-                    fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner) + " is stunned, can't attack next turn.");
+                    fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner.Description, effectOwner.tag) + " is stunned, can't attack next turn.");
                     onAnimeEnded?.Invoke ();
                 });
         }
@@ -28,10 +28,10 @@ public class StunTempEffect : TempEffect
     {
         base.OnEffectWearsOff (effectOwner, fightDescription);
 
-        if (effectOwner.HasState (State.Stunned))
+        if (effectOwner.Stats.AttackableState.HasState (State.Stunned))
         {
-            effectOwner.RemoveState (State.Stunned);
-            fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner) + " is no longuer stunned!");
+            effectOwner.Stats.AttackableState.RemoveState (State.Stunned);
+            fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner.Description, effectOwner.tag) + " is no longuer stunned!");
         }
         else
         {

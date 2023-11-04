@@ -1,9 +1,44 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class AttackInstance
 {
+    // public class Factory : PlaceholderFactory<Attack, Character, FightDescription, AttackInstance> { }
+    public class Factory : IFactory<Attack, Character, AttackInstance>
+    {
+        DiContainer _container;
+
+        public Factory (DiContainer container)
+        {
+            _container = container;
+        }
+
+        public AttackInstance Create (Attack attack, Character owner)
+        {
+            if (attack as AttackTrajectoryZone)
+                return new AttackInstTrajectoryZone (attack, owner, _fightDescription);
+            else if (attack as AttackZone)
+                return new AttackInstZone (attack, owner, _fightDescription);
+            else if (attack as AttackProjectile)
+                return new AttackInstProjectile (attack, owner, _fightDescription);
+            else if (attack as AttackTrajectory)
+                return new AttackInstTrajectory (attack, owner, _fightDescription);
+            else if (attack as AttackSingleTarget)
+                return new AttackInstSingleTarget (attack, owner, _fightDescription);
+            else if (attack as AttackJump)
+                return new AttackInstJump (attack, owner, _fightDescription);
+            else
+                throw new ArgumentException ("Attack type " + attack.GetType () + "not supported");
+        }
+
+        public AttackInstance Create ()
+        {
+            throw new NotImplementedException ();
+        }
+    }
+
     public string Name { get; set; }
     public SpriteAnimation AnimationTemplate { get; set; }
     public ParticleSystemCallback ParticleTemplate { get; set; }
@@ -21,13 +56,17 @@ public class AttackInstance
     public Dictionary<string, Effect> EffectInstancesByName { get { return _effectInstancesByName; } }
 
     public Action<AttackInstance> OnAttackStarted;
-    protected FightDescription _fightDescription;
     protected Character _attacker;
     protected Attack _attack;
     private bool _callbackCalled = false;
     protected int _targetToHitCount;
 
-    public AttackInstance (Attack attack, Character owner, FightDescription fightDescription)
+    #region Injected
+    [Inject]
+    protected FightDescription _fightDescription;
+    #endregion
+
+    public AttackInstance (Attack attack, Character owner)
     {
         _attack = attack;
         Name = attack.Name;
@@ -41,7 +80,6 @@ public class AttackInstance
         Range = attack.GetRangeInMeter ();
         DamageType = attack.DamageType;
         _owner = owner;
-        _fightDescription = fightDescription;
 
         MergeEffectsAndPassiveFromOwner (attack);
 
@@ -164,14 +202,14 @@ public class AttackInstance
         if (!NoDamage)
         {
             dammageToInflict = UnityEngine.Random.Range (attackInstance.MinDamage, attackInstance.MaxDamage + 1);
-            _fightDescription.ReportAttackDamage (_attacker, target, attackInstance, dammageToInflict);
+            _fightDescription.ReportAttackDamage (_attacker.Description, target.Description, attackInstance.DamageType, attackInstance.Name, dammageToInflict, _attacker.tag);
             target.FadeSprite ();
-            target.ReceiveDamage (dammageToInflict);
+            target.Stats.AttackableState.ReceiveDamage (dammageToInflict);
             ApplyEffects (target.EffectInstancesByName, target, Effect.Timeline.ReceiveAttackDamage, _attacker, attackInstance, dammageToInflict);
         }
         else
         {
-            _fightDescription.ReportAttackUse (_attacker, target, attackInstance);
+            _fightDescription.ReportAttackUse (_attacker.Description, target.Description, attackInstance.Name, _attacker.tag);
         }
 
         if (_effectInstancesByName.Values.Count == 0)

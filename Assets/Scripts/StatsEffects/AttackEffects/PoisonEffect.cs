@@ -12,8 +12,8 @@ public class PoisonEffect : Effect
 
     protected override void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightDescription fightDescription, Action onAnimeEnded)
     {
-        string coloredUserName = fightDescription.GetColoredAttackableName (user);
-        string coloredTargetName = fightDescription.GetColoredAttackableName (target);
+        string coloredUserName = fightDescription.GetColoredAttackableName (user.Description, user.tag);
+        string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description, target.tag);
 
         if (TargetHasTempEffect (target, TempEffect, TempEffect.Timeline.EndRound))
         {
@@ -24,8 +24,8 @@ public class PoisonEffect : Effect
 
         if (UnityEngine.Random.Range (0, 100f) < _alteredValue)
         {
-            if (!target.HasState (State.Poisonned))
-                target.AddState (State.Poisonned);
+            if (!target.Stats.AttackableState.HasState (State.Poisonned))
+                target.Stats.AttackableState.AddState (State.Poisonned);
 
             fightDescription.Report (coloredUserName + " <b>poisoned</b> " + coloredTargetName + " for <b>" + POISON_DURATION + "</b> turns!");
 

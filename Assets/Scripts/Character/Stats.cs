@@ -13,65 +13,80 @@ public enum MainStatType
 public class Stats
 {
     #region Main stats
-    private int _life;
+    private int _baseLife;
     public int Life
     {
         get
         {
-            return AlterMainStatMethod (_lifeModifiersById, _life);
+            AlterMainStatMethod (_lifeModifiersById, ref _baseLife);
+            return _baseLife;
         }
         set
         {
-            _life = value;
+            _baseLife = value;
+            _attackableState = new AttackableState (Life);
         }
     }
     private Dictionary < int, (OperationTypeEnum, float) > _lifeModifiersById = new Dictionary < int, (OperationTypeEnum, float) > ();
+    private AttackableState _attackableState = null;
+    public AttackableState AttackableState
+    {
+        get
+        {
+            if (_attackableState == null)
+                _attackableState = new AttackableState (Life);
+            return _attackableState;
+        }
+    }
 
-    private int _intelligence;
+    private int _baseIntelligence;
     public int Intelligence
     {
         get
         {
-            return AlterMainStatMethod (_intelligenceModifiersById, _intelligence);
+            AlterMainStatMethod (_intelligenceModifiersById, ref _baseIntelligence);
+            return _baseIntelligence;
         }
         set
         {
-            _intelligence = value;
+            _baseIntelligence = value;
         }
     }
     private Dictionary < int, (OperationTypeEnum, float) > _intelligenceModifiersById = new Dictionary < int, (OperationTypeEnum, float) > ();
 
-    private int _strenght;
+    private int _baseStrenght;
     public int Strenght
     {
         get
         {
-            return AlterMainStatMethod (_strenghtModifiersById, _strenght);
+            AlterMainStatMethod (_strenghtModifiersById, ref _baseStrenght);
+            return _baseStrenght;
         }
         set
         {
-            _strenght = value;
+            _baseStrenght = value;
         }
     }
     private Dictionary < int, (OperationTypeEnum, float) > _strenghtModifiersById = new Dictionary < int, (OperationTypeEnum, float) > ();
 
-    private int _mobility;
+    private int _baseMobility;
     public int Mobility
     {
         get
         {
-            return AlterMainStatMethod (_mobilityModifiersById, _mobility);
+            AlterMainStatMethod (_mobilityModifiersById, ref _baseMobility);
+            return _baseMobility;
         }
         set
         {
-            _mobility = value;
+            _baseMobility = value;
         }
     }
     private Dictionary < int, (OperationTypeEnum, float) > _mobilityModifiersById = new Dictionary < int, (OperationTypeEnum, float) > ();
 
-    private int AlterMainStatMethod (Dictionary < int, (OperationTypeEnum, float) > modifiersById, int valueToAlter)
+    private void AlterMainStatMethod (Dictionary < int, (OperationTypeEnum, float) > modifiersById, ref int valueToAlter)
     {
-        foreach ((OperationTypeEnum, float) mainStatModifier in GetSortedListOfMobilityModifiers (modifiersById))
+        foreach ((OperationTypeEnum, float) mainStatModifier in GetSortedListOfModifiers (modifiersById))
         {
             switch (mainStatModifier.Item1)
             {
@@ -92,11 +107,9 @@ public class Stats
                     break;
             }
         }
-
-        return valueToAlter;
     }
 
-    private List < (OperationTypeEnum, float) > GetSortedListOfMobilityModifiers (Dictionary < int, (OperationTypeEnum, float) > modifiersById)
+    private List < (OperationTypeEnum, float) > GetSortedListOfModifiers (Dictionary < int, (OperationTypeEnum, float) > modifiersById)
     {
         List < (OperationTypeEnum, float) > modifiers = new List < (OperationTypeEnum, float) > ();
         foreach (KeyValuePair < int, (OperationTypeEnum, float) > mobilityModifier in modifiersById)
@@ -112,21 +125,21 @@ public class Stats
         switch (mainStatType)
         {
             case MainStatType.Life:
-                AddMainStatModifierInternal (id, operationType, value, _lifeModifiersById);
+                AddMainStatModifierInternal (id, operationType, value, ref _lifeModifiersById);
                 break;
             case MainStatType.Intelligence:
-                AddMainStatModifierInternal (id, operationType, value, _intelligenceModifiersById);
+                AddMainStatModifierInternal (id, operationType, value, ref _intelligenceModifiersById);
                 break;
             case MainStatType.Strength:
-                AddMainStatModifierInternal (id, operationType, value, _strenghtModifiersById);
+                AddMainStatModifierInternal (id, operationType, value, ref _strenghtModifiersById);
                 break;
             case MainStatType.Mobility:
-                AddMainStatModifierInternal (id, operationType, value, _mobilityModifiersById);
+                AddMainStatModifierInternal (id, operationType, value, ref _mobilityModifiersById);
                 break;
         }
     }
 
-    private void AddMainStatModifierInternal (int id, OperationTypeEnum operationType, float value, Dictionary < int, (OperationTypeEnum, float) > modifiersById)
+    private void AddMainStatModifierInternal (int id, OperationTypeEnum operationType, float value, ref Dictionary < int, (OperationTypeEnum, float) > modifiersById)
     {
         if (modifiersById.ContainsKey (id))
         {
@@ -213,10 +226,10 @@ public class Stats
 
     public Stats (int life, int intelligence, int strenght, int mobility, float kilogram)
     {
-        _life = life;
-        _intelligence = intelligence;
-        _strenght = strenght;
-        _mobility = mobility;
+        _baseLife = life;
+        _baseIntelligence = intelligence;
+        _baseStrenght = strenght;
+        _baseMobility = mobility;
         _kilogram = kilogram;
     }
 

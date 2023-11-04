@@ -44,7 +44,7 @@ public class AttackInstTrajectory : AttackInstance
             bool isDodged = DodgeTest (attackInstCopy);
             if (isDodged)
             {
-                _fightDescription.ReportAttackDodge (_attacker, target, attackInstCopy);
+                _fightDescription.ReportAttackDodge (_attacker.Description, target.Description, attackInstCopy.Name, _attacker.tag);
                 EndAttack (attacker, trajectory);
                 return;
             }

@@ -319,7 +319,7 @@ public class CharacterCanvas : MonoBehaviour
         DrawedCharacter drawedCharacter = (DrawedCharacter) _attackableFactory.Create (_drawedCharacterTemplate);
         GameObject drawedCharacterGo = drawedCharacter.gameObject;
         drawedCharacter.Init (_drawedCharacterFormDescription, _frame, _modifiersAdded);
-        drawedCharacter.Name = _nameField.text;
+        drawedCharacter.Description.DisplayName = _nameField.text;
 
         CharacterPivot pivot = drawedCharacterGo.GetComponentInParent<CharacterPivot> ();
         pivot.InitForMap ();
