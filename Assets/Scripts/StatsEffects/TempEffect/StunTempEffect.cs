@@ -4,7 +4,7 @@ using UnityEngine;
 [CreateAssetMenu (fileName = "StunTempEffect", menuName = "TempEffect/StunTempEffect", order = 1)]
 public class StunTempEffect : TempEffect
 {
-    public override void Apply (Attackable effectOwner, FightDescription fightDescription, Action onAnimeEnded)
+    public override void Apply (Attackable effectOwner, FightRegistry fightDescription, Action onAnimeEnded)
     {
         DecrementTurn (effectOwner, fightDescription);
 
@@ -24,7 +24,7 @@ public class StunTempEffect : TempEffect
 
     }
 
-    protected override void OnEffectWearsOff (Attackable effectOwner, FightDescription fightDescription)
+    protected override void OnEffectWearsOff (Attackable effectOwner, FightRegistry fightDescription)
     {
         base.OnEffectWearsOff (effectOwner, fightDescription);
 
@@ -39,7 +39,7 @@ public class StunTempEffect : TempEffect
         }
     }
 
-    protected override void DecrementTurn (Attackable effectOwner, FightDescription fightDescription)
+    protected override void DecrementTurn (Attackable effectOwner, FightRegistry fightDescription)
     {
         _turnDuration--;
         if (_turnDuration < 0) // Need to be < 0 to be sure to call OnEffectWearsOff() after the character has his attack blocked

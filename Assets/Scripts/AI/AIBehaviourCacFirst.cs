@@ -6,7 +6,7 @@ public class AIBehaviourCacFirst : AIBehaviour
 {
     public float CacRange = 0.5f;
 
-    public override void ExecuteTurn (CombatZone combatZone, Character playerCharacter, FightDescription fightDescription, Action onTurnEnd)
+    public override void ExecuteTurn (CombatZone combatZone, Character playerCharacter, FightRegistry fightDescription, Action onTurnEnd)
     {
         float playerToCharDist = Vector3.Distance (playerCharacter.transform.position, _character.transform.position);
         Bounds bounds = (Bounds) _character.GetSpriteBounds ();

@@ -7,8 +7,9 @@ public class AttackInstTrajectory : AttackInstance
     public float TrajectorySpeed = 1f;
     public float TrajectoryRadius = 1f;
 
-    public AttackInstTrajectory (Attack attack, Character owner, FightDescription fightDescription) : base (attack, owner, fightDescription)
+    public override void Init (Attack attack, Character owner)
     {
+        base.Init (attack, owner);
         AttackTrajectory attackTrajectory = attack as AttackTrajectory ??
             throw new ArgumentException (nameof (attack) + " must be of type " + nameof (AttackTrajectory));
 
@@ -18,7 +19,9 @@ public class AttackInstTrajectory : AttackInstance
 
     public override AttackInstance GetCopy ()
     {
-        return new AttackInstTrajectory (_attack, _owner, _fightDescription);
+        AttackInstTrajectory attackInstTrajectory = new AttackInstTrajectory ();
+        attackInstTrajectory.Init (_attack, _owner);
+        return attackInstTrajectory;
     }
 
     public override void Execute (Character attacker, Attackable target, Vector3 attackPos, Action onAttackEnded,

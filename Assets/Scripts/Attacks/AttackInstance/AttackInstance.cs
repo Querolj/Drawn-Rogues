@@ -5,39 +5,8 @@ using Zenject;
 
 public class AttackInstance
 {
-    // public class Factory : PlaceholderFactory<Attack, Character, FightDescription, AttackInstance> { }
-    public class Factory : IFactory<Attack, Character, AttackInstance>
-    {
-        DiContainer _container;
-
-        public Factory (DiContainer container)
-        {
-            _container = container;
-        }
-
-        public AttackInstance Create (Attack attack, Character owner)
-        {
-            if (attack as AttackTrajectoryZone)
-                return new AttackInstTrajectoryZone (attack, owner, _fightDescription);
-            else if (attack as AttackZone)
-                return new AttackInstZone (attack, owner, _fightDescription);
-            else if (attack as AttackProjectile)
-                return new AttackInstProjectile (attack, owner, _fightDescription);
-            else if (attack as AttackTrajectory)
-                return new AttackInstTrajectory (attack, owner, _fightDescription);
-            else if (attack as AttackSingleTarget)
-                return new AttackInstSingleTarget (attack, owner, _fightDescription);
-            else if (attack as AttackJump)
-                return new AttackInstJump (attack, owner, _fightDescription);
-            else
-                throw new ArgumentException ("Attack type " + attack.GetType () + "not supported");
-        }
-
-        public AttackInstance Create ()
-        {
-            throw new NotImplementedException ();
-        }
-    }
+    public class Factory : PlaceholderFactory<Attack, Character, AttackInstance>
+    { }
 
     public string Name { get; set; }
     public SpriteAnimation AnimationTemplate { get; set; }
@@ -63,10 +32,35 @@ public class AttackInstance
 
     #region Injected
     [Inject]
-    protected FightDescription _fightDescription;
+    protected FightRegistry _fightDescription;
     #endregion
 
-    public AttackInstance (Attack attack, Character owner)
+    // public AttackInstance (Attack attack, Character owner)
+    // {
+    //     _attack = attack;
+    //     Name = attack.Name;
+    //     AnimationTemplate = attack.AnimationTemplate;
+    //     ParticleTemplate = attack.ParticleTemplate;
+    //     AttackType = attack.AttackType;
+    //     MinDamage = attack.MinDamage;
+    //     MaxDamage = attack.MaxDamage;
+    //     NoDamage = attack.NoDamage;
+    //     Precision = attack.Precision;
+    //     Range = attack.GetRangeInMeter ();
+    //     DamageType = attack.DamageType;
+    //     _owner = owner;
+
+    //     MergeEffectsAndPassiveFromOwner (attack);
+
+    //     // apply strenght influence
+    //     if (attack.DamageType != DamageType.Heal && _owner.Stats.Strenght > 0 && !NoDamage)
+    //     {
+    //         MinDamage += MinDamage * (int) (_owner.Stats.Strenght / 100f);
+    //         MaxDamage += MaxDamage * (int) (_owner.Stats.Strenght / 100f);
+    //     }
+    // }
+
+    public virtual void Init (Attack attack, Character owner)
     {
         _attack = attack;
         Name = attack.Name;
@@ -159,20 +153,20 @@ public class AttackInstance
         particle.Play ();
     }
 
-    protected virtual void PlayAnimationsOnTargets<T> (List<Attackable> allTargets) where T : AttackInstance
-    {
-        foreach (Attackable target in allTargets)
-        {
-            if (target == null || target.WillBeDestroyed)
-                continue;
+    // protected virtual void PlayAnimationsOnTargets<T> (List<Attackable> allTargets) where T : AttackInstance
+    // {
+    //     foreach (Attackable target in allTargets)
+    //     {
+    //         if (target == null || target.WillBeDestroyed)
+    //             continue;
 
-            T attackInstcopy = GetCopy () as T;
-            if (AnimationTemplate != null)
-                PlayAtkTouchedAnimation (target.transform.position, () => InflictDamage (target, attackInstcopy));
-            else if (ParticleTemplate != null)
-                PlayAtkTouchedParticle (target.transform.position, () => InflictDamage (target, attackInstcopy));
-        }
-    }
+    //         T attackInstcopy = GetCopy () as T;
+    //         if (AnimationTemplate != null)
+    //             PlayAtkTouchedAnimation (target.transform.position, () => InflictDamage (target, attackInstcopy));
+    //         else if (ParticleTemplate != null)
+    //             PlayAtkTouchedParticle (target.transform.position, () => InflictDamage (target, attackInstcopy));
+    //     }
+    // }
 
     protected T ApplyTargetAttackDefPassive<T> (Attackable target, ref T attackInstance) where T : AttackInstance
     {

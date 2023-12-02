@@ -124,19 +124,20 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
             Character character = attackable as Character;
             if (character == null)
                 continue;
+            
+            // TODO : Create a factory for spell, to be able to use injected stuff
+            // AttackInstance attackInstance = AttackInstance.Factory.Create (_healingAttack, character);
+            // attackInstance.ApplyMultiplierToEffect (healingEffectName, mult);
 
-            AttackInstance attackInstance = AttackInstFactory.Create (_healingAttack, character);
-            attackInstance.ApplyMultiplierToEffect (healingEffectName, mult);
-
-            attackInstance.Execute (character,
-                character,
-                character.GetSpriteBounds ().center,
-                () =>
-                {
-                    attackableLeft--;
-                    if (attackableLeft <= 0)
-                        onTurnEnded?.Invoke ();
-                });
+            // attackInstance.Execute (character,
+            //     character,
+            //     character.GetSpriteBounds ().center,
+            //     () =>
+            //     {
+            //         attackableLeft--;
+            //         if (attackableLeft <= 0)
+            //             onTurnEnded?.Invoke ();
+            //     });
         }
 
     }

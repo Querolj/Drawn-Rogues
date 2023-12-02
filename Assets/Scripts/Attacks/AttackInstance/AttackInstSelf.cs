@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class AttackInstSelf : AttackInstance
 {
-    public AttackInstSelf (Attack attack, Character owner, FightDescription fightDescription) : base (attack, owner, fightDescription) { }
-
     public override AttackInstance GetCopy ()
     {
-        return new AttackInstSelf (_attack, _owner, _fightDescription);
+        AttackInstSelf attackInstSelf = new AttackInstSelf ();
+        attackInstSelf.Init (_attack, _owner);
+        return attackInstSelf;
     }
 
     public override void Execute (Character attacker, Attackable target, Vector3 attackPos, Action onAttackEnded,

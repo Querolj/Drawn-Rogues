@@ -293,13 +293,14 @@ public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
 
         _lightningBolt.StartObject = go;
         _lightningBolt.EndObject = target.gameObject;
+        
+        // TODO : Create a factory for spells, to be able to use injected stuff
+        // AttackInstance attackInstance = AttackInstFactory.Create (_attack, _turnManager.ActivePlayerCharacter);
 
-        AttackInstance attackInstance = AttackInstFactory.Create (_attack, _turnManager.ActivePlayerCharacter);
+        // attackInstance.MinDamage = (int) (_attack.MinDamage * _damageMultiplier);
+        // attackInstance.MaxDamage = (int) (_attack.MaxDamage * _damageMultiplier);
 
-        attackInstance.MinDamage = (int) (_attack.MinDamage * _damageMultiplier);
-        attackInstance.MaxDamage = (int) (_attack.MaxDamage * _damageMultiplier);
-
-        attackInstance.Execute (_turnManager.ActivePlayerCharacter, target, target.GetSpriteBounds ().center, () => { });
+        // attackInstance.Execute (_turnManager.ActivePlayerCharacter, target, target.GetSpriteBounds ().center, () => { });
 
         _renderer.material.SetVector ("_LightStartPos", go.transform.position + Vector3.down * 0.3f);
     }

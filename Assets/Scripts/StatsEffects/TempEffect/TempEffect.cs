@@ -39,13 +39,13 @@ public class TempEffect : ScriptableObject
         Icon = icon;
     }
 
-    public virtual void Apply (Attackable effectOwner, FightDescription fightDescription, Action onAnimeEnded)
+    public virtual void Apply (Attackable effectOwner, FightRegistry fightDescription, Action onAnimeEnded)
     {
         DecrementTurn (effectOwner, fightDescription);
         onAnimeEnded?.Invoke ();
     }
 
-    protected virtual void DecrementTurn (Attackable effectOwner, FightDescription fightDescription)
+    protected virtual void DecrementTurn (Attackable effectOwner, FightRegistry fightDescription)
     {
         _turnDuration--;
         if (_turnDuration <= 0)
@@ -85,7 +85,7 @@ public class TempEffect : ScriptableObject
         particle.Play ();
     }
 
-    protected virtual void OnEffectWearsOff (Attackable effectOwner, FightDescription fightDescription)
+    protected virtual void OnEffectWearsOff (Attackable effectOwner, FightRegistry fightDescription)
     {
         _onEffectWoreOff?.Invoke ();
         _effectWoreOff = true;

@@ -307,7 +307,7 @@ public class Attackable : CombatEntity
     }
 
     private const float SECONDS_BETWEEN_EFFECTS = 0.5f;
-    public void ApplyTempEffects (Action onAllEffectApplied, FightDescription fightDescription, TempEffect.Timeline timeline, int index = 0)
+    public void ApplyTempEffects (Action onAllEffectApplied, FightRegistry fightDescription, TempEffect.Timeline timeline, int index = 0)
     {
         if (!_tempEffects.ContainsKey (timeline) || _tempEffects[timeline].Count == 0 || index >= _tempEffects[timeline].Count)
         {

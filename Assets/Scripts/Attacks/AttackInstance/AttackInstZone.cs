@@ -7,8 +7,9 @@ public class AttackInstZone : AttackInstance
     public AttackableDetector AttackableDetectorTemplate;
     public Vector2 ZoneSize;
 
-    public AttackInstZone (Attack attack, Character owner, FightDescription fightDescription) : base (attack, owner, fightDescription)
+    public override void Init (Attack attack, Character owner)
     {
+        base.Init (attack, owner);
         AttackZone attackZone = attack as AttackZone ??
             throw new ArgumentException (nameof (attack) + " must be of type " + nameof (AttackZone));
 
@@ -19,7 +20,9 @@ public class AttackInstZone : AttackInstance
 
     public override AttackInstance GetCopy ()
     {
-        return new AttackInstZone (_attack, _owner, _fightDescription);
+        AttackInstZone attackInstZone = new AttackInstZone ();
+        attackInstZone.Init (_attack, _owner);
+        return attackInstZone;
     }
 
     public override void Execute (Character attacker, Attackable target, Vector3 attackPos, Action onAttackEnded,

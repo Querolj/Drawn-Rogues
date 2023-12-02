@@ -10,7 +10,7 @@ public class BleedingTempEffect : TempEffect
     public Vector3 LastOwnerPosition;
 
     private const float BLEED_STRENGHT = 8f;
-    public override void Apply (Attackable effectOwner, FightDescription fightDescription, Action onAnimeEnded)
+    public override void Apply (Attackable effectOwner, FightRegistry fightDescription, Action onAnimeEnded)
     {
         float distance = Vector3.Distance (effectOwner.transform.position, LastOwnerPosition);
 
@@ -27,7 +27,7 @@ public class BleedingTempEffect : TempEffect
             });
     }
 
-    protected override void OnEffectWearsOff (Attackable effectOwner, FightDescription fightDescription)
+    protected override void OnEffectWearsOff (Attackable effectOwner, FightRegistry fightDescription)
     {
         base.OnEffectWearsOff (effectOwner, fightDescription);
         if (effectOwner.Stats.AttackableState.HasState (State.Bleed))

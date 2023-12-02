@@ -10,12 +10,17 @@ public abstract class AIBehaviour : MonoBehaviour
     protected Character _character;
     protected TrajectoryCalculator _trajectoryCalculator;
     protected CharacterAnimation _characterAnimation;
+
+    #region  Injected
     private ActionDelayer _actionDelayer;
+    protected AttackInstance.Factory _attackInstanceFactory;
+    #endregion
 
     [Inject, UsedImplicitly]
-    private void Init (ActionDelayer actionDelayer)
+    private void Init (ActionDelayer actionDelayer, AttackInstance.Factory attackInstanceFactory)
     {
         _actionDelayer = actionDelayer;
+        _attackInstanceFactory = attackInstanceFactory;
     }
 
     private void Awake ()
@@ -25,7 +30,7 @@ public abstract class AIBehaviour : MonoBehaviour
         _character = GetComponent<Character> ();
     }
 
-    public virtual void ExecuteTurn (CombatZone combatZone, Character playerCharacter, FightDescription fightDescription, Action onTurnEnd)
+    public virtual void ExecuteTurn (CombatZone combatZone, Character playerCharacter, FightRegistry fightDescription, Action onTurnEnd)
     {
         throw new NotImplementedException ();
     }
@@ -35,7 +40,7 @@ public abstract class AIBehaviour : MonoBehaviour
 
         Vector3 attackPos = ((Bounds) playerCharacter.GetSpriteBounds ()).center;
         attackPos.z = _character.transform.position.z;
-        AttackInstance attackInstance = AttackInstance.Factory.Create (attack, _character);
+        AttackInstance attackInstance = _attackInstanceFactory.Create (attack, _character);
         attackInstance.OnAttackStarted += _characterAnimation.PlayAttackAnimation;
 
         if ((_character.CharMovement.DirectionRight && playerCharacter.transform.position.x < _character.transform.position.x) ||

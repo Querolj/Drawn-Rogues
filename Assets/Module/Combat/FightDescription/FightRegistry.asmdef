@@ -1,5 +1,5 @@
 {
-    "name": "FightDescription",
+    "name": "FightRegistry",
     "rootNamespace": "",
     "references": [
         "GUID:f7b019b8bc906924e93022448a2882eb",

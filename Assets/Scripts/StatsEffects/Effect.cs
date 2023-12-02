@@ -42,7 +42,7 @@ public class Effect : ScriptableObject
         SetInitialValue (_initialValue + value);
     }
 
-    public void ApplyOnUser (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightDescription fightDescription, Action onAnimeEnded)
+    public void ApplyOnUser (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightDescription, Action onAnimeEnded)
     {
         if (!CheckApplyCondition (attack, ApplyConditionsOnUser))
         {
@@ -54,12 +54,12 @@ public class Effect : ScriptableObject
         ApplyOnUserInternal (user, attack, target, inflictedDamage, fightDescription, onAnimeEnded);
     }
 
-    protected virtual void ApplyOnUserInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightDescription fightDescription, Action onAnimeEnded)
+    protected virtual void ApplyOnUserInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightDescription, Action onAnimeEnded)
     {
         onAnimeEnded?.Invoke ();
     }
 
-    public void ApplyOnTarget (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightDescription fightDescription, Action onAnimeEnded)
+    public void ApplyOnTarget (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightDescription, Action onAnimeEnded)
     {
         if (!CheckApplyCondition (attack, ApplyConditionsOnTarget))
         {
@@ -71,7 +71,7 @@ public class Effect : ScriptableObject
         ApplyOnTargetInternal (user, attack, target, inflictedDamage, fightDescription, onAnimeEnded);
     }
 
-    protected virtual void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightDescription fightDescription, Action onAnimeEnded)
+    protected virtual void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightDescription, Action onAnimeEnded)
     {
         onAnimeEnded?.Invoke ();
     }

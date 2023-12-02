@@ -11,15 +11,16 @@ public class AttackButtonGenerator : MonoBehaviour
     [SerializeField]
     private Button _attackButtonTemplate;
 
+    #region  Injected
     private AttackSelectionManager _attackSelectionManager;
-
-    private Character _lastPlayerCharacter = null;
-    private Action _onAttackEnded;
+    private AttackInstance.Factory _attackInstanceFactory;
+    #endregion
 
     [Inject, UsedImplicitly]
-    private void Init (AttackSelectionManager attackSelectionManager)
+    private void Init (AttackSelectionManager attackSelectionManager, AttackInstance.Factory attackInstanceFactory)
     {
         _attackSelectionManager = attackSelectionManager;
+        _attackInstanceFactory = attackInstanceFactory;
     }
 
     public void GenerateButtons (Character playerCharacter, CombatZone combatZone, Action onAttackEnded)
@@ -32,12 +33,6 @@ public class AttackButtonGenerator : MonoBehaviour
 
         foreach (GameObject go in toDelete)
             GameObject.DestroyImmediate (go);
-
-        _onAttackEnded = onAttackEnded ??
-            throw new ArgumentNullException (nameof (onAttackEnded));
-
-        _lastPlayerCharacter = playerCharacter ??
-            throw new ArgumentNullException (nameof (playerCharacter));
 
         if (combatZone == null)
             throw new ArgumentNullException (nameof (combatZone));
@@ -55,7 +50,7 @@ public class AttackButtonGenerator : MonoBehaviour
                 {
                     AttackSelection attackSelection = _attackSelectionManager.SwitchAttackSelection (attack.AttackSelectionType, playerCharacter.transform.position);
                     attackSelection.gameObject.SetActive (true);
-                    AttackInstance attackInstance = AttackInstFactory.Create (attack, playerCharacter);
+                    AttackInstance attackInstance = _attackInstanceFactory.Create (attack, playerCharacter);
                     attackInstance.OnAttackStarted += playerCharacter.GetComponentInParent<CharacterAnimation> ().PlayAttackAnimation;
                     attackSelection.Activate (attackInstance, playerCharacter, combatZone, onAttackEnded);
                 }

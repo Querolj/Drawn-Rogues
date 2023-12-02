@@ -10,7 +10,7 @@ public class TempModMainStatEffect : Effect
     private Character _targetChar;
     public Sprite Icon;
 
-    protected override void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightDescription fightDescription, Action onAnimeEnded)
+    protected override void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightDescription, Action onAnimeEnded)
     {
         _targetChar = target as Character;
         if (_targetChar == null)

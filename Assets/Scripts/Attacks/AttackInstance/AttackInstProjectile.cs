@@ -9,8 +9,9 @@ public class AttackInstProjectile : AttackInstance
 
     private Projectile _projectileTemplate;
 
-    public AttackInstProjectile (Attack attack, Character owner, FightDescription fightDescription) : base (attack, owner, fightDescription)
+    public override void Init (Attack attack, Character owner)
     {
+        base.Init (attack, owner);
         AttackProjectile attackProjectile = attack as AttackProjectile ??
             throw new ArgumentException (nameof (attack) + " must be of type " + nameof (AttackProjectile));
 
@@ -22,7 +23,9 @@ public class AttackInstProjectile : AttackInstance
 
     public override AttackInstance GetCopy ()
     {
-        return new AttackInstProjectile (_attack, _owner, _fightDescription);
+        AttackInstProjectile attackInstProjectile = new AttackInstProjectile ();
+        attackInstProjectile.Init (_attack, _owner);
+        return attackInstProjectile;
     }
 
     public override void Execute (Character attacker, Attackable target, Vector3 attackPos, Action onAttackEnded,

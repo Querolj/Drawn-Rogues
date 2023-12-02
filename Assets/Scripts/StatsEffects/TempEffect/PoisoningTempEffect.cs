@@ -4,7 +4,7 @@ using UnityEngine;
 [CreateAssetMenu (fileName = "PoisoningTempEffect", menuName = "TempEffect/PoisoningTempEffect", order = 1)]
 public class PoisoningTempEffect : TempEffect
 {
-    public override void Apply (Attackable effectOwner, FightDescription fightDescription, Action onAnimeEnded)
+    public override void Apply (Attackable effectOwner, FightRegistry fightDescription, Action onAnimeEnded)
     {
         PlayAnimation (effectOwner.transform.position,
             () =>
@@ -17,7 +17,7 @@ public class PoisoningTempEffect : TempEffect
             });
     }
 
-    protected override void OnEffectWearsOff (Attackable effectOwner, FightDescription fightDescription)
+    protected override void OnEffectWearsOff (Attackable effectOwner, FightRegistry fightDescription)
     {
         base.OnEffectWearsOff (effectOwner, fightDescription);
         if (effectOwner.Stats.AttackableState.HasState (State.Poisonned))

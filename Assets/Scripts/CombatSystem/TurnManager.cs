@@ -13,9 +13,6 @@ public class TurnManager : MonoBehaviour
     public DrawedCharacter ActivePlayerCharacter { get { return _playerController.ControlledCharacter; } }
 
     [SerializeField]
-    private FightDescription _fightDescription;
-
-    [SerializeField]
     private EnemyTurnIndicator _enemyTurnIndicator;
 
     private CombatZone _currentCombatZone;
@@ -36,15 +33,17 @@ public class TurnManager : MonoBehaviour
     private Stack<CombatEntity> _combatEntitiesLeftToPlay;
 
     private ActionDelayer _actionDelayer;
+    private FightRegistry _fightRegistry;
     private bool _inCombat = false;
     public bool InCombat { get { return _inCombat; } }
 
     private const float SECONDS_BETWEEN_APPLY_EFFECTS = 0.5f;
 
     [Inject, UsedImplicitly]
-    private void Init (ActionDelayer actionDelayer)
+    private void Init (ActionDelayer actionDelayer, FightRegistry fightRegistry)
     {
         _actionDelayer = actionDelayer;
+        _fightRegistry = fightRegistry;
     }
 
     private void Awake ()
@@ -100,7 +99,7 @@ public class TurnManager : MonoBehaviour
         if (!character.CanPlayTurn ())
         {
             _enemyTurnIndicator.Hide ();
-            _fightDescription.Report (character.Description.DisplayName + " can't play this turn");
+            _fightRegistry.Report (character.Description.DisplayName + " can't play this turn");
             EndTurn (character);
             yield return null;
         }
@@ -122,7 +121,7 @@ public class TurnManager : MonoBehaviour
                 OneEnemyTurnStart?.Invoke (character);
                 yield return new WaitForSeconds (0.5f);
                 if (character.HasAI ())
-                    character.GetAI ().ExecuteTurn (_currentCombatZone, _playerController.ControlledCharacter, _fightDescription, () => EndTurn (character));
+                    character.GetAI ().ExecuteTurn (_currentCombatZone, _playerController.ControlledCharacter, _fightRegistry, () => EndTurn (character));
             }
             else
             {
@@ -195,7 +194,7 @@ public class TurnManager : MonoBehaviour
         if (_combatEntitiesLeftToPlay.Count > 1)
         {
             _roundCount++;
-            _fightDescription.ReportRoundStart (_roundCount);
+            _fightRegistry.ReportRoundStart (_roundCount);
             NextTurn ();
         }
         else
@@ -208,7 +207,7 @@ public class TurnManager : MonoBehaviour
 
     private void EndCombat ()
     {
-        _fightDescription.Report ("Combat ended!");
+        _fightRegistry.Report ("Combat ended!");
         _inCombat = false;
         _playerController.StopCombatMode ();
         OnCombatEnded?.Invoke (_currentCombatZone);
@@ -217,7 +216,7 @@ public class TurnManager : MonoBehaviour
 
     public void EscapeFight ()
     {
-        _fightDescription.Report ("Escaped!");
+        _fightRegistry.Report ("Escaped!");
         _inCombat = false;
         _playerController.StopCombatMode ();
         OnCombatEnded?.Invoke (_currentCombatZone);
@@ -241,7 +240,7 @@ public class TurnManager : MonoBehaviour
 
         _actionDelayer.ExecuteInSeconds (SECONDS_BETWEEN_APPLY_EFFECTS, () =>
         {
-            attackable.ApplyTempEffects (() => ApplyAllTempEffects (attackables, timeline, onAllTempEffectsApplied), _fightDescription, timeline);
+            attackable.ApplyTempEffects (() => ApplyAllTempEffects (attackables, timeline, onAllTempEffectsApplied), _fightRegistry, timeline);
         });
     }
 }

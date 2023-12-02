@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class FightDescription : MonoBehaviour, IPointerClickHandler, IPointerExitHandler
+public class FightRegistry : MonoBehaviour
 {
     [SerializeField]
     private GameObject _content;
@@ -27,6 +27,7 @@ public class FightDescription : MonoBehaviour, IPointerClickHandler, IPointerExi
 
     private void Awake ()
     {
+        Debug.Log ("FightRegistry Awake");
         //AttackInstFactory.Init (this);
         VerticalLayoutGroup layout = _content.GetComponent<VerticalLayoutGroup> ();
         if (layout == null)
@@ -50,15 +51,7 @@ public class FightDescription : MonoBehaviour, IPointerClickHandler, IPointerExi
         line.transform.localScale = Vector3.one;
 
         _contentHeight += spacingBetweenLines;
-        StartCoroutine (RepositionContent ());
-    }
-
-    private IEnumerator RepositionContent ()
-    {
-        yield return new WaitForEndOfFrame ();
-        Vector3 newContentPos = _content.transform.localPosition;
-        newContentPos.y = _contentHeight;
-        _content.transform.localPosition = newContentPos;
+        // StartCoroutine (RepositionContent ());
     }
 
     public void ReportAttackDamage (AttackableDescription attackerDescription, AttackableDescription targetDescription,
@@ -117,36 +110,44 @@ public class FightDescription : MonoBehaviour, IPointerClickHandler, IPointerExi
         AddLine (text);
     }
 
-    public void OnPointerExit (PointerEventData eventData)
-    {
-        _isZoomed = false;
-        ZoomOut ();
-    }
+    // private IEnumerator RepositionContent ()
+    // {
+    //     yield return new WaitForEndOfFrame ();
+    //     Vector3 newContentPos = _content.transform.localPosition;
+    //     newContentPos.y = _contentHeight;
+    //     _content.transform.localPosition = newContentPos;
+    // }
 
-    public void OnPointerClick (PointerEventData eventData)
-    {
-        if (_isZoomed)
-        {
-            _isZoomed = false;
-            ZoomOut ();
-        }
-        else
-        {
-            _isZoomed = true;
-            ZoomIn ();
-        }
+    // public void OnPointerExit (PointerEventData eventData)
+    // {
+    //     _isZoomed = false;
+    //     ZoomOut ();
+    // }
 
-    }
+    // public void OnPointerClick (PointerEventData eventData)
+    // {
+    //     if (_isZoomed)
+    //     {
+    //         _isZoomed = false;
+    //         ZoomOut ();
+    //     }
+    //     else
+    //     {
+    //         _isZoomed = true;
+    //         ZoomIn ();
+    //     }
 
-    private void ZoomIn ()
-    {
-        _scrollViewRect.offsetMax = new Vector2 (_scrollViewRect.offsetMax.x, TOP_SCROLL_VIEW_ZOOMED);
-        StartCoroutine (RepositionContent ());
-    }
+    // }
 
-    private void ZoomOut ()
-    {
-        _scrollViewRect.offsetMax = new Vector2 (_scrollViewRect.offsetMax.x, TOP_SCROLL_VIEW_UNZOOMED);
-        StartCoroutine (RepositionContent ());
-    }
+    // private void ZoomIn ()
+    // {
+    //     _scrollViewRect.offsetMax = new Vector2 (_scrollViewRect.offsetMax.x, TOP_SCROLL_VIEW_ZOOMED);
+    //     StartCoroutine (RepositionContent ());
+    // }
+
+    // private void ZoomOut ()
+    // {
+    //     _scrollViewRect.offsetMax = new Vector2 (_scrollViewRect.offsetMax.x, TOP_SCROLL_VIEW_UNZOOMED);
+    //     StartCoroutine (RepositionContent ());
+    // }
 }

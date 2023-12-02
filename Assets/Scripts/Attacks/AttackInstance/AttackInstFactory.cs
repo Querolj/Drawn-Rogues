@@ -1,33 +1,34 @@
 using System;
+using Zenject;
 
-public class AttackInstFactory
+public class AttackInstFactory : IFactory<Attack, Character, AttackInstance>
 {
-    private static FightDescription _fightDescription;
-    public static void Init (FightDescription fightDescription)
-    {
-        if (_fightDescription != null)
-            throw new InvalidOperationException ("AttackInstFactory already initialized");
+    DiContainer _container;
 
-        _fightDescription = fightDescription ??
-            throw new ArgumentNullException (nameof (fightDescription));
+    public AttackInstFactory (DiContainer container)
+    {
+        _container = container;
     }
 
-    public static AttackInstance Create (Attack attack, Character owner)
+    public AttackInstance Create (Attack attack, Character owner)
     {
-
+        AttackInstance attackInstance;
         if (attack as AttackTrajectoryZone)
-            return new AttackInstTrajectoryZone (attack, owner, _fightDescription);
+            attackInstance = _container.Instantiate<AttackInstTrajectoryZone> ();
         else if (attack as AttackZone)
-            return new AttackInstZone (attack, owner, _fightDescription);
+            attackInstance = _container.Instantiate<AttackInstZone> ();
         else if (attack as AttackProjectile)
-            return new AttackInstProjectile (attack, owner, _fightDescription);
+            attackInstance = _container.Instantiate<AttackInstProjectile> ();
         else if (attack as AttackTrajectory)
-            return new AttackInstTrajectory (attack, owner, _fightDescription);
+            attackInstance = _container.Instantiate<AttackInstTrajectory> ();
         else if (attack as AttackSingleTarget)
-            return new AttackInstSingleTarget (attack, owner, _fightDescription);
+            attackInstance = _container.Instantiate<AttackInstSingleTarget> ();
         else if (attack as AttackJump)
-            return new AttackInstJump (attack, owner, _fightDescription);
+            attackInstance = _container.Instantiate<AttackInstJump> ();
         else
             throw new ArgumentException ("Attack type " + attack.GetType () + "not supported");
+
+        attackInstance.Init (attack, owner);
+        return attackInstance;
     }
 }

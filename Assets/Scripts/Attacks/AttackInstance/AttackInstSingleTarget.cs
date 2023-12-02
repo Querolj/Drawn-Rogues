@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class AttackInstSingleTarget : AttackInstance
 {
-    public AttackInstSingleTarget (Attack attack, Character owner, FightDescription fightDescription) : base (attack, owner, fightDescription) { }
-
     public override void Execute (Character attacker, Attackable target, Vector3 attackPos, Action onAttackEnded,
         List<Attackable> targetsInZone = null, List<Vector3> trajectory = null)
     {
@@ -32,6 +30,8 @@ public class AttackInstSingleTarget : AttackInstance
 
     public override AttackInstance GetCopy ()
     {
-        return new AttackInstSingleTarget (_attack, _owner, _fightDescription);
+        AttackInstSingleTarget attackInstSingleTarget = new AttackInstSingleTarget ();
+        attackInstSingleTarget.Init (_attack, _owner);
+        return attackInstSingleTarget;
     }
 }

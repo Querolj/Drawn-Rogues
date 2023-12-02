@@ -7,7 +7,7 @@ public class AIBehaviourEncircle : AIBehaviour
     [SerializeField]
     private Attack _circleAttack;
 
-    public override void ExecuteTurn (CombatZone combatZone, Character playerCharacter, FightDescription fightDescription, Action onTurnEnd)
+    public override void ExecuteTurn (CombatZone combatZone, Character playerCharacter, FightRegistry fightDescription, Action onTurnEnd)
     {
         if (_circleAttack == null)
             throw new ArgumentNullException (nameof (_circleAttack));
@@ -35,7 +35,7 @@ public class AIBehaviourEncircle : AIBehaviour
         {
             Debug.Log ("Encircle " + _character.Description.DisplayName + " to " + targetPos);
             _character.CharMovement.TurnTowardTarget (targetPos);
-            AttackInstJump jump = AttackInstFactory.Create (_circleAttack, _character) as AttackInstJump;
+            AttackInstJump jump = _attackInstanceFactory.Create (_circleAttack, _character) as AttackInstJump;
             float radius = bounds.extents.x > bounds.extents.y ? bounds.extents.x : bounds.extents.y;
 
             List<Vector3> trajPoints = _trajectoryCalculator.GetCurvedTrajectory (_character.transform.position, targetPos, radius, _character.gameObject.GetInstanceID ());

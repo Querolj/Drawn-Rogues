@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class AttackInstJump : AttackInstance
 {
-
-    public AttackInstJump (Attack attack, Character owner, FightDescription fightDescription) : base (attack, owner, fightDescription) { }
-
     public override AttackInstance GetCopy ()
     {
-        return new AttackInstJump (_attack, _owner, _fightDescription);
+        AttackInstJump attackInstJump = new AttackInstJump ();
+        attackInstJump.Init (_attack, _owner);
+        return attackInstJump;
     }
 
     public override void Execute (Character attacker, Attackable target, Vector3 attackPos, Action onAttackEnded,

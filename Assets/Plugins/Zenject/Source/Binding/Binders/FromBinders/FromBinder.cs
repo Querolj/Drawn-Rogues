@@ -382,7 +382,7 @@ namespace Zenject
                 prefab, new GameObjectCreationParameters());
         }
 
-        internal NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder FromComponentsInNewPrefab(
+        public NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder FromComponentsInNewPrefab(
             UnityEngine.Object prefab, GameObjectCreationParameters gameObjectInfo)
         {
             BindingUtil.AssertIsValidPrefab(prefab);

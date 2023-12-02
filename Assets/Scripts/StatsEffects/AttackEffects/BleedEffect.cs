@@ -8,7 +8,7 @@ public class BleedEffect : Effect
 
     public BleedingTempEffect BleedingEffect;
 
-    protected override void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightDescription fightDescription, Action onAnimeEnded)
+    protected override void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightDescription, Action onAnimeEnded)
     {
         string coloredUserName = fightDescription.GetColoredAttackableName (user.Description, user.tag);
         string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description, target.tag);

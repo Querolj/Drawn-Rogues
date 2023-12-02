@@ -24,6 +24,12 @@ public class MapInstaller : MonoInstaller
     [SerializeField]
     private WorldUIContainer _worldUIContainer;
 
+    [SerializeField]
+    private GameObject _combatUIContainer;
+
+    [SerializeField]
+    private FightRegistry _fightRegistry;
+
     public override void InstallBindings ()
     {
         Container.Bind<ModeSwitcher> ().FromComponentsInNewPrefab (_modeSwitcher).AsSingle ();
@@ -33,12 +39,15 @@ public class MapInstaller : MonoInstaller
         Container.Bind<ResizableBrush> ().FromNewScriptableObject (_resizableBrush).AsSingle ();
         Container.Bind<TrajectoryDrawer> ().FromComponentsInNewPrefab (_trajectoryDrawer).AsSingle ();
         Container.Bind<AttackSelectionManager> ().FromComponentsInNewPrefab (_attackSelectionManager).AsSingle ();
-        Container.Bind<FightDescription> ().AsSingle ();
+        GameObjectCreationParameters combatUIContainerParams = new GameObjectCreationParameters ();
+        combatUIContainerParams.ParentTransform = _combatUIContainer.transform;
+        Container.Bind<FightRegistry> ().FromComponentsInNewPrefab (_fightRegistry, combatUIContainerParams).AsSingle().NonLazy();
         Container.Bind<BaseColorInventory> ().AsSingle ();
         Container.Bind<TrajectoryCalculator> ().AsSingle ();
 
         // Factories
         Container.BindFactory<AttackSelection, AttackSelection, AttackSelection.Factory> ().FromFactory<PrefabFactory<AttackSelection>> ();
         Container.BindFactory<GameObject, CombatEntity, CombatEntity.Factory> ().FromFactory<PrefabFactory<CombatEntity>> ();
+        Container.BindFactory<Attack, Character, AttackInstance, AttackInstance.Factory> ().FromFactory<AttackInstFactory> ();
     }
 }
