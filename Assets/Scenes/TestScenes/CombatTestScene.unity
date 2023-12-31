@@ -13076,7 +13076,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c731fea54bf4b5648899c44285e91fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fightDescription: {fileID: 0}
   _enemyTurnIndicator: {fileID: 2133520621}
 --- !u!1 &2086975251
 GameObject:

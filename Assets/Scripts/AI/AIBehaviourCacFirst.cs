@@ -27,7 +27,7 @@ public class AIBehaviourCacFirst : AIBehaviour
         }
         if (reachableCacAttacks.Count == 0 && reachableNonCacAttacks.Count == 0)
         {
-            fightDescription.Report (fightDescription.GetColoredAttackableName (_character.Description, _character.tag) + " moved.");
+            fightDescription.Report (fightDescription.GetColoredAttackableName (_character.Description.DisplayName, _character.tag) + " moved.");
             MoveTowardCharacter (combatZone, playerCharacter, onTurnEnd);
         }
         else if (reachableCacAttacks.Count > 0)
@@ -37,7 +37,7 @@ public class AIBehaviourCacFirst : AIBehaviour
         }
         else if (combatZone.TryCastCharacterToAttackable (combatZone.SizeX, _character, playerCharacter, _character.transform.position, out Attackable attackable))
         {
-            fightDescription.Report (fightDescription.GetColoredAttackableName (_character.Description, _character.tag) + " moved.");
+            fightDescription.Report (fightDescription.GetColoredAttackableName (_character.Description.DisplayName, _character.tag) + " moved.");
             MoveTowardCharacter (combatZone, playerCharacter, onTurnEnd);
         }
         else

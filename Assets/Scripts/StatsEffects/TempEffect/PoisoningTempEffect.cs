@@ -4,25 +4,25 @@ using UnityEngine;
 [CreateAssetMenu (fileName = "PoisoningTempEffect", menuName = "TempEffect/PoisoningTempEffect", order = 1)]
 public class PoisoningTempEffect : TempEffect
 {
-    public override void Apply (Attackable effectOwner, FightRegistry fightDescription, Action onAnimeEnded)
+    public override void Apply (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription, Action onAnimeEnded)
     {
-        PlayAnimation (effectOwner.transform.position,
+        PlayAnimation (ownerTransform.position,
             () =>
             {
-                int poisonDamage = (int) (effectOwner.Stats.Life * 0.1f);
-                fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner.Description, effectOwner.tag) + " took <b>" + poisonDamage + "</b> damage from poisoning.");
-                effectOwner.Stats.AttackableState.ReceiveDamage (poisonDamage);
-                DecrementTurn (effectOwner, fightDescription);
+                int poisonDamage = (int) (ownerStats.Life * 0.1f);
+                fightDescription.Report (fightDescription.GetColoredAttackableName (ownerName, ownerTransform.tag) + " took <b>" + poisonDamage + "</b> damage from poisoning.");
+                ownerStats.AttackableState.ReceiveDamage (poisonDamage);
+                DecrementTurn (ownerTransform, ownerName, ownerStats, fightDescription);
                 onAnimeEnded?.Invoke ();
             });
     }
 
-    protected override void OnEffectWearsOff (Attackable effectOwner, FightRegistry fightDescription)
+    protected override void OnEffectWearsOff (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription)
     {
-        base.OnEffectWearsOff (effectOwner, fightDescription);
-        if (effectOwner.Stats.AttackableState.HasState (State.Poisonned))
-            effectOwner.Stats.AttackableState.RemoveState (State.Poisonned);
+        base.OnEffectWearsOff (ownerTransform, ownerName, ownerStats, fightDescription);
+        if (ownerStats.AttackableState.HasState (State.Poisonned))
+            ownerStats.AttackableState.RemoveState (State.Poisonned);
 
-        fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner.Description, effectOwner.tag) + " is no longuer poisonned!");
+        fightDescription.Report (fightDescription.GetColoredAttackableName (ownerName, ownerTransform.tag) + " is no longuer poisonned!");
     }
 }

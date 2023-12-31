@@ -96,7 +96,7 @@ public class DrawedCharacter : Character
 
     private void UpdateStats (Dictionary < (int, PixelUsage), int > pixelUsageByIds, bool resetCurrentLife = true)
     {
-        Stats = new Stats (pixelUsageByIds);
+        Stats = new AttackableStats (pixelUsageByIds);
 
         foreach (ModifierInfos modifierInfos in _modifierAdded)
         {

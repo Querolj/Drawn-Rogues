@@ -28,6 +28,9 @@ public class Attackable : CombatEntity
 
     [SerializeField]
     protected StatsSerialized _statsSerialized = new StatsSerialized ();
+    
+    [SerializeField]
+    protected List<EffectSerialized> _effectsSerialized = new List<EffectSerialized> ();
 
     [SerializeField]
     protected Outline _outline;
@@ -41,13 +44,13 @@ public class Attackable : CombatEntity
         get { return _renderer; }
     }
 
-    public Stats Stats = new Stats ();
+    public AttackableStats Stats = new AttackableStats ();
     public Dictionary<string, Effect> EffectInstancesByName
     {
         get
         {
             Dictionary<string, Effect> effectsInstByNames = new Dictionary<string, Effect> ();
-            foreach (Effect effect in Stats.EffectByNames.Values)
+            foreach (Effect effect in EffectByNames.Values)
             {
                 if (!effectsInstByNames.ContainsKey (effect.EffectName))
                     effectsInstByNames.Add (effect.EffectName, effect.GetCopy ());
@@ -68,6 +71,26 @@ public class Attackable : CombatEntity
     public List<TempEffect> TempEffectsList
     {
         get { return _tempEffects.Values.SelectMany (x => x).ToList (); }
+    }
+
+    private Dictionary<string, Effect> _effectByNames = new Dictionary<string, Effect> ();
+    public Dictionary<string, Effect> EffectByNames
+    {
+        get { return _effectByNames; }
+    }
+
+    public Dictionary<string, Effect> EffectByNamesCopy
+    {
+        get
+        {
+            Dictionary<string, Effect> effectsInstByNames = new Dictionary<string, Effect> ();
+            foreach (KeyValuePair<string, Effect> effectByName in _effectByNames)
+            {
+                effectsInstByNames.Add (effectByName.Key, effectByName.Value.GetCopy ());
+            }
+
+            return effectsInstByNames;
+        }
     }
 
     private bool _hightLightSprite = false;
@@ -124,6 +147,11 @@ public class Attackable : CombatEntity
                 _willBeDestroyed = true;
                 StartCoroutine (DestroyInSeconds (DEATH_DELAY));
             };
+        }
+
+        if(_effectsSerialized?.Count > 0)
+        {
+            AddEffectSerialized (_effectsSerialized);
         }
     }
 
@@ -291,54 +319,6 @@ public class Attackable : CombatEntity
 
     }
 
-    public void AddTempEffect (TempEffect tempEffect)
-    {
-        if (!_tempEffects.ContainsKey (tempEffect.EffectApplicationTimeline))
-            _tempEffects.Add (tempEffect.EffectApplicationTimeline, new List<TempEffect> ());
-
-        _tempEffects[tempEffect.EffectApplicationTimeline].Add (tempEffect);
-        _stateUI.UpdateStateIcons ();
-    }
-
-    public void RemoveAllTempEffect ()
-    {
-        _tempEffects.Clear ();
-        _stateUI.UpdateStateIcons ();
-    }
-
-    private const float SECONDS_BETWEEN_EFFECTS = 0.5f;
-    public void ApplyTempEffects (Action onAllEffectApplied, FightRegistry fightDescription, TempEffect.Timeline timeline, int index = 0)
-    {
-        if (!_tempEffects.ContainsKey (timeline) || _tempEffects[timeline].Count == 0 || index >= _tempEffects[timeline].Count)
-        {
-            onAllEffectApplied?.Invoke ();
-            return;
-        }
-
-        _tempEffects[timeline][index].Apply (this, fightDescription, () =>
-        {
-            int nextIndex = index + 1;
-
-            if (_tempEffects[timeline][index].EffectWoreOff)
-            {
-                _tempEffects[timeline].RemoveAt (index);
-                nextIndex = index;
-            }
-            _stateUI.UpdateStateIcons ();
-
-            if (nextIndex < _tempEffects[timeline].Count)
-            {
-                _actionDelayer.ExecuteInSeconds (SECONDS_BETWEEN_EFFECTS, () =>
-                {
-                    ApplyTempEffects (onAllEffectApplied, fightDescription, timeline, nextIndex);
-                });
-            }
-            else
-                onAllEffectApplied?.Invoke ();
-
-        });
-    }
-
     public void DisplayOutline (Color color)
     {
         _outline.ActivateOutline (color);
@@ -363,4 +343,73 @@ public class Attackable : CombatEntity
         if (_stateUI != null)
             _stateUI.transform.localScale = Vector3.one;
     }
+
+    #region Effects
+    public void AddTempEffect (TempEffect tempEffect)
+    {
+        if (!_tempEffects.ContainsKey (tempEffect.EffectApplicationTimeline))
+            _tempEffects.Add (tempEffect.EffectApplicationTimeline, new List<TempEffect> ());
+
+        _tempEffects[tempEffect.EffectApplicationTimeline].Add (tempEffect);
+        _stateUI.UpdateStateIcons ();
+    }
+
+    public void RemoveAllTempEffect ()
+    {
+        _tempEffects.Clear ();
+        _stateUI.UpdateStateIcons ();
+    }
+
+    private const float SECONDS_BETWEEN_EFFECTS = 0.5f;
+    public void ApplyTempEffects (Action onAllEffectApplied, FightRegistry fightDescription, TempEffect.Timeline timeline, int index = 0)
+    {
+        if (!_tempEffects.ContainsKey (timeline) || _tempEffects[timeline].Count == 0 || index >= _tempEffects[timeline].Count)
+        {
+            onAllEffectApplied?.Invoke ();
+            return;
+        }
+
+        _tempEffects[timeline][index].Apply (transform, Description.DisplayName, Stats, fightDescription, () =>
+        {
+            int nextIndex = index + 1;
+
+            if (_tempEffects[timeline][index].EffectWoreOff)
+            {
+                _tempEffects[timeline].RemoveAt (index);
+                nextIndex = index;
+            }
+            _stateUI.UpdateStateIcons ();
+
+            if (nextIndex < _tempEffects[timeline].Count)
+            {
+                _actionDelayer.ExecuteInSeconds (SECONDS_BETWEEN_EFFECTS, () =>
+                {
+                    ApplyTempEffects (onAllEffectApplied, fightDescription, timeline, nextIndex);
+                });
+            }
+            else
+                onAllEffectApplied?.Invoke ();
+
+        });
+    }
+
+    public void AddEffectSerialized(List<EffectSerialized> effectsSerialized, float multiplicator = 1f)
+    {
+        foreach (EffectSerialized effectSerialized in effectsSerialized)
+        {
+            string effectName = effectSerialized.Effect.EffectName;
+            if (_effectByNames.ContainsKey (effectName))
+            {
+                _effectByNames[effectName].AddToInitialValue (effectSerialized.Value * multiplicator);
+            }
+            else
+            {
+                Effect effect = effectSerialized.GetInstance ();
+                effect.SetInitialValue (effectSerialized.Value * multiplicator);
+                _effectByNames.Add (effectSerialized.Effect.EffectName, effect);
+            }
+        }
+    }
+
+    #endregion Effects
 }

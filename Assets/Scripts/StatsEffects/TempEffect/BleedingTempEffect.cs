@@ -10,29 +10,29 @@ public class BleedingTempEffect : TempEffect
     public Vector3 LastOwnerPosition;
 
     private const float BLEED_STRENGHT = 8f;
-    public override void Apply (Attackable effectOwner, FightRegistry fightDescription, Action onAnimeEnded)
+    public override void Apply (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription, Action onAnimeEnded)
     {
-        float distance = Vector3.Distance (effectOwner.transform.position, LastOwnerPosition);
+        float distance = Vector3.Distance (ownerTransform.position, LastOwnerPosition);
 
-        PlayAnimation (effectOwner.transform.position,
+        PlayAnimation (ownerTransform.position,
             () =>
             {
                 int bleedDamage = (int) (distance * BLEED_STRENGHT);
                 bleedDamage = Mathf.Clamp (bleedDamage, 1, bleedDamage);
-                fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner.Description, effectOwner.tag) + " took <b>" + bleedDamage + "</b> damage from " + bleeding + ".");
-                effectOwner.Stats.AttackableState.ReceiveDamage (bleedDamage);
-                DecrementTurn (effectOwner, fightDescription);
-                LastOwnerPosition = effectOwner.transform.position;
+                fightDescription.Report (fightDescription.GetColoredAttackableName (ownerName, ownerTransform.tag) + " took <b>" + bleedDamage + "</b> damage from " + bleeding + ".");
+                ownerStats.AttackableState.ReceiveDamage (bleedDamage);
+                DecrementTurn (ownerTransform, ownerName, ownerStats, fightDescription);
+                LastOwnerPosition = ownerTransform.position;
                 onAnimeEnded?.Invoke ();
             });
     }
 
-    protected override void OnEffectWearsOff (Attackable effectOwner, FightRegistry fightDescription)
+    protected override void OnEffectWearsOff (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription)
     {
-        base.OnEffectWearsOff (effectOwner, fightDescription);
-        if (effectOwner.Stats.AttackableState.HasState (State.Bleed))
-            effectOwner.Stats.AttackableState.RemoveState (State.Bleed);
+        base.OnEffectWearsOff (ownerTransform, ownerName, ownerStats, fightDescription);
+        if (ownerStats.AttackableState.HasState (State.Bleed))
+            ownerStats.AttackableState.RemoveState (State.Bleed);
 
-        fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner.Description, effectOwner.tag) + " is no longuer " + bleeding + "!");
+        fightDescription.Report (fightDescription.GetColoredAttackableName (ownerName, ownerTransform.tag) + " is no longuer " + bleeding + "!");
     }
 }

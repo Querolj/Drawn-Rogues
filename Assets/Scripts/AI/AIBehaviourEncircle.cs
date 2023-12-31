@@ -59,7 +59,7 @@ public class AIBehaviourEncircle : AIBehaviour
 
         if (reachableAttacks.Count == 0)
         {
-            fightDescription.Report (fightDescription.GetColoredAttackableName (_character.Description, _character.tag) + " moved.");
+            fightDescription.Report (fightDescription.GetColoredAttackableName (_character.Description.DisplayName, _character.tag) + " moved.");
             MoveTowardCharacter (combatZone, playerCharacter, onTurnEnd);
         }
         else

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum MainStatType
@@ -10,7 +11,7 @@ public enum MainStatType
     Mobility
 }
 
-public class Stats
+public class AttackableStats
 {
     #region Main stats
     private int _baseLife;
@@ -209,12 +210,6 @@ public class Stats
         get { return _effectOffPassiveByNames; }
     }
 
-    private Dictionary<string, Effect> _EffectByNames = new Dictionary<string, Effect> ();
-    public Dictionary<string, Effect> EffectByNames
-    {
-        get { return _EffectByNames; }
-    }
-
     private float _kilogram = 0f;
     public float Kilogram
     {
@@ -222,9 +217,9 @@ public class Stats
         set { _kilogram = value; }
     }
 
-    public Stats () { }
+    public AttackableStats () { }
 
-    public Stats (int life, int intelligence, int strenght, int mobility, float kilogram)
+    public AttackableStats (int life, int intelligence, int strenght, int mobility, float kilogram)
     {
         _baseLife = life;
         _baseIntelligence = intelligence;
@@ -233,7 +228,7 @@ public class Stats
         _kilogram = kilogram;
     }
 
-    public Stats (Dictionary < (int, PixelUsage), int > pixelUsageByIds)
+    public AttackableStats (Dictionary < (int, PixelUsage), int > pixelUsageByIds)
     {
         foreach ((int id, PixelUsage colorUsage) in pixelUsageByIds.Keys)
         {
@@ -362,69 +357,49 @@ public class Stats
         {
             AddToPassiveDict (_effectOffPassiveByNames, effectOffPassiveSerialized, multiplicator);
         }
-
-        foreach (EffectSerialized effectSerialized in statsSerialized?.effectValues)
-        {
-            string effectName = effectSerialized.Effect.EffectName;
-            if (_EffectByNames.ContainsKey (effectName))
-            {
-                _EffectByNames[effectName].AddToInitialValue (effectSerialized.Value * multiplicator);
-            }
-            else
-            {
-                Effect effect = effectSerialized.GetInstance ();
-                effect.SetInitialValue (effectSerialized.Value * multiplicator);
-                _EffectByNames.Add (effectSerialized.Effect.EffectName, effect);
-            }
-        }
     }
 
-    private void OverwriteStat (StatsSerialized statsSerialized, int multiplicator = 1)
-    {
-        foreach (AttackDefPassiveSerialized attackdefPassiveSerialized in statsSerialized.AttackDefPassiveValues)
-        {
-            OverwriteToPassiveDict (_attackDefPassiveByNames, attackdefPassiveSerialized, multiplicator);
-        }
+    // private void OverwriteStat (StatsSerialized statsSerialized, int multiplicator = 1)
+    // {
+    //     foreach (AttackDefPassiveSerialized attackdefPassiveSerialized in statsSerialized.AttackDefPassiveValues)
+    //     {
+    //         OverwriteToPassiveDict (_attackDefPassiveByNames, attackdefPassiveSerialized, multiplicator);
+    //     }
 
-        foreach (AttackOffPassiveSerialized attackOffPassiveSerialized in statsSerialized.AttackOffPassiveValues)
-        {
-            OverwriteToPassiveDict (_attackoffPassiveByNames, attackOffPassiveSerialized, multiplicator);
-        }
+    //     foreach (AttackOffPassiveSerialized attackOffPassiveSerialized in statsSerialized.AttackOffPassiveValues)
+    //     {
+    //         OverwriteToPassiveDict (_attackoffPassiveByNames, attackOffPassiveSerialized, multiplicator);
+    //     }
 
-        foreach (EffectDefPassiveSerialized effectDefPassiveSerialized in statsSerialized.EffectDefPassiveValues)
-        {
-            OverwriteToPassiveDict (_effectDefPassiveByNames, effectDefPassiveSerialized, multiplicator);
-        }
+    //     foreach (EffectDefPassiveSerialized effectDefPassiveSerialized in statsSerialized.EffectDefPassiveValues)
+    //     {
+    //         OverwriteToPassiveDict (_effectDefPassiveByNames, effectDefPassiveSerialized, multiplicator);
+    //     }
 
-        foreach (EffectOffPassiveSerialized effectOffPassiveSerialized in statsSerialized.EffectOffPassiveValues)
-        {
-            OverwriteToPassiveDict (_effectOffPassiveByNames, effectOffPassiveSerialized, multiplicator);
-        }
+    //     foreach (EffectOffPassiveSerialized effectOffPassiveSerialized in statsSerialized.EffectOffPassiveValues)
+    //     {
+    //         OverwriteToPassiveDict (_effectOffPassiveByNames, effectOffPassiveSerialized, multiplicator);
+    //     }
 
-        foreach (EffectSerialized effectSerialized in statsSerialized.effectValues)
-        {
-            string effectName = effectSerialized.Effect.EffectName;
-            if (_EffectByNames.ContainsKey (effectName))
-            {
-                _EffectByNames[effectName].SetInitialValue (effectSerialized.Value * multiplicator);
-            }
-            else
-            {
-                Effect effect = effectSerialized.GetInstance ();
-                effect.SetInitialValue (effectSerialized.Value * multiplicator);
-                _EffectByNames.Add (effectSerialized.Effect.EffectName, effect);
-            }
-        }
-    }
+    //     foreach (EffectSerialized effectSerialized in statsSerialized.effectValues)
+    //     {
+    //         string effectName = effectSerialized.Effect.EffectName;
+    //         if (_effectByNames.ContainsKey (effectName))
+    //         {
+    //             _effectByNames[effectName].SetInitialValue (effectSerialized.Value * multiplicator);
+    //         }
+    //         else
+    //         {
+    //             Effect effect = effectSerialized.GetInstance ();
+    //             effect.SetInitialValue (effectSerialized.Value * multiplicator);
+    //             _effectByNames.Add (effectSerialized.Effect.EffectName, effect);
+    //         }
+    //     }
+    // }
 
     public override string ToString ()
     {
         string s = "Life : " + Life + "\nIntelligence : " + Intelligence + "\nStrenght : " + Strenght + "\nMobility : " + Mobility;
-
-        foreach (KeyValuePair<string, Effect> stat in _EffectByNames)
-        {
-            s += "\n" + stat.Value;
-        }
 
         foreach (KeyValuePair<string, AttackOffPassive> stat in _attackoffPassiveByNames)
         {
@@ -457,10 +432,9 @@ public class StatsSerialized
     public List<AttackOffPassiveSerialized> AttackOffPassiveValues = new List<AttackOffPassiveSerialized> ();
     public List<EffectDefPassiveSerialized> EffectDefPassiveValues = new List<EffectDefPassiveSerialized> ();
     public List<EffectOffPassiveSerialized> EffectOffPassiveValues = new List<EffectOffPassiveSerialized> ();
-    public List<EffectSerialized> effectValues = new List<EffectSerialized> ();
 
     public bool HasAnyStats ()
     {
-        return AttackDefPassiveValues?.Count > 0 || AttackOffPassiveValues?.Count > 0 || effectValues?.Count > 0;
+        return AttackDefPassiveValues?.Count > 0 || AttackOffPassiveValues?.Count > 0 || EffectDefPassiveValues?.Count > 0 || EffectOffPassiveValues?.Count > 0;
     }
 }

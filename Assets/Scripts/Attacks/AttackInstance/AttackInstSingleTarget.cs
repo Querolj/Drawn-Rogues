@@ -15,7 +15,7 @@ public class AttackInstSingleTarget : AttackInstance
         bool isDodged = DodgeTest (attackInstCopy);
         if (isDodged)
         {
-            _fightDescription.ReportAttackDodge (_attacker.Description, target.Description, attackInstCopy.Name, _attacker.tag);
+            _fightDescription.ReportAttackDodge (_attacker.Description.DisplayName, target.Description, attackInstCopy.Name, _attacker.tag);
             _onAttackEnded?.Invoke ();
             return;
         }

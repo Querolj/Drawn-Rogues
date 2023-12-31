@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class GraphicUtils
 {
-
     private static ComputeShader _calculateSpriteBoundsCs;
 
     /// <summary>

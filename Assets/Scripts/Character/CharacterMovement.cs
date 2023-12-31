@@ -28,7 +28,6 @@ public class CharacterMovement : MonoBehaviour
     private Vector3 _eulerAngleRight = Vector3.zero;
     private Vector3 _eulerAngleLeft = new Vector3 (0f, 180f, 0f);
 
-    private Camera _mainCamera;
     private Vector3 _positionTarget;
     private Vector3 _initialPosition;
     private float _lerpValue = 1.1f;
@@ -38,7 +37,6 @@ public class CharacterMovement : MonoBehaviour
         get
         {
             return _lerpValue < 1f;
-            // return _lastPosition != transform.position && !_followTrajectory && ActivateWalk;
         }
     }
 
@@ -56,7 +54,6 @@ public class CharacterMovement : MonoBehaviour
     protected virtual void Awake ()
     {
         _positionTarget = transform.position;
-        _mainCamera = Camera.main;
 
         if (_initialDirectionIsRight)
             _eulerAngleTarget = _eulerAngleRight;

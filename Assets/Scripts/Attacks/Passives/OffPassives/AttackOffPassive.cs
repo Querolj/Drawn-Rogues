@@ -2,16 +2,17 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Attack passive that is usually used to make the character boost his attack (ex : +10% fire damage)
 [CreateAssetMenu (fileName = "AttackOffPassive", menuName = "Passive/AttackOffPassive", order = 1)]
 public class AttackOffPassive : AttackPassive
 {
-    public enum AttackStatsEnum
+    public enum AttackStatsType
     {
         Damage,
         Range,
         Precision
     }
-    public AttackStatsEnum AttackStatToAlter;
+    public AttackStatsType AttackStatToAlter;
 
     public override void AlterAttack (AttackInstance attack)
     {
@@ -19,13 +20,13 @@ public class AttackOffPassive : AttackPassive
 
         switch (AttackStatToAlter)
         {
-            case AttackStatsEnum.Damage:
+            case AttackStatsType.Damage:
                 AlterDamage (attack);
                 break;
-            case AttackStatsEnum.Range:
+            case AttackStatsType.Range:
                 AlterRange (attack);
                 break;
-            case AttackStatsEnum.Precision:
+            case AttackStatsType.Precision:
                 AlterPrecision (attack);
                 break;
         }

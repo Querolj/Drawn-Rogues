@@ -54,55 +54,55 @@ public class FightRegistry : MonoBehaviour
         // StartCoroutine (RepositionContent ());
     }
 
-    public void ReportAttackDamage (AttackableDescription attackerDescription, AttackableDescription targetDescription,
+    public void ReportAttackDamage (string attackerName, string targetName,
         DamageType damageType, string attackName, int damage, string attackerTag)
     {
         bool isAttackerPlayer = _playerTag == attackerTag;
-        string attackerName = isAttackerPlayer ? GetColoredPlayerName (attackerDescription) : GetColoredEnemyName (attackerDescription);
-        string targetName = isAttackerPlayer ? GetColoredEnemyName (targetDescription) : GetColoredPlayerName (targetDescription);
+        string coloredAttackerName = isAttackerPlayer ? GetColoredPlayerName (attackerName) : GetColoredEnemyName (attackerName);
+        string coloredTargetName = isAttackerPlayer ? GetColoredEnemyName (targetName) : GetColoredPlayerName (targetName);
         string text;
         if (damageType == DamageType.Heal)
-            text = attackerName + " use <b>" + attackName + "</b> and heal " + targetName + " for <color=\"green\"><b>" + (damage * -1) + "</b></color> life.";
+            text = attackerName + " use <b>" + coloredAttackerName + "</b> and heal " + coloredTargetName + " for <color=\"green\"><b>" + (damage * -1) + "</b></color> life.";
         else
-            text = attackerName + " use <b>" + attackName + "</b> and damages " + targetName + " for <b>" + damage + "</b> damages.";
+            text = attackerName + " use <b>" + coloredAttackerName + "</b> and damages " + coloredTargetName + " for <b>" + damage + "</b> damages.";
         AddLine (text);
     }
 
-    public void ReportAttackUse (AttackableDescription attackerDescription, AttackableDescription targetDescription, string attackName, string attackerTag)
+    public void ReportAttackUse (string attackerName, AttackableDescription targetDescription, string attackName, string attackerTag)
     {
         bool isAttackerPlayer = _playerTag == attackerTag;
-        string attackerName = isAttackerPlayer ? GetColoredPlayerName (attackerDescription) : GetColoredEnemyName (attackerDescription);
-        string targetName = isAttackerPlayer ? GetColoredEnemyName (targetDescription) : GetColoredPlayerName (targetDescription);
-        string text = attackerName + " use <b>" + attackName + "</b> on " + targetName + ".";
+        string coloredAttackerName = isAttackerPlayer ? GetColoredPlayerName (attackerName) : GetColoredEnemyName (attackerName);
+        string targetName = isAttackerPlayer ? GetColoredEnemyName (attackerName) : GetColoredPlayerName (attackerName);
+        string text = coloredAttackerName + " use <b>" + attackName + "</b> on " + targetName + ".";
         AddLine (text);
     }
 
-    public void ReportAttackDodge (AttackableDescription attackerDescription, AttackableDescription targetDescription, string attackName, string attackerTag)
+    public void ReportAttackDodge (string attackerName, AttackableDescription targetDescription, string attackName, string attackerTag)
     {
         bool isAttackerPlayer = _playerTag == attackerTag;
-        string attackerName = isAttackerPlayer ? GetColoredPlayerName (attackerDescription) : GetColoredEnemyName (attackerDescription);
-        string targetName = isAttackerPlayer ? GetColoredEnemyName (targetDescription) : GetColoredPlayerName (targetDescription);
-        string text = attackerName + " use <b>" + attackName + "</b> on " + targetName + ".";
+        string coloredAttackerName = isAttackerPlayer ? GetColoredPlayerName (attackerName) : GetColoredEnemyName (attackerName);
+        string targetName = isAttackerPlayer ? GetColoredEnemyName (attackerName) : GetColoredPlayerName (attackerName);
+        string text = coloredAttackerName + " use <b>" + attackName + "</b> on " + targetName + ".";
         AddLine (text);
         text = targetName + " <b>dodged</b> the attack.";
         AddLine (text);
     }
 
-    public string GetColoredAttackableName (AttackableDescription attackableDescription, string attackerTag)
+    public string GetColoredAttackableName (string attackerName, string attackerTag)
     {
         bool isAttackerPlayer = _playerTag == attackerTag;
-        string name = isAttackerPlayer ? GetColoredEnemyName (attackableDescription) : GetColoredPlayerName (attackableDescription);
+        string name = isAttackerPlayer ? GetColoredEnemyName (attackerName) : GetColoredPlayerName (attackerName);
         return name;
     }
 
-    public string GetColoredPlayerName (AttackableDescription attackableDescription)
+    public string GetColoredPlayerName (string attackerName)
     {
-        return "<color=\"green\">" + attackableDescription.DisplayName + "</color>";
+        return "<color=\"green\">" + attackerName + "</color>";
     }
 
-    public string GetColoredEnemyName (AttackableDescription attackableDescription)
+    public string GetColoredEnemyName (string attackerName)
     {
-        return "<color=\"red\">" + attackableDescription.DisplayName + "</color>";
+        return "<color=\"red\">" + attackerName + "</color>";
     }
 
     public void Report (string text)

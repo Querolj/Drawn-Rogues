@@ -111,7 +111,7 @@ public class AttackInstance
         }
 
         // merge effect from owner with effects
-        foreach (Effect effect in _owner.Stats.EffectByNames.Values)
+        foreach (Effect effect in _owner.EffectByNames.Values)
         {
             if (!_effectInstancesByName.ContainsKey (effect.EffectName))
                 _effectInstancesByName.Add (effect.EffectName, effect);
@@ -196,14 +196,14 @@ public class AttackInstance
         if (!NoDamage)
         {
             dammageToInflict = UnityEngine.Random.Range (attackInstance.MinDamage, attackInstance.MaxDamage + 1);
-            _fightDescription.ReportAttackDamage (_attacker.Description, target.Description, attackInstance.DamageType, attackInstance.Name, dammageToInflict, _attacker.tag);
+            _fightDescription.ReportAttackDamage (_attacker.Description.DisplayName, target.Description.DisplayName, attackInstance.DamageType, attackInstance.Name, dammageToInflict, _attacker.tag);
             target.FadeSprite ();
             target.Stats.AttackableState.ReceiveDamage (dammageToInflict);
-            ApplyEffects (target.EffectInstancesByName, target, Effect.Timeline.ReceiveAttackDamage, _attacker, attackInstance, dammageToInflict);
+            ApplyEffects (target.EffectByNamesCopy, target, Effect.AttackTimeline.ReceiveAttackDamage, _attacker, attackInstance, dammageToInflict);
         }
         else
         {
-            _fightDescription.ReportAttackUse (_attacker.Description, target.Description, attackInstance.Name, _attacker.tag);
+            _fightDescription.ReportAttackUse (_attacker.Description.DisplayName, target.Description, attackInstance.Name, _attacker.tag);
         }
 
         if (_effectInstancesByName.Values.Count == 0)
@@ -212,7 +212,7 @@ public class AttackInstance
             return;
         }
 
-        ApplyEffects (_effectInstancesByName, _attacker, Effect.Timeline.AfterAttackLanded, target, attackInstance, dammageToInflict);
+        ApplyEffects (_effectInstancesByName, _attacker, Effect.AttackTimeline.AfterAttackLanded, target, attackInstance, dammageToInflict);
     }
 
     protected void TryInvokeCallback ()
@@ -226,7 +226,7 @@ public class AttackInstance
         }
     }
 
-    protected void ApplyEffects (Dictionary<string, Effect> effectInstancesByName, Attackable effectOwner, Effect.Timeline timeline, Attackable target, AttackInstance attackInstance, int dammageToInflict = 0)
+    protected void ApplyEffects (Dictionary<string, Effect> effectInstancesByName, Attackable effectOwner, Effect.AttackTimeline timeline, Attackable target, AttackInstance attackInstance, int dammageToInflict = 0)
     {
         Stack<Effect> stackEffects = new Stack<Effect> ();
         foreach (Effect effect in effectInstancesByName.Values)

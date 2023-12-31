@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c348b64cc24bfaa46836ca24d6362724, type: 3}
   m_Name: PoisonEffect
   m_EditorClassIdentifier: 
-  Name: Poison effect
+  EffectName: 
   AnimationOnApplyTemplate: {fileID: 0}
   ParticleOnApplyTemplate: {fileID: 0}
   EffectApplicationTimeline: 0
   ApplyConditionsOnUser: 
   ApplyConditionsOnTarget: 
+  _poisonDuration: 1
   TempEffect: {fileID: 11400000, guid: f0e59eaf2ae1f0d4daf79162a1530dd2, type: 2}

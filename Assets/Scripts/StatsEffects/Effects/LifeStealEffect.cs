@@ -6,8 +6,8 @@ public class LifeStealEffect : Effect
 {
     protected override void ApplyOnUserInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightDescription, Action onAnimeEnded)
     {
-        string coloredUserName = fightDescription.GetColoredAttackableName (user.Description, user.tag);
-        string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description, target.tag);
+        string coloredUserName = fightDescription.GetColoredAttackableName (user.Description.DisplayName, user.tag);
+        string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description.DisplayName, target.tag);
         int healAmount = (int) (_alteredValue * inflictedDamage);
 
         user.Stats.AttackableState.Heal (healAmount);

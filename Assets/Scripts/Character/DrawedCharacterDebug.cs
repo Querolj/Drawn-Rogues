@@ -19,7 +19,7 @@ public class DrawedCharacterDebug : DrawedCharacter
 
     protected override void Awake ()
     {
-        Stats = new Stats (_life, _intelligence, _strenght, _mobility, _kilogram);
+        Stats = new AttackableStats (_life, _intelligence, _strenght, _mobility, _kilogram);
         base.Awake ();
     }
 }

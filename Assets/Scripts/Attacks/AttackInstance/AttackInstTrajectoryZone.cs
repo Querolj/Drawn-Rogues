@@ -69,7 +69,7 @@ public class AttackInstTrajectoryZone : AttackInstance
                 bool isDodged = DodgeTest (attackInstCopy);
                 if (isDodged)
                 {
-                    _fightDescription.ReportAttackDodge (_attacker.Description, attackable.Description, attackInstCopy.Name, _attacker.tag);
+                    _fightDescription.ReportAttackDodge (_attacker.Description.DisplayName, attackable.Description, attackInstCopy.Name, _attacker.tag);
                     TryInvokeCallback ();
                     continue;
                 }

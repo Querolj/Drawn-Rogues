@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Effect : ScriptableObject
 {
-    public enum Timeline
+    public enum AttackTimeline
     {
         AfterAttackLanded,
         ReceiveAttackDamage
@@ -19,7 +19,7 @@ public class Effect : ScriptableObject
     public string EffectName;
     public SpriteAnimation AnimationOnApplyTemplate;
     public ParticleSystemCallback ParticleOnApplyTemplate;
-    public Timeline EffectApplicationTimeline;
+    public AttackTimeline EffectApplicationTimeline;
     public List<ApplyCondition> ApplyConditionsOnUser;
     public List<ApplyCondition> ApplyConditionsOnTarget;
 
@@ -42,7 +42,7 @@ public class Effect : ScriptableObject
         SetInitialValue (_initialValue + value);
     }
 
-    public void ApplyOnUser (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightDescription, Action onAnimeEnded)
+    public void ApplyOnUser (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightRegistry, Action onAnimeEnded)
     {
         if (!CheckApplyCondition (attack, ApplyConditionsOnUser))
         {
@@ -50,16 +50,16 @@ public class Effect : ScriptableObject
             return;
         }
 
-        _alteredValue = GetAlteredValue (user, target);
-        ApplyOnUserInternal (user, attack, target, inflictedDamage, fightDescription, onAnimeEnded);
+        _alteredValue = GetAlteredValue (user.Stats, target.Stats);
+        ApplyOnUserInternal (user, attack, target, inflictedDamage, fightRegistry, onAnimeEnded);
     }
 
-    protected virtual void ApplyOnUserInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightDescription, Action onAnimeEnded)
+    protected virtual void ApplyOnUserInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightRegistry, Action onAnimeEnded)
     {
         onAnimeEnded?.Invoke ();
     }
 
-    public void ApplyOnTarget (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightDescription, Action onAnimeEnded)
+    public void ApplyOnTarget (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightRegistry, Action onAnimeEnded)
     {
         if (!CheckApplyCondition (attack, ApplyConditionsOnTarget))
         {
@@ -67,11 +67,11 @@ public class Effect : ScriptableObject
             return;
         }
 
-        _alteredValue = GetAlteredValue (user, target);
-        ApplyOnTargetInternal (user, attack, target, inflictedDamage, fightDescription, onAnimeEnded);
+        _alteredValue = GetAlteredValue (user.Stats, target.Stats);
+        ApplyOnTargetInternal (user, attack, target, inflictedDamage, fightRegistry, onAnimeEnded);
     }
 
-    protected virtual void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightDescription, Action onAnimeEnded)
+    protected virtual void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightRegistry, Action onAnimeEnded)
     {
         onAnimeEnded?.Invoke ();
     }
@@ -98,15 +98,15 @@ public class Effect : ScriptableObject
         return apply;
     }
 
-    protected float GetAlteredValue (Attackable effectOwner, Attackable target)
+    protected float GetAlteredValue (AttackableStats ownerStats, AttackableStats targetStats)
     {
         float moddedValue = _initialValue;
-        foreach (EffectOffPassive offPassive in effectOwner.Stats.EffectOffPassiveByNames.Values)
+        foreach (EffectOffPassive offPassive in ownerStats.EffectOffPassiveByNames.Values)
         {
             moddedValue = offPassive.GetAlterEffectValue (this, moddedValue);
         }
 
-        foreach (EffectDefPassive defPassive in target.Stats.EffectDefPassiveByNames.Values)
+        foreach (EffectDefPassive defPassive in targetStats.EffectDefPassiveByNames.Values)
         {
             moddedValue = defPassive.GetAlterEffectValue (this, moddedValue);
         }
@@ -171,9 +171,9 @@ public class EffectSerialized
 
     public Effect GetInstance ()
     {
-        Effect attackEffect = ScriptableObject.Instantiate (Effect);
-        attackEffect.SetInitialValue (Value);
-        return attackEffect;
+        Effect effect = ScriptableObject.Instantiate (Effect);
+        effect.SetInitialValue (Value);
+        return effect;
     }
 
     public override string ToString ()

@@ -4,16 +4,16 @@ using UnityEngine;
 [CreateAssetMenu (fileName = "StunTempEffect", menuName = "TempEffect/StunTempEffect", order = 1)]
 public class StunTempEffect : TempEffect
 {
-    public override void Apply (Attackable effectOwner, FightRegistry fightDescription, Action onAnimeEnded)
+    public override void Apply (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription, Action onAnimeEnded)
     {
-        DecrementTurn (effectOwner, fightDescription);
+        DecrementTurn (ownerTransform, ownerName, ownerStats, fightDescription);
 
         if (_turnDuration >= 0) // Need to be < 0 to be sure to call OnEffectWearsOff() after the character has his attack blocked
         {
-            PlayAnimation (effectOwner.transform.position,
+            PlayAnimation (ownerTransform.position,
                 () =>
                 {
-                    fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner.Description, effectOwner.tag) + " is stunned, can't attack next turn.");
+                    fightDescription.Report (fightDescription.GetColoredAttackableName (ownerName, ownerTransform.tag) + " is stunned, can't attack next turn.");
                     onAnimeEnded?.Invoke ();
                 });
         }
@@ -24,14 +24,14 @@ public class StunTempEffect : TempEffect
 
     }
 
-    protected override void OnEffectWearsOff (Attackable effectOwner, FightRegistry fightDescription)
+    protected override void OnEffectWearsOff (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription)
     {
-        base.OnEffectWearsOff (effectOwner, fightDescription);
+        base.OnEffectWearsOff (ownerTransform, ownerName, ownerStats, fightDescription);
 
-        if (effectOwner.Stats.AttackableState.HasState (State.Stunned))
+        if (ownerStats.AttackableState.HasState (State.Stunned))
         {
-            effectOwner.Stats.AttackableState.RemoveState (State.Stunned);
-            fightDescription.Report (fightDescription.GetColoredAttackableName (effectOwner.Description, effectOwner.tag) + " is no longuer stunned!");
+            ownerStats.AttackableState.RemoveState (State.Stunned);
+            fightDescription.Report (fightDescription.GetColoredAttackableName (ownerName, ownerTransform.tag) + " is no longuer stunned!");
         }
         else
         {
@@ -39,12 +39,12 @@ public class StunTempEffect : TempEffect
         }
     }
 
-    protected override void DecrementTurn (Attackable effectOwner, FightRegistry fightDescription)
+    protected override void DecrementTurn (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription)
     {
         _turnDuration--;
         if (_turnDuration < 0) // Need to be < 0 to be sure to call OnEffectWearsOff() after the character has his attack blocked
         {
-            OnEffectWearsOff (effectOwner, fightDescription);
+            OnEffectWearsOff (ownerTransform, ownerName, ownerStats, fightDescription);
         }
     }
 }

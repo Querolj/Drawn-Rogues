@@ -6,14 +6,15 @@ using UnityEngine;
 [CreateAssetMenu (fileName = "PoisonEffect", menuName = "Effect/AttackEffect/PoisonEffect", order = 1)]
 public class PoisonEffect : Effect
 {
-    private const int POISON_DURATION = 3;
+    [SerializeField]
+    private int _poisonDuration = 3;
 
     public TempEffect TempEffect;
 
     protected override void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightDescription, Action onAnimeEnded)
     {
-        string coloredUserName = fightDescription.GetColoredAttackableName (user.Description, user.tag);
-        string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description, target.tag);
+        string coloredUserName = fightDescription.GetColoredAttackableName (user.Description.DisplayName, user.tag);
+        string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description.DisplayName, target.tag);
 
         if (TargetHasTempEffect (target, TempEffect, TempEffect.Timeline.EndRound))
         {
@@ -27,10 +28,10 @@ public class PoisonEffect : Effect
             if (!target.Stats.AttackableState.HasState (State.Poisonned))
                 target.Stats.AttackableState.AddState (State.Poisonned);
 
-            fightDescription.Report (coloredUserName + " <b>poisoned</b> " + coloredTargetName + " for <b>" + POISON_DURATION + "</b> turns!");
+            fightDescription.Report (coloredUserName + " <b>poisoned</b> " + coloredTargetName + " for <b>" + _poisonDuration + "</b> turns!");
 
             PoisoningTempEffect tmpEffect = ScriptableObject.Instantiate (TempEffect) as PoisoningTempEffect;
-            tmpEffect.Init (POISON_DURATION);
+            tmpEffect.Init (_poisonDuration);
             target.AddTempEffect (tmpEffect);
             PlayAnimation (target.GetSpriteBounds ().center, onAnimeEnded);
         }

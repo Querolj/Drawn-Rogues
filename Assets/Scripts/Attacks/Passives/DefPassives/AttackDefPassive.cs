@@ -1,15 +1,16 @@
 using System;
 using UnityEngine;
 
+// Attack passive that is usually used to make the character defend from an attack (ex : resistance to fire)
 [CreateAssetMenu (fileName = "AttackDefPassive", menuName = "Passive/AttackDefPassive", order = 1)]
 public class AttackDefPassive : AttackPassive
 {
-    public enum AttackStatsEnum
+    public enum AttackStatsType
     {
         Damage,
         Precision
     }
-    public AttackStatsEnum AttackStatToAlter;
+    public AttackStatsType AttackStatToAlter;
 
     public override void AlterAttack (AttackInstance attack)
     {
@@ -19,10 +20,10 @@ public class AttackDefPassive : AttackPassive
         base.AlterAttack (attack);
         switch (AttackStatToAlter)
         {
-            case AttackStatsEnum.Damage:
+            case AttackStatsType.Damage:
                 AlterDamage (attack);
                 break;
-            case AttackStatsEnum.Precision:
+            case AttackStatsType.Precision:
                 AlterPrecision (attack);
                 break;
         }

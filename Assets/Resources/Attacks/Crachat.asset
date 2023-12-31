@@ -23,7 +23,9 @@ MonoBehaviour:
   _range: 6
   AttackSelectionType: 1
   AttackType: 2
-  Effects: []
+  EffectsSerialized:
+  - Effect: {fileID: 11400000, guid: a1171f3f9d7e36b40bd707d209547f29, type: 2}
+    Value: 100
   AvailableForPlayer: 1
   RequiredLevel: 0
   RequiredWidthAdjectives: 

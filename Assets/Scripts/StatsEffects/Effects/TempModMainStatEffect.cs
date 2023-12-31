@@ -20,8 +20,8 @@ public class TempModMainStatEffect : Effect
             return;
         }
 
-        string coloredUserName = fightDescription.GetColoredAttackableName (user.Description, user.tag);
-        string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description, target.tag);
+        string coloredUserName = fightDescription.GetColoredAttackableName (user.Description.DisplayName, user.tag);
+        string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description.DisplayName, target.tag);
         int id = GetInstanceID ();
 
         if (target.TempEffects.ContainsKey (TempEffect.Timeline.EndTurn) && target.TempEffects[TempEffect.Timeline.EndTurn].Find (x => x.Name == EffectName) != null)

@@ -12,8 +12,8 @@ public class StunEffect : Effect
 
     protected override void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightDescription, Action onAnimeEnded)
     {
-        string coloredUserName = fightDescription.GetColoredAttackableName (user.Description, user.tag);
-        string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description, target.tag);
+        string coloredUserName = fightDescription.GetColoredAttackableName (user.Description.DisplayName, user.tag);
+        string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description.DisplayName, target.tag);
 
         if (TargetHasTempEffect (target, StunTempEffect, TempEffect.Timeline.StartTurn))
         {

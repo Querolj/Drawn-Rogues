@@ -1,6 +1,6 @@
 using System;
-using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEngine;
 /*
  /!\ No passive alter any temp effect yet (not needed for now)
 */
@@ -39,18 +39,18 @@ public class TempEffect : ScriptableObject
         Icon = icon;
     }
 
-    public virtual void Apply (Attackable effectOwner, FightRegistry fightDescription, Action onAnimeEnded)
+    public virtual void Apply (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription, Action onAnimeEnded)
     {
-        DecrementTurn (effectOwner, fightDescription);
+        DecrementTurn (ownerTransform, ownerName, ownerStats, fightDescription);
         onAnimeEnded?.Invoke ();
     }
 
-    protected virtual void DecrementTurn (Attackable effectOwner, FightRegistry fightDescription)
+    protected virtual void DecrementTurn (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription)
     {
         _turnDuration--;
         if (_turnDuration <= 0)
         {
-            OnEffectWearsOff (effectOwner, fightDescription);
+            OnEffectWearsOff (ownerTransform, ownerName, ownerStats, fightDescription);
         }
     }
 
@@ -85,7 +85,7 @@ public class TempEffect : ScriptableObject
         particle.Play ();
     }
 
-    protected virtual void OnEffectWearsOff (Attackable effectOwner, FightRegistry fightDescription)
+    protected virtual void OnEffectWearsOff (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription)
     {
         _onEffectWoreOff?.Invoke ();
         _effectWoreOff = true;
