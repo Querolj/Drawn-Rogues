@@ -1,0 +1,19 @@
+{
+    "name": "Colouring",
+    "rootNamespace": "",
+    "references": [
+        "GUID:0efaf3e77b69ad24b82158c9976639fa"
+    ],
+    "includePlatforms": [
+        "Editor",
+        "WindowsStandalone64"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

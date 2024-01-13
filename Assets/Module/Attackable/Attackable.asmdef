@@ -1,0 +1,29 @@
+{
+    "name": "Attackable",
+    "rootNamespace": "",
+    "references": [
+        "GUID:1b011d00f0ce6414e80882ce13f90099",
+        "GUID:27dfadfef929c0948aba02b7f4f68e43",
+        "GUID:56743fcac63d57c40a339be1e9e8f774",
+        "GUID:bcab614487cf77543911769dd8c2fe59",
+        "GUID:f7b019b8bc906924e93022448a2882eb",
+        "GUID:182dc7ea5bcf03a449119928c849136c",
+        "GUID:38af65c1bd03b6d4aaaf2b19abd4d137",
+        "GUID:0209aea70967ae941b950ef81f4e5b42",
+        "GUID:78e524162aa59a84ea10e4fa13cf247c",
+        "GUID:d138bc7f848f68d4db02f11063e0f4e7",
+        "GUID:a42494ce8f2e92d478e0cdbbcc455b7b"
+    ],
+    "includePlatforms": [
+        "Editor",
+        "WindowsStandalone64"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -47,7 +47,7 @@ public class MapInstaller : MonoInstaller
 
         // Factories
         Container.BindFactory<AttackSelection, AttackSelection, AttackSelection.Factory> ().FromFactory<PrefabFactory<AttackSelection>> ();
-        Container.BindFactory<GameObject, CombatEntity, CombatEntity.Factory> ().FromFactory<PrefabFactory<CombatEntity>> ();
+        Container.BindFactory<GameObject, ICombatEntity, ICombatEntity.Factory> ().FromFactory<PrefabFactory<ICombatEntity>> ();
         Container.BindFactory<Attack, Character, AttackInstance, AttackInstance.Factory> ().FromFactory<AttackInstFactory> ();
     }
 }

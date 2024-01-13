@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
+public class Branch : MonoBehaviour, ICombatEnvironnementHazard, IColouringSpellBehaviour
 {
     private const float KG_PER_PIXEL = 0.3f;
     private const int DRAW_STEPS_MAX = 16;
@@ -91,55 +91,6 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
     private void Awake ()
     {
         _turnManager = FindObjectOfType<TurnManager> (); // TODO : inject
-    }
-
-    public override void ExecuteTurn (Action onTurnEnded)
-    {
-        if (!_branchTouchingGround)
-        {
-            onTurnEnded?.Invoke ();
-            return;
-        }
-
-        if (_totalFlowerGrown == 0)
-        {
-            onTurnEnded?.Invoke ();
-            return;
-        }
-
-        if (_attackableInRange.Count == 0)
-        {
-            onTurnEnded?.Invoke ();
-            return;
-        }
-
-        string healingEffectName = _healingAttack.EffectsSerialized[0].Effect.EffectName;
-        float mult = 1 + (_totalFlowerGrown * 0.075f);
-
-        int attackableLeft = _attackableInRange.Count;
-        foreach (Attackable attackable in _attackableInRange)
-        {
-            if (attackable.WillBeDestroyed)
-                continue;
-            Character character = attackable as Character;
-            if (character == null)
-                continue;
-            
-            // TODO : Create a factory for spell, to be able to use injected stuff
-            // AttackInstance attackInstance = AttackInstance.Factory.Create (_healingAttack, character);
-            // attackInstance.ApplyMultiplierToEffect (healingEffectName, mult);
-
-            // attackInstance.Execute (character,
-            //     character,
-            //     character.GetSpriteBounds ().center,
-            //     () =>
-            //     {
-            //         attackableLeft--;
-            //         if (attackableLeft <= 0)
-            //             onTurnEnded?.Invoke ();
-            //     });
-        }
-
     }
 
     private bool IsMainBranchTouchingGround (List<Vector2> strokeDrawUVs, FrameDecor frameDecor)
@@ -551,4 +502,64 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
         _renderer.material.mainTexture = _drawedTex;
     }
 
+    #region ICombatEnvironnementHazard
+    public void ExecuteTurn (Action onTurnEnded)
+    {
+        if (!_branchTouchingGround)
+        {
+            onTurnEnded?.Invoke ();
+            return;
+        }
+
+        if (_totalFlowerGrown == 0)
+        {
+            onTurnEnded?.Invoke ();
+            return;
+        }
+
+        if (_attackableInRange.Count == 0)
+        {
+            onTurnEnded?.Invoke ();
+            return;
+        }
+
+        string healingEffectName = _healingAttack.EffectsSerialized[0].Effect.EffectName;
+        float mult = 1 + (_totalFlowerGrown * 0.075f);
+
+        int attackableLeft = _attackableInRange.Count;
+        foreach (Attackable attackable in _attackableInRange)
+        {
+            if (attackable.WillBeDestroyed)
+                continue;
+            Character character = attackable as Character;
+            if (character == null)
+                continue;
+
+            // TODO : Create a factory for spell, to be able to use injected stuff
+            // AttackInstance attackInstance = AttackInstance.Factory.Create (_healingAttack, character);
+            // attackInstance.ApplyMultiplierToEffect (healingEffectName, mult);
+
+            // attackInstance.Execute (character,
+            //     character,
+            //     character.GetSpriteBounds ().center,
+            //     () =>
+            //     {
+            //         attackableLeft--;
+            //         if (attackableLeft <= 0)
+            //             onTurnEnded?.Invoke ();
+            //     });
+        }
+
+    }
+
+    public List<ICombatEntity> GetLinkedCombatEntities ()
+    {
+        throw new NotImplementedException ();
+    }
+
+    public int GetTurnOrder ()
+    {
+        throw new NotImplementedException ();
+    }
+    #endregion ICombatEnvironnementHazard
 }

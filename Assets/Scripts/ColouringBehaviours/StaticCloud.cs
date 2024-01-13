@@ -5,7 +5,7 @@ using System.Linq;
 using DigitalRuby.LightningBolt;
 using UnityEngine;
 
-public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
+public class StaticCloud : MonoBehaviour, ICombatEnvironnementHazard, IColouringSpellBehaviour
 {
     private TurnManager _turnManager;
 
@@ -247,25 +247,6 @@ public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
         _targetsDetected = _targetsDetected.Where (t => t.Item2.transform.position.x > _xMinBounds && t.Item2.transform.position.x < _xMaxBounds).ToList ();
     }
 
-    public override void ExecuteTurn (Action onTurnEnded)
-    {
-        FilterTargetsOutsideOfBounds ();
-
-        if (_targetsDetected.Count > 0)
-        {
-            _onTurnEnded = onTurnEnded ??
-                throw new ArgumentNullException (nameof (onTurnEnded));
-
-            _lightingBoltTimeLeft = _LIGHTING_BOLT_DURATION;
-            _targetsToHit = new Stack < (GameObject, Attackable) > (_targetsDetected);
-            StartCoroutine (ChainLightingBolt ());
-        }
-        else
-        {
-            onTurnEnded ();
-        }
-    }
-
     private IEnumerator ChainLightingBolt ()
     {
         if (_targetsToHit.Count > 0)
@@ -293,7 +274,7 @@ public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
 
         _lightningBolt.StartObject = go;
         _lightningBolt.EndObject = target.gameObject;
-        
+
         // TODO : Create a factory for spells, to be able to use injected stuff
         // AttackInstance attackInstance = AttackInstFactory.Create (_attack, _turnManager.ActivePlayerCharacter);
 
@@ -318,4 +299,35 @@ public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
         _triggeredAttackableGoIds.Add (otherGoId);
         _targetsDetected.Add ((cloud, target));
     }
+
+    #region ICombatEnvironnementHazard
+    public void ExecuteTurn (Action onTurnEnded)
+    {
+        FilterTargetsOutsideOfBounds ();
+
+        if (_targetsDetected.Count > 0)
+        {
+            _onTurnEnded = onTurnEnded ??
+                throw new ArgumentNullException (nameof (onTurnEnded));
+
+            _lightingBoltTimeLeft = _LIGHTING_BOLT_DURATION;
+            _targetsToHit = new Stack < (GameObject, Attackable) > (_targetsDetected);
+            StartCoroutine (ChainLightingBolt ());
+        }
+        else
+        {
+            onTurnEnded ();
+        }
+    }
+
+    public List<ICombatEntity> GetLinkedCombatEntities ()
+    {
+        throw new NotImplementedException ();
+    }
+
+    public int GetTurnOrder ()
+    {
+        throw new NotImplementedException ();
+    }
+    #endregion ICombatEnvironnementHazard
 }

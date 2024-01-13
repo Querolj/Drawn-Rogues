@@ -1,0 +1,19 @@
+{
+    "name": "AttackableTypeDefinition",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d138bc7f848f68d4db02f11063e0f4e7"
+    ],
+    "includePlatforms": [
+        "Editor",
+        "WindowsStandalone64"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

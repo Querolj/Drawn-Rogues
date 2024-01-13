@@ -20,10 +20,10 @@ public class FrameDecor : Frame
         }
     }
 
-    private CombatEntity.Factory _combatEntityFactory;
+    private ICombatEntity.Factory _combatEntityFactory;
 
     [Inject, UsedImplicitly]
-    private void Init (CombatEntity.Factory combatEntityFactory)
+    private void Init (ICombatEntity.Factory combatEntityFactory)
     {
         _combatEntityFactory = combatEntityFactory;
     }
@@ -100,7 +100,7 @@ public class FrameDecor : Frame
         }
         else
         {
-            CombatEnvironnementHazard combatEnvironnementHazard = goBehaviour.GetComponentInParent<CombatEnvironnementHazard> ();
+            ICombatEnvironnementHazard combatEnvironnementHazard = goBehaviour.GetComponentInParent<ICombatEnvironnementHazard> ();
             if (combatEnvironnementHazard != null)
             {
                 if (combatEnvironnementHazard is IColouringSpellBehaviour spellBehaviour)

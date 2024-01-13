@@ -289,9 +289,6 @@ public class CombatZone : MonoBehaviour
                 int hitId = hitbox.gameObject.GetInstanceID ();
                 if (!allIdsToIgnore.Contains (hitId))
                 {
-                    Attackable attackable = hitbox.GetComponentInParent<Attackable> ();
-                    // Debug.Log ("hitId : " + hitbox.gameObject.name + ", go att " + attackable.Name);
-
                     return oldMapPos.x;
                 }
             }

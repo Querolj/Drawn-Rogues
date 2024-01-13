@@ -30,7 +30,7 @@ public class TurnManager : MonoBehaviour
     private int _roundCount = 0;
 
     // Attacks ordered by priority
-    private Stack<CombatEntity> _combatEntitiesLeftToPlay;
+    private Stack<ICombatEntity> _combatEntitiesLeftToPlay;
 
     private ActionDelayer _actionDelayer;
     private FightRegistry _fightRegistry;
@@ -75,15 +75,15 @@ public class TurnManager : MonoBehaviour
 
     private void SetCharactersLeftToPlay ()
     {
-        List<CombatEntity> sortedCombatEntitiesFromCombatZone = new List<CombatEntity> (_currentCombatZone.EnemiesInZone);
+        List<ICombatEntity> sortedCombatEntitiesFromCombatZone = new List<ICombatEntity> (_currentCombatZone.EnemiesInZone);
         sortedCombatEntitiesFromCombatZone.Add (_playerController.ControlledCharacter);
         sortedCombatEntitiesFromCombatZone.Sort ((a, b) => a.GetTurnOrder ().CompareTo (b.GetTurnOrder ()));
 
-        _combatEntitiesLeftToPlay = new Stack<CombatEntity> ();
-        foreach (CombatEntity combatEntity in sortedCombatEntitiesFromCombatZone)
+        _combatEntitiesLeftToPlay = new Stack<ICombatEntity> ();
+        foreach (ICombatEntity combatEntity in sortedCombatEntitiesFromCombatZone)
         {
             _combatEntitiesLeftToPlay.Push (combatEntity);
-            foreach (CombatEntity combatEntityLinked in combatEntity.LinkedCombatEntities)
+            foreach (ICombatEntity combatEntityLinked in combatEntity.LinkedCombatEntities)
             {
                 _combatEntitiesLeftToPlay.Push (combatEntityLinked);
             }
@@ -151,7 +151,7 @@ public class TurnManager : MonoBehaviour
 
         if (_combatEntitiesLeftToPlay.Count > 0)
         {
-            CombatEntity combatEntity = _combatEntitiesLeftToPlay.Pop ();
+            ICombatEntity combatEntity = _combatEntitiesLeftToPlay.Pop ();
             if (combatEntity is Character character)
             {
                 if (character == null)
@@ -165,7 +165,7 @@ public class TurnManager : MonoBehaviour
                     StartCoroutine (StartCharacterTurn (character));
                 });
             }
-            else if (combatEntity is CombatEnvironnementHazard envHazard)
+            else if (combatEntity is ICombatEnvironnementHazard envHazard)
             {
                 envHazard.ExecuteTurn (NextTurn);
             }

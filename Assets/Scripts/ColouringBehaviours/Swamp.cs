@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using DigitalRuby.AdvancedPolygonCollider;
 using UnityEngine;
 
-public class Swamp : CombatEnvironnementHazard, IColouringSpellBehaviour
+public class Swamp : MonoBehaviour, ICombatEnvironnementHazard, IColouringSpellBehaviour
 {
     [SerializeField]
     private AdvancedPolygonCollider _advancedPolygonColliderTemplate;
@@ -19,10 +19,6 @@ public class Swamp : CombatEnvironnementHazard, IColouringSpellBehaviour
 
     private FrameDecor _frameDecor;
     private Action _onInitDone;
-    public override void ExecuteTurn (Action onTurnEnded)
-    {
-        onTurnEnded?.Invoke ();
-    }
 
     public void Init (TurnManager bg, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor, Action onInitDone = null)
     {
@@ -184,4 +180,21 @@ public class Swamp : CombatEnvironnementHazard, IColouringSpellBehaviour
 
         return false;
     }
+
+    #region ICombatEnvironnementHazard
+    public void ExecuteTurn (Action onTurnEnded)
+    {
+        onTurnEnded?.Invoke ();
+    }
+
+    public List<ICombatEntity> GetLinkedCombatEntities()
+    {
+        throw new NotImplementedException();
+    }
+
+    public int GetTurnOrder()
+    {
+        throw new NotImplementedException();
+    }
+    #endregion ICombatEnvironnementHazard
 }
