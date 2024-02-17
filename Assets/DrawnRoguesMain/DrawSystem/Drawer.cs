@@ -221,7 +221,6 @@ public class Drawer : MonoBehaviour
         });
     }
 
-    private Dictionary<int, Frame> _frameByInstancesFound = new Dictionary<int, Frame> ();
     private void SetFocusedFrame (Vector3 screenPos)
     {
         _coordinateByFocusedFrame.Item1 = null;

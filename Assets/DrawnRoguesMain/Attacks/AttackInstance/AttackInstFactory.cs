@@ -13,7 +13,10 @@ public class AttackInstFactory : IFactory<Attack, Character, AttackInstance>
     public AttackInstance Create (Attack attack, Character owner)
     {
         AttackInstance attackInstance;
-        if (attack as AttackTrajectoryZone)
+
+        if(owner == null && attack as AttackSingleTargetNoOwner)
+            attackInstance = _container.Instantiate<AttackInstSingleTargetNoOwner> ();
+        else if (attack as AttackTrajectoryZone)
             attackInstance = _container.Instantiate<AttackInstTrajectoryZone> ();
         else if (attack as AttackZone)
             attackInstance = _container.Instantiate<AttackInstZone> ();

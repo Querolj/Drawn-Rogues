@@ -1,5 +1,5 @@
 {
-    "name": "Script",
+    "name": "DrawnRoguesMain",
     "rootNamespace": "",
     "references": [
         "Unity.TextMeshPro",
@@ -26,7 +26,8 @@
         "EntityDescriptions",
         "AttackTypeDefinition",
         "AttackableState",
-        "FightRegistry"
+        "FightRegistry",
+        "MapUtils"
     ],
     "includePlatforms": [
         "Editor",

@@ -5,8 +5,7 @@ using Zenject;
 
 public class AttackInstance
 {
-    public class Factory : PlaceholderFactory<Attack, Character, AttackInstance>
-    { }
+    public class Factory : PlaceholderFactory<Attack, Character, AttackInstance> { }
 
     public string Name { get; set; }
     public SpriteAnimation AnimationTemplate { get; set; }
@@ -34,31 +33,6 @@ public class AttackInstance
     [Inject]
     protected FightRegistry _fightDescription;
     #endregion
-
-    // public AttackInstance (Attack attack, Character owner)
-    // {
-    //     _attack = attack;
-    //     Name = attack.Name;
-    //     AnimationTemplate = attack.AnimationTemplate;
-    //     ParticleTemplate = attack.ParticleTemplate;
-    //     AttackType = attack.AttackType;
-    //     MinDamage = attack.MinDamage;
-    //     MaxDamage = attack.MaxDamage;
-    //     NoDamage = attack.NoDamage;
-    //     Precision = attack.Precision;
-    //     Range = attack.GetRangeInMeter ();
-    //     DamageType = attack.DamageType;
-    //     _owner = owner;
-
-    //     MergeEffectsAndPassiveFromOwner (attack);
-
-    //     // apply strenght influence
-    //     if (attack.DamageType != DamageType.Heal && _owner.Stats.Strenght > 0 && !NoDamage)
-    //     {
-    //         MinDamage += MinDamage * (int) (_owner.Stats.Strenght / 100f);
-    //         MaxDamage += MaxDamage * (int) (_owner.Stats.Strenght / 100f);
-    //     }
-    // }
 
     public virtual void Init (Attack attack, Character owner)
     {
@@ -138,35 +112,31 @@ public class AttackInstance
         _effectInstancesByName[effectName].SetInitialValue (_effectInstancesByName[effectName].InitialValue * mult);
     }
 
-    protected void PlayAtkTouchedAnimation (Vector3 position, Action onAnimeEnded)
+    protected void PlayAtkTouchedAnimation (Vector3 position, Action onAnimeEnded = null)
     {
         SpriteAnimation anime = GameObject.Instantiate<SpriteAnimation> (AnimationTemplate, position, Quaternion.identity);
         anime.Direction = _attacker.CharMovement.DirectionRight ? SpriteAnimation.AnimeDirection.Right : SpriteAnimation.AnimeDirection.Left;
-        anime.OnAnimationEnded += onAnimeEnded;
+        if (onAnimeEnded != null)
+            anime.OnAnimationEnded += onAnimeEnded;
         anime.Play ();
     }
 
-    protected void PlayAtkTouchedParticle (Vector3 position, Action onParticleEnded)
+    protected void PlayAtkTouchedParticle (Vector3 position, Action onParticleEnded = null)
     {
         ParticleSystemCallback particle = GameObject.Instantiate<ParticleSystemCallback> (ParticleTemplate, position, Quaternion.Euler (-90, 0, 0));
-        particle.OnParticleSystemDestroyed += onParticleEnded;
+        if (onParticleEnded != null)
+            particle.OnParticleSystemDestroyed += onParticleEnded;
         particle.Play ();
     }
 
-    // protected virtual void PlayAnimationsOnTargets<T> (List<Attackable> allTargets) where T : AttackInstance
-    // {
-    //     foreach (Attackable target in allTargets)
-    //     {
-    //         if (target == null || target.WillBeDestroyed)
-    //             continue;
-
-    //         T attackInstcopy = GetCopy () as T;
-    //         if (AnimationTemplate != null)
-    //             PlayAtkTouchedAnimation (target.transform.position, () => InflictDamage (target, attackInstcopy));
-    //         else if (ParticleTemplate != null)
-    //             PlayAtkTouchedParticle (target.transform.position, () => InflictDamage (target, attackInstcopy));
-    //     }
-    // }
+    protected void PlayAtkTouchedParticle (Vector3 position, Transform target, Action onParticleEnded = null)
+    {
+        ParticleSystemCallback particle = GameObject.Instantiate<ParticleSystemCallback> (ParticleTemplate, position, Quaternion.Euler (-90, 0, 0));
+        particle.SetTarget (target);
+        if (onParticleEnded != null)
+            particle.OnParticleSystemDestroyed += onParticleEnded;
+        particle.Play ();
+    }
 
     protected T ApplyTargetAttackDefPassive<T> (Attackable target, ref T attackInstance) where T : AttackInstance
     {
@@ -186,7 +156,7 @@ public class AttackInstance
         return UnityEngine.Random.Range (0f, 100f) > attackInstance.Precision;
     }
 
-    protected void InflictDamage (Attackable target, AttackInstance attackInstance)
+    protected virtual void InflictDamage (Attackable target, AttackInstance attackInstance)
     {
         if (attackInstance == this)
             throw new ArgumentException (nameof (attackInstance) + " must be a copy of this");

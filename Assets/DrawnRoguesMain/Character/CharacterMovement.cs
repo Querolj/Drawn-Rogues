@@ -7,7 +7,6 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField]
     private float _initialWalkingSpeed = 3f;
     private float _walkingSpeed = 3f;
-    private float _walkingSpeedOffset = 0f;
 
     [SerializeField]
     private bool _initialDirectionIsRight = true;
@@ -106,10 +105,7 @@ public class CharacterMovement : MonoBehaviour
             return;
         }
 
-        UpdateWalkingSpeedOffset ();
-
-        // Vector3 newPos = Vector3.MoveTowards (transform.position, _positionTarget, Time.fixedDeltaTime * (_walkingSpeed + _walkingSpeedOffset));
-        _lerpValue += Time.fixedDeltaTime * (_walkingSpeed);
+        _lerpValue += Time.fixedDeltaTime * _walkingSpeed;
         Vector3 newPos = Vector3.Lerp (_initialPosition, _positionTarget, _lerpValue);
 
         float mapHeight = Utils.GetMapHeight (transform.position);
@@ -138,17 +134,6 @@ public class CharacterMovement : MonoBehaviour
         {
             transform.rotation = Quaternion.RotateTowards (transform.rotation, Quaternion.Euler (-_eulerAngleTarget), Time.fixedDeltaTime * _DIRECTION_CHANGE_SPEED);
         }
-    }
-
-    private void UpdateWalkingSpeedOffset ()
-    {
-        float dist = Vector3.Distance (transform.position, _positionTarget);
-        if (dist > 0.1f)
-        {
-            _walkingSpeedOffset = dist;
-        }
-        else
-            _walkingSpeedOffset = 0f;
     }
 
     public void FollowTrajectory (List<Vector3> trajectory, Action onMovementFinished = null)
