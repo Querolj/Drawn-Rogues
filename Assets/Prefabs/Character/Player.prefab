@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 6380750594029326618}
   - component: {fileID: 2214279922952288429}
   - component: {fileID: 8475252597214284077}
-  - component: {fileID: 6537064485577003562}
   m_Layer: 14
   m_Name: DrawedCharacter
   m_TagString: Player
@@ -112,7 +111,7 @@ MonoBehaviour:
     AttackOffPassiveValues: []
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
-    effectValues: []
+  _effectsSerialized: []
   _outline: {fileID: 7673125499798634235}
   _eventsOnDeath: []
   _attacksReferences: []
@@ -180,19 +179,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _displayName: PlayerName
---- !u!114 &6537064485577003562
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2032451665636909854}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8d91089766f243a8c71c4767f20e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _renderer: {fileID: 1803782553044872708}
 --- !u!1 &2268071720730420520
 GameObject:
   m_ObjectHideFlags: 0
@@ -458,7 +444,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _character: {fileID: 1561575053082485635}
-  _initForMapOnStart: 1
 --- !u!114 &6005709883124936033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -471,7 +456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c78c9b784c5c6143b48248cfc5dab50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _initialWalkingSpeed: 3
+  _walkingSpeed: 3
   _initialDirectionIsRight: 1
   _characterAnimation: {fileID: 587915763813740162}
   ActivateWalk: 0

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Zenject;
 
 public class Drawer : MonoBehaviour
@@ -22,8 +22,18 @@ public class Drawer : MonoBehaviour
         Activate (true);
     }
 
-    [SerializeField]
-    private BodyPartSelection _bodyPartSelection;
+    private PixelUsage _currentPixelUsage;
+    public PixelUsage CurrentPixelUsage
+    {
+        get
+        {
+            return _currentPixelUsage;
+        }
+        set
+        {
+            _currentPixelUsage = value;
+        }
+    }
 
     private Camera _mainCamera;
 
@@ -122,13 +132,13 @@ public class Drawer : MonoBehaviour
     private BaseColorInventory _baseColorInventory;
 
     [Inject, UsedImplicitly]
-    private void Init (ModeSwitcher modeSwitcher, ResizableBrush resizableBrush, BaseColorInventory baseColorInventory)
+    private void Init (CursorModeSwitcher modeSwitcher, ResizableBrush resizableBrush, BaseColorInventory baseColorInventory)
     {
         _baseColorInventory = baseColorInventory;
         _resizableBrush = resizableBrush;
         modeSwitcher.OnChangeMode += (mode) =>
         {
-            Activate (mode == ModeSwitcher.Mode.Draw);
+            Activate (mode == CursorModeSwitcher.Mode.Draw);
         };
     }
 
@@ -151,11 +161,9 @@ public class Drawer : MonoBehaviour
 
     private void ResetStrokeValidation ()
     {
-        PixelUsage currentPixUsage = _bodyPartSelection.GetPixelUsageFromSelectedBodyPart ();
-
-        if (currentPixUsage == PixelUsage.Arm || currentPixUsage == PixelUsage.Leg)
+        if (_currentPixelUsage == PixelUsage.Arm || _currentPixelUsage == PixelUsage.Leg)
         {
-            _strokeValidation = new StrokeValidation (currentPixUsage);
+            _strokeValidation = new StrokeValidation (_currentPixelUsage);
         }
         else
         {
@@ -169,7 +177,7 @@ public class Drawer : MonoBehaviour
         if (_selectedColouring == null || !_activateDrawer)
             return;
 
-        if (Input.GetKeyDown (KeyCode.Mouse0))
+        if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             _leftMouseJustPressed = true;
         }
@@ -178,18 +186,18 @@ public class Drawer : MonoBehaviour
             _leftMouseJustPressed = false;
         }
 
-        SetFocusedFrame (Input.mousePosition);
+        SetFocusedFrame (Mouse.current.position.ReadValue ());
 
-        if (!disalowDrawUntilNewStroke && Input.GetKey (KeyCode.Mouse0) && Vector2.Distance (_lastDrawedPosition, Input.mousePosition) > _DISTANCE_TO_REACH_UNTIL_DRAW_IN_PIXEL)
+        if (!disalowDrawUntilNewStroke && Mouse.current.leftButton.isPressed && Vector2.Distance (_lastDrawedPosition, Mouse.current.position.ReadValue ()) > _DISTANCE_TO_REACH_UNTIL_DRAW_IN_PIXEL)
         {
             if (_coordinateByFocusedFrame.Item1 != null)
             {
                 DrawOnFocusedFrame (_leftMouseJustPressed);
-                _lastDrawedPosition = Input.mousePosition;
+                _lastDrawedPosition = Mouse.current.position.ReadValue ();
             }
         }
 
-        if (Input.GetKeyUp (KeyCode.Mouse0) || _stopDraw)
+        if (Mouse.current.leftButton.wasReleasedThisFrame || _stopDraw)
         {
             _stopDraw = false;
             _leftMouseJustPressed = false;
@@ -348,7 +356,7 @@ public class Drawer : MonoBehaviour
         ExecuteActionForFrame ((frame, uv) =>
         {
             bool drawDone = frame.TryDraw (uv, _selectedColouring.Id, _selectedColouring.Texture, _selectedColouring.BaseColorsUsedPerPixel,
-                _bodyPartSelection.GetPixelUsageFromSelectedBodyPart (), drawStrokeJustStarting, _resizableBrush, maxDrawablePixCount,
+                _currentPixelUsage, drawStrokeJustStarting, _resizableBrush, maxDrawablePixCount,
                 out _currentStrokeInfo, out int pixelsAdded);
 
             if (!drawDone)

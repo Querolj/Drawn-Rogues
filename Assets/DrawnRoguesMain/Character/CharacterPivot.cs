@@ -6,9 +6,6 @@ public class CharacterPivot : MonoBehaviour
     [SerializeField]
     private Character _character;
 
-    [SerializeField]
-    private bool _initForMapOnStart = true; // for testing
-
     private void Awake ()
     {
         DontDestroyOnLoad (gameObject);
@@ -19,14 +16,13 @@ public class CharacterPivot : MonoBehaviour
         yield return new WaitForEndOfFrame (); // wait for drawed character to have his collider generated
         yield return new WaitForEndOfFrame ();
 
-        if (_initForMapOnStart)
-            InitForMap ();
+        Init ();
         DrawedCharacter drawedCharacter = _character as DrawedCharacter;
         if (drawedCharacter != null)
             drawedCharacter.OnDrawedCharacterUpdate += UpdateCharacterLocalPos;
     }
 
-    public void InitForMap ()
+    public void Init ()
     {
         UpdateCharacterLocalPos ();
     }
@@ -42,6 +38,5 @@ public class CharacterPivot : MonoBehaviour
         offset.x = _character.GetXOffSetFromRenderer ();
         offset.y = _character.Renderer.bounds.extents.y;
         _character.transform.localPosition = offset;
-        float distX = Mathf.Abs (bounds.center.x - transform.position.x);
     }
 }

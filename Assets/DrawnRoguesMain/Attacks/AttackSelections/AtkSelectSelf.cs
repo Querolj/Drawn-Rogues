@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent (typeof (SpriteRenderer))]
 public class AtkSelectSelf : AttackSelection
@@ -69,7 +70,7 @@ public class AtkSelectSelf : AttackSelection
             return;
         }
 
-        TryRaycastOnAttackSelectionSprite (Input.mousePosition, out Vector3 worldMousePos);
+        TryRaycastOnAttackSelectionSprite (Mouse.current.position.ReadValue(), out Vector3 worldMousePos);
         worldMousePos.z = _attackerOriginPosition.z;
 
         bool inRange = IsPositionInAttackRange (worldMousePos);
@@ -85,7 +86,7 @@ public class AtkSelectSelf : AttackSelection
             _invalidSelectionIcon.transform.position = worldMousePos;
         }
 
-        if (Input.GetMouseButtonDown (0) && _targetAttackable == _player && inRange)
+        if (Mouse.current.leftButton.wasPressedThisFrame && _targetAttackable == _player && inRange)
         {
             _attackSingleTarget.Execute (_player, _targetAttackable, _validSelectionIcon.transform.position, _onAttackEnded);
             Deactivate ();

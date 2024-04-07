@@ -5,12 +5,12 @@ using UnityEngine;
 public class CharacterMovement : MonoBehaviour
 {
     [SerializeField]
-    private float _initialWalkingSpeed = 3f;
-    private float _walkingSpeed = 3f;
+    private float _walkingSpeed = 0.4f;
+    private float _walkingSpeedMultiplier = 1f;
 
     [SerializeField]
     private bool _initialDirectionIsRight = true;
-    private const float _DIRECTION_CHANGE_SPEED = 1000f;
+    private const float _ROTATION_SPEED = 1000f;
 
     [SerializeField]
     private CharacterAnimation _characterAnimation;
@@ -29,24 +29,22 @@ public class CharacterMovement : MonoBehaviour
 
     private Vector3 _positionTarget;
     private Vector3 _initialPosition;
-    private float _lerpValue = 1.1f;
+    private float _currentLerpValue = 1.1f;
+    private float _valueToAddToLerp = 0f;
     private Vector3 _lastPosition;
+    private float _offsetY = 0f;
     public bool IsMoving
     {
         get
         {
-            return _lerpValue < 1f;
+            return _currentLerpValue < 1f;
         }
     }
 
     private bool _targetReached = false;
-    private Vector3 _lastNormalHit;
     private Action _onMovementFinished;
-
-    // Trajectory follow
-    private bool _followTrajectory = false;
-
-    private List<Vector3> _trajectory;
+    private bool _isJumping = false;
+    private List<Vector3> _jumpTrajectory;
     private float _lerpTrajectory = 0f;
     public bool ActivateWalk = false;
 
@@ -72,7 +70,7 @@ public class CharacterMovement : MonoBehaviour
         }
     }
 
-    private void FixedUpdate ()
+    private void Update ()
     {
         UpdateYRotationInTime ();
         _lastPosition = transform.position;
@@ -80,24 +78,13 @@ public class CharacterMovement : MonoBehaviour
         if (_characterAnimation.IsPlayingNonWalkingAnim)
             return;
 
-        if (_followTrajectory)
+        if (_isJumping)
         {
-            if (_lerpTrajectory < 1f)
-            {
-                _lerpTrajectory += Time.fixedDeltaTime * _walkingSpeed;
-                int index = (int) Mathf.Lerp (0, _trajectory.Count - 1, _lerpTrajectory);
-                transform.position = _trajectory[index];
-            }
-            else
-            {
-                _followTrajectory = false;
-                _lerpTrajectory = 0f;
-                _onMovementFinished?.Invoke ();
-            }
+            UpdateJump ();
             return;
         }
 
-        if (!ActivateWalk || _lerpValue >= 1f)
+        if (!ActivateWalk || _currentLerpValue >= 1f)
         {
             if (!_targetReached)
                 _onMovementFinished?.Invoke ();
@@ -105,16 +92,50 @@ public class CharacterMovement : MonoBehaviour
             return;
         }
 
-        _lerpValue += Time.fixedDeltaTime * _walkingSpeed;
-        Vector3 newPos = Vector3.Lerp (_initialPosition, _positionTarget, _lerpValue);
+        _currentLerpValue += _valueToAddToLerp;
+        Vector3 newPos = Vector3.Lerp (_initialPosition, _positionTarget, _currentLerpValue);
 
         float mapHeight = Utils.GetMapHeight (transform.position);
-        newPos.y = mapHeight;
+        newPos.y = mapHeight + _offsetY;
         transform.position = newPos;
 
         if (!IsMoving && !_targetReached)
         {
             _targetReached = true;
+            _onMovementFinished?.Invoke ();
+        }
+    }
+
+    public void Move (Vector2 direction)
+    {
+        Vector3 newPos = transform.position + new Vector3 (direction.x, 0f, direction.y) * Time.deltaTime * _walkingSpeed * _walkingSpeedMultiplier;
+        float mapHeight = Utils.GetMapHeight (newPos);
+        newPos.y = mapHeight + _offsetY;
+        transform.position = newPos;
+    }
+
+    public void SetOffsetY (float offsetY)
+    {
+        _offsetY = offsetY;
+    }
+
+    public void SetWalkingSpeedMultiplier (float multiplier)
+    {
+        _walkingSpeedMultiplier = multiplier;
+    }
+
+    private void UpdateJump ()
+    {
+        if (_lerpTrajectory < 1f)
+        {
+            _lerpTrajectory += Time.deltaTime * _walkingSpeed;
+            int index = (int) Mathf.Lerp (0, _jumpTrajectory.Count - 1, _lerpTrajectory);
+            transform.position = _jumpTrajectory[index];
+        }
+        else
+        {
+            _isJumping = false;
+            _lerpTrajectory = 0f;
             _onMovementFinished?.Invoke ();
         }
     }
@@ -132,20 +153,20 @@ public class CharacterMovement : MonoBehaviour
 
         if (transform.rotation.eulerAngles != _eulerAngleTarget)
         {
-            transform.rotation = Quaternion.RotateTowards (transform.rotation, Quaternion.Euler (-_eulerAngleTarget), Time.fixedDeltaTime * _DIRECTION_CHANGE_SPEED);
+            transform.rotation = Quaternion.RotateTowards (transform.rotation, Quaternion.Euler (-_eulerAngleTarget), Time.fixedDeltaTime * _ROTATION_SPEED);
         }
     }
 
-    public void FollowTrajectory (List<Vector3> trajectory, Action onMovementFinished = null)
+    public void Jump (List<Vector3> trajectory, Action onMovementFinished = null)
     {
         if (trajectory == null || trajectory.Count == 0)
             throw new Exception ("Trajectory is null or empty");
 
         _lerpTrajectory = 0f;
-        _trajectory = trajectory;
+        _jumpTrajectory = trajectory;
         trajectory.Insert (0, transform.position);
         _positionTarget = trajectory[trajectory.Count - 1];
-        _followTrajectory = true;
+        _isJumping = true;
         _onMovementFinished = onMovementFinished;
     }
 
@@ -156,15 +177,15 @@ public class CharacterMovement : MonoBehaviour
         _targetReached = false;
         ActivateWalk = true;
         _initialPosition = transform.position;
-        _lerpValue = 0;
+        _currentLerpValue = 0;
 
-        float dist = Vector3.Distance (transform.position, _positionTarget);
-        _walkingSpeed = _initialWalkingSpeed / dist;
+        float dist = Vector3.Distance (_initialPosition, _positionTarget);
+        _valueToAddToLerp = _walkingSpeed * Time.deltaTime / dist;
     }
 
     public void StopMovement ()
     {
-        _lerpValue = 1f;
+        _currentLerpValue = 1f;
     }
 
     public void MoveNextToCharacter (Bounds targetCharBounds, Bounds charBounds, float margin, Action onMovementFinished = null)

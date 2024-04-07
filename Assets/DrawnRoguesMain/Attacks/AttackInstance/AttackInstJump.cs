@@ -24,7 +24,7 @@ public class AttackInstJump : AttackInstance
         attacker.CharMovement.ActivateWalk = false;
         attacker.Squasher.SquashHorizontally (0.4f, 0.25f, 0.05f, () =>
         {
-            attacker.CharMovement.FollowTrajectory (trajectory, () =>
+            attacker.CharMovement.Jump (trajectory, () =>
             {
                 attacker.CharMovement.ActivateWalk = true;
                 onAttackEnded.Invoke ();

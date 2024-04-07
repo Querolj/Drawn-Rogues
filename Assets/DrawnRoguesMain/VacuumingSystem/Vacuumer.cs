@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Zenject;
 
 public class Vacuumer : MonoBehaviour
@@ -93,7 +94,7 @@ public class Vacuumer : MonoBehaviour
         if (!_active)
             return;
 
-        if (Input.GetMouseButtonDown (0) && _focusedAttackable != null && _focusedVacuumable != null)
+        if (Mouse.current.leftButton.wasPressedThisFrame && _focusedAttackable != null && _focusedVacuumable != null)
         {
             _focusedAttackable.StopDisplayOutline ();
             TryVacuumeFocusedAttackable ();

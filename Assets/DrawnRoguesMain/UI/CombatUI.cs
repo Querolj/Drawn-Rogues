@@ -5,11 +5,7 @@ using Zenject;
 
 public class CombatUI : MonoBehaviour
 {
-    private TurnManager _turnManager;
-    private PlayerController _playerController;
-    private Drawer _drawer;
-    private AttackSelectionManager _attackSelectionManager;
-
+    #region Serialized Fields
     [SerializeField]
     private AttackButtonGenerator _attackButtonGen;
 
@@ -36,21 +32,28 @@ public class CombatUI : MonoBehaviour
 
     [SerializeField]
     private Vacuumer _vacuumer;
+    #endregion
 
-    private ModeSwitcher _modeSwitcher;
+    #region Private Fields
+    private TurnManager _turnManager;
+    private PlayerController _playerController;
+    private Drawer _drawer;
+    private AttackSelectionManager _attackSelectionManager;
+    private CursorModeSwitcher _modeSwitcher;
+    #endregion
 
     [Inject, UsedImplicitly]
-    private void Init (ModeSwitcher modeSwitcher, AttackSelectionManager attackSelectionManager)
+    private void Init (CursorModeSwitcher modeSwitcher, AttackSelectionManager attackSelectionManager, Drawer drawer)
     {
         _modeSwitcher = modeSwitcher;
         _attackSelectionManager = attackSelectionManager;
+        _drawer = drawer;
     }
 
     private void Awake ()
     {
         _turnManager = FindAnyObjectByType<TurnManager> (); // TODO : inject
         _playerController = FindAnyObjectByType<PlayerController> (); // TODO : inject
-        _drawer = FindAnyObjectByType<Drawer> (); // TODO : inject
 
         gameObject.SetActive (false);
         ActivateActionsToggleGOs (false);
@@ -135,7 +138,7 @@ public class CombatUI : MonoBehaviour
         {
             if (_drawToggle.isOn)
             {
-                _modeSwitcher.ChangeMode (ModeSwitcher.Mode.Selection);
+                _modeSwitcher.ChangeMode (CursorModeSwitcher.Mode.Selection);
             }
         };
 

@@ -84,3 +84,8 @@ MonoBehaviour:
   _trajectoryDrawer: {fileID: 5123555723767774746, guid: 4948cb8478df2394c812a4a410e85ec1, type: 3}
   _attackSelectionManager: {fileID: 721502521497670147, guid: 9ed0468ea48a02e4591a136d64ca8c0a, type: 3}
   _worldUIContainer: {fileID: 9173465816642191538, guid: 4b281df9b5ab2ec4a8a66dceeb2ead16, type: 3}
+  _combatUIContainer: {fileID: 0}
+  _fightRegistry: {fileID: 604063905424876866, guid: 2d7990dd0909c0940be499933a9b3a76, type: 3}
+  _inputMapSwitcher: {fileID: 7068013086792094371, guid: f02e44bef5cba554196c0ad824178154, type: 3}
+  _textureTransition: {fileID: 121936778938195429, guid: 5b36a4214b39e3348b3113d466a47b25, type: 3}
+  _drawer: {fileID: 5994979137666046339, guid: 406ebfcbc9d400640998e0a352462112, type: 3}

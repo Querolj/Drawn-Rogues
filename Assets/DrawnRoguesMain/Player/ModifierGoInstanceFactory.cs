@@ -8,14 +8,15 @@ public class ModifierGoInstanceFactory : MonoBehaviour
     [SerializeField]
     private Drawer _drawer;
 
-    private ModeSwitcher _modeSwitcher;
+    private CursorModeSwitcher _modeSwitcher;
     private ActionDelayer _actionDelayer;
 
     [Inject, UsedImplicitly]
-    private void Init (ModeSwitcher modeSwitcher, ActionDelayer actionDelayer)
+    private void Init (CursorModeSwitcher modeSwitcher, ActionDelayer actionDelayer, Drawer drawer)
     {
         _modeSwitcher = modeSwitcher;
         _actionDelayer = actionDelayer;
+        _drawer = drawer;
     }
 
     public GameObject Create (Bounds renderBounds, Transform modifierLayer, Modifier modifier, Vector3 localPos, bool isFlipped, float delayLimitCalculInSec = 0f, Action<Modifier> onModifierDeleted = null)

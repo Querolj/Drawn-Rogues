@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class AtkSelectZone : AttackSelection
 {
@@ -46,7 +47,7 @@ public class AtkSelectZone : AttackSelection
             return;
         }
 
-        if (Input.GetMouseButtonDown (0) && _attackableDetector.AttackablesInZone?.Count > 0 && _validSelectionIcon.activeInHierarchy)
+        if (Mouse.current.leftButton.wasPressedThisFrame && _attackableDetector.AttackablesInZone?.Count > 0 && _validSelectionIcon.activeInHierarchy)
         {
             List<Attackable> targetsInZone = null;
             if (_attackableDetector.AttackablesInZone?.Count > 0)
@@ -55,12 +56,12 @@ public class AtkSelectZone : AttackSelection
             Deactivate ();
         }
 
-        if (Vector3.Distance (_lastMousePos, Input.mousePosition) < 2)
+        if (Vector3.Distance (_lastMousePos, Mouse.current.position.ReadValue()) < 2)
         {
             return;
         }
 
-        TryRaycastOnAttackSelectionSprite (Input.mousePosition, out Vector3 targetPos);
+        TryRaycastOnAttackSelectionSprite (Mouse.current.position.ReadValue(), out Vector3 targetPos);
         TryTurnPlayer (targetPos);
 
         bool isPositionInRange = IsPositionInAttackRange (targetPos);
@@ -91,7 +92,7 @@ public class AtkSelectZone : AttackSelection
         _material.SetFloat ("_AttackRange", _attack.Range + _radiusAdded);
         _material.SetVector ("_AttackPosition", _attackerOriginPosition);
 
-        _lastMousePos = Input.mousePosition;
+        _lastMousePos = Mouse.current.position.ReadValue();
     }
 
     private void StopDisplayAttackablesContours ()

@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using Cinemachine;
 using JetBrains.Annotations;
+using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Zenject;
-
 public class PlayerController : MonoBehaviour
 {
     public enum ControlMode
@@ -15,11 +16,20 @@ public class PlayerController : MonoBehaviour
     }
 
     #region Debug
+
     [SerializeField]
     private string _playerNameToLoad;
 
     [SerializeField]
     private GameObject _drawedCharacterTestPrefab;
+    #endregion
+
+    #region Inputs
+    [SerializeField, BoxGroup ("Inputs")]
+    private InputActionReference _mapMoveInput;
+
+    [SerializeField, BoxGroup ("Inputs")]
+    private InputActionReference _drawModeInput;
     #endregion
 
     [SerializeField]
@@ -75,18 +85,20 @@ public class PlayerController : MonoBehaviour
 
     private List<DrawedCharacter> _ownedCharacters = new List<DrawedCharacter> ();
 
-    private ModeSwitcher _modeSwitcher;
+    private CursorModeSwitcher _modeSwitcher;
     private MoveIndicator _moveIndicator;
     private BaseColorInventory _baseColorInventory;
     private Attackable.Factory _attackableFactory;
+    private InputMapSwitcher _inputMapSwitcher;
 
     [Inject, UsedImplicitly]
-    private void Init (ModeSwitcher modeSwitcher, MoveIndicator moveIndicator, BaseColorInventory baseColorInventory, Attackable.Factory attackableFactory)
+    private void Init (CursorModeSwitcher modeSwitcher, MoveIndicator moveIndicator, BaseColorInventory baseColorInventory, Attackable.Factory attackableFactory, InputMapSwitcher inputMapSwitcher)
     {
         _modeSwitcher = modeSwitcher;
         _moveIndicator = moveIndicator;
         _baseColorInventory = baseColorInventory;
         _attackableFactory = attackableFactory;
+        _inputMapSwitcher = inputMapSwitcher;
     }
 
     private void Awake ()
@@ -106,6 +118,13 @@ public class PlayerController : MonoBehaviour
 
         _characterCanvas.OnCharacterCreated += OnCharacterCreated;
         _characterCanvas.OnCharacterModified += StopCharacterDraw;
+
+        _drawModeInput.action.performed += OnDrawModeActionPerformed;
+    }
+
+    private void Start ()
+    {
+        _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Map);
     }
 
     private void SetAllColorDrop (int total)
@@ -131,7 +150,7 @@ public class PlayerController : MonoBehaviour
         _controlledCharacter.InitFromLoad (infos);
 
         CharacterPivot pivot = drawedCharacterGo.GetComponentInParent<CharacterPivot> ();
-        pivot.InitForMap ();
+        pivot.Init ();
         pivot.transform.position = _startPosition.position;
 
         _playerVirtualCamera.Follow = _controlledCharacter.transform;
@@ -172,39 +191,41 @@ public class PlayerController : MonoBehaviour
         _characterCanvas.Deactivate ();
     }
 
+    private void OnDrawModeActionPerformed (InputAction.CallbackContext context)
+    {
+        if (_controlledCharacter == null || _charCreationUI.gameObject.activeSelf)
+            return;
+
+        if (_controlMode == ControlMode.Map)
+        {
+            _controlledCharacter.CharMovement.StopMovement ();
+            InitForFreeDraw ();
+        }
+        else if (_controlMode == ControlMode.FreeDecorDraw)
+        {
+            StopFreeDrawMode ();
+        }
+    }
+
     private void Update ()
     {
         if (_controlledCharacter == null || _charCreationUI.gameObject.activeSelf)
             return;
 
-        if (Input.GetKeyDown (KeyCode.Space))
+        if (_modeSwitcher.CurrentMode == CursorModeSwitcher.Mode.Selection)
         {
-            if (_controlMode == ControlMode.Map)
-            {
-                _controlledCharacter.CharMovement.StopMovement ();
-                InitForFreeDraw ();
-            }
-            else if (_controlMode == ControlMode.FreeDecorDraw)
-            {
-                StopFreeDrawMode ();
-            }
-        }
-
-        if (_modeSwitcher.CurrentMode == ModeSwitcher.Mode.Selection)
-        {
-            if (_controlMode == ControlMode.Map)
-                UpdateMoveOnMap ();
-            else if (_controlMode == ControlMode.Combat)
+            if (_controlMode == ControlMode.Combat)
                 UpdateMoveOnCombat ();
+            else
+                UpdateMoveOnMap ();
         }
-        else if (_modeSwitcher.CurrentMode == ModeSwitcher.Mode.Draw)
+        else if (_modeSwitcher.CurrentMode == CursorModeSwitcher.Mode.Draw)
         {
             if (_controlMode == ControlMode.FreeDecorDraw)
             {
                 UpdateMoveOnFreeDraw ();
             }
         }
-
     }
 
     private void UpdateMoveOnMap ()
@@ -212,14 +233,8 @@ public class PlayerController : MonoBehaviour
         if (_characterCanvas.gameObject.activeSelf)
             return;
 
-        if (Input.GetMouseButton (0) && !Utils.IsPointerOverUIElement ())
-        {
-            if (Utils.TryGetMouseToMapPosition (out Vector3 mouseToMapPosition))
-            {
-                _controlledCharacter.CharMovement.MoveToTarget (mouseToMapPosition);
-                ActivateArrowAtPosition (mouseToMapPosition);
-            }
-        }
+        Vector2 direction = _mapMoveInput.action.ReadValue<Vector2> ();
+        _controlledCharacter.CharMovement.Move (direction);
     }
 
     private void UpdateMoveOnCombat ()
@@ -235,8 +250,9 @@ public class PlayerController : MonoBehaviour
                 mouseToMapPosition.x = Mathf.Clamp (mouseToMapPosition.x, _leftLimitX, _rightLimitX);
                 ActivateArrowAtPosition (mouseToMapPosition);
 
-                if (Input.GetMouseButtonDown (0))
+                if (Mouse.current.leftButton.wasPressedThisFrame)
                 {
+                    Debug.Log ("Move to target");
                     _controlledCharacter.CharMovement.MoveToTarget (mouseToMapPosition, TryEscape);
                 }
             }
@@ -253,7 +269,7 @@ public class PlayerController : MonoBehaviour
                 mouseToMapPosition.z = _lockedZ;
                 ActivateArrowAtPosition (mouseToMapPosition);
 
-                if (Input.GetMouseButtonDown (0))
+                if (Mouse.current.leftButton.wasPressedThisFrame)
                 {
                     _controlledCharacter.CharMovement.MoveToTarget (mouseToMapPosition);
                 }
@@ -294,8 +310,9 @@ public class PlayerController : MonoBehaviour
         _currentCombatZone = combatZone ??
             throw new System.Exception (nameof (combatZone) + " not set, can't fight. (it should be set)");
 
-        _controlMode = ControlMode.Combat;
+        SetControlMode (ControlMode.Combat);
         _moveIndicator.ActiveCombatMode (_controlledCharacter.GetSpriteBounds ());
+        _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Combat);
     }
 
     public void InitForFreeDraw ()
@@ -304,22 +321,22 @@ public class PlayerController : MonoBehaviour
             throw new System.Exception (nameof (_controlledCharacter) + " not set, can't fight. (it should be set)");
 
         _freeDrawVirtualCamera.Priority = 20;
-        _modeSwitcher.ChangeMode (ModeSwitcher.Mode.Draw);
+        _modeSwitcher.ChangeMode (CursorModeSwitcher.Mode.Draw);
         _lockedZ = _controlledCharacter.transform.position.z;
-        _controlMode = ControlMode.FreeDecorDraw;
+        SetControlMode (ControlMode.FreeDecorDraw);
         _freeDrawUI.gameObject.SetActive (true);
         _freeDrawUI.Init (_controlledCharacter);
-        // _moveIndicator.ActiveCombatMode (_controlledCharacter.GetSpriteBounds ());
     }
 
     private void StopFreeDrawMode ()
     {
         _freeDrawUI.gameObject.SetActive (false);
         _controlledCharacter.CharMovement.StopMovement ();
-        _controlMode = ControlMode.Map;
+        SetControlMode (ControlMode.Map);
         _freeDrawVirtualCamera.Priority = 0;
-        _modeSwitcher.ChangeMode (ModeSwitcher.Mode.Selection);
+        _modeSwitcher.ChangeMode (CursorModeSwitcher.Mode.Selection);
         _moveIndicator.DeactivateCombatMode ();
+        _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Map);
     }
 
     private bool _combatMoveStarted = false;
@@ -348,7 +365,8 @@ public class PlayerController : MonoBehaviour
     {
         _moveIndicator.gameObject.SetActive (false);
         _currentCombatZone.StopDrawMoveZoneLineOnMap ();
-        _controlMode = ControlMode.Map;
+        SetControlMode (ControlMode.Map);
+        _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Map);
         _moveIndicator.DeactivateCombatMode ();
     }
 
@@ -364,11 +382,12 @@ public class PlayerController : MonoBehaviour
 
     private void ChooseNewAttack (int additionalAttackToChoose)
     {
-        _controlMode = ControlMode.None;
+        SetControlMode (ControlMode.None);
         if (!_attackRegistry.TryGetAttacksToChooseFrom (_controlledCharacter, out List<Attack> attacks))
         {
             Debug.LogWarning ("No attack found for " + _controlledCharacter.Description.DisplayName);
-            _controlMode = ControlMode.Map;
+            SetControlMode (ControlMode.Map);
+            _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Map);
             return;
         }
 
@@ -379,10 +398,9 @@ public class PlayerController : MonoBehaviour
             if (additionalAttackToChoose > 0)
                 ChooseNewAttack (additionalAttackToChoose - 1);
             else
-                _controlMode = ControlMode.Map;
+                SetControlMode (ControlMode.Map);
         });
     }
-
     public void SetMoveMode (ControlMode moveMode)
     {
         _controlMode = moveMode;
@@ -391,5 +409,26 @@ public class PlayerController : MonoBehaviour
     public void RemoveAllTempEffectOnChar ()
     {
         _controlledCharacter.RemoveAllTempEffect ();
+    }
+
+    private void SetControlMode (ControlMode mode)
+    {
+        _controlMode = mode;
+
+        switch (mode)
+        {
+            case ControlMode.Combat:
+                _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Combat);
+                break;
+            case ControlMode.Map:
+                _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Map);
+                break;
+            case ControlMode.FreeDecorDraw:
+                _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Map);
+                break;
+            case ControlMode.None:
+                _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.None);
+                break;
+        }
     }
 }

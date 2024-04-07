@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class Utils
 {
@@ -22,7 +23,7 @@ public class Utils
     private static Camera _mainCamera = null;
     public static bool TryGetMouseToMapPosition (out Vector3 hitPos)
     {
-        Vector3 screenPos = Input.mousePosition;
+        Vector3 screenPos = Mouse.current.position.ReadValue ();
         if (_mainCamera == null)
             _mainCamera = Camera.main;
 
@@ -70,7 +71,7 @@ public class Utils
 
     public static bool TryGetMouseToLayerPosition (out Vector3 hitPos, int layer)
     {
-        Vector3 screenPos = Input.mousePosition;
+        Vector3 screenPos = Mouse.current.position.ReadValue ();
         return TryGetScreenToLayerPosition (screenPos, out hitPos, layer);
     }
 
@@ -162,6 +163,16 @@ public class Utils
         return 0f;
     }
 
+    public static float GetMapHeight (Bounds bounds)
+    {
+        const float RAYCAST_OFFSET = 0.1f;
+        if (Physics.Raycast (bounds.center + Vector3.up * RAYCAST_OFFSET, Vector3.down, out RaycastHit hit, Mathf.Infinity, 1 << LayerMask.NameToLayer ("Map")))
+        {
+            return hit.point.y;
+        }
+        return 0f;
+    }
+
     public static bool TryGetMapHeight (Vector3 position, out float height)
     {
         height = 0f;
@@ -196,7 +207,7 @@ public class Utils
     private static List<RaycastResult> GetEventSystemRaycastResults ()
     {
         PointerEventData eventData = new PointerEventData (EventSystem.current);
-        eventData.position = Input.mousePosition;
+        eventData.position = Mouse.current.position.ReadValue ();
         List<RaycastResult> raysastResults = new List<RaycastResult> ();
         EventSystem.current.RaycastAll (eventData, raysastResults);
         return raysastResults;

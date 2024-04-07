@@ -17,10 +17,10 @@ public class ModifiersDisplayer : MonoBehaviour
 
     private List<Modifier> _modifierInstances = new List<Modifier> ();
 
-    private ModeSwitcher _modeSwitcher;
+    private CursorModeSwitcher _modeSwitcher;
 
     [Inject, UsedImplicitly]
-    private void Init (ModeSwitcher modeSwitcher)
+    private void Init (CursorModeSwitcher modeSwitcher)
     {
         _modeSwitcher = modeSwitcher;
     }

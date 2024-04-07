@@ -40,15 +40,15 @@ public class TurnManager : MonoBehaviour
     private const float SECONDS_BETWEEN_APPLY_EFFECTS = 0.5f;
 
     [Inject, UsedImplicitly]
-    private void Init (ActionDelayer actionDelayer, FightRegistry fightRegistry)
+    private void Init (ActionDelayer actionDelayer, FightRegistry fightRegistry, Drawer drawer)
     {
         _actionDelayer = actionDelayer;
         _fightRegistry = fightRegistry;
+        _drawer = drawer;
     }
 
     private void Awake ()
     {
-        _drawer = FindAnyObjectByType<Drawer> (); // TODO : inject
         _playerController = FindAnyObjectByType<PlayerController> (); // TODO : inject
     }
 

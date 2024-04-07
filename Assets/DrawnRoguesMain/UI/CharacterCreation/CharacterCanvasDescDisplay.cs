@@ -1,6 +1,8 @@
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 public class CharacterCanvasDescDisplay : MonoBehaviour
 {
@@ -35,9 +37,6 @@ public class CharacterCanvasDescDisplay : MonoBehaviour
         public string Description;
 
     }
-
-    [SerializeField]
-    private Drawer _drawer;
 
     [SerializeField]
     private IconWithHeightAdjectiveAndDescription[] _heightAdjectiveIcons;
@@ -90,6 +89,14 @@ public class CharacterCanvasDescDisplay : MonoBehaviour
     [SerializeField]
     private TMP_Text _weightDescription;
 
+    private Drawer _drawer;
+    
+    [Inject, UsedImplicitly]
+    private void Init (Drawer drawer)
+    {
+        _drawer = drawer;
+    }
+    
     private void Awake ()
     {
         _characterCanvas.OnStatsChanged += () =>
@@ -109,11 +116,6 @@ public class CharacterCanvasDescDisplay : MonoBehaviour
         {
             SetWeightDescription ();
         };
-    }
-
-    private void Update ()
-    {
-
     }
 
     private void UpdateFormDescription ()

@@ -57,8 +57,6 @@ public class Character : Attackable
         _pivot = GetComponentInParent<CharacterPivot> ();
         _collider = GetComponentInChildren<Collider> ();
 
-        TrajectoryCalculator trajectoryCalculator = new TrajectoryCalculator ();
-
         foreach (Attack attack in _attacksReferences)
         {
             Attack inst = Instantiate (attack);

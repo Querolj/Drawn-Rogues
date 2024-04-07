@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class ModifierPlacer : MonoBehaviour
@@ -76,15 +77,15 @@ public class ModifierPlacer : MonoBehaviour
             return;
         }
 
-        _modifierPlacerImage.transform.position = Input.mousePosition;
+        _modifierPlacerImage.transform.position = Mouse.current.position.ReadValue();
 
-        Vector2 viewportMousePosition = _mainCamera.ScreenToViewportPoint (Input.mousePosition);
+        Vector2 viewportMousePosition = _mainCamera.ScreenToViewportPoint (Mouse.current.position.ReadValue());
 
-        Vector2 topRightModifierPlacer = Input.mousePosition;
+        Vector2 topRightModifierPlacer = Mouse.current.position.ReadValue();
         topRightModifierPlacer += _modifierPlacerImage.rectTransform.sizeDelta / 2f;
         topRightModifierPlacer = _mainCamera.ScreenToViewportPoint (topRightModifierPlacer);
 
-        Vector2 bottomLeftModifierPlacer = Input.mousePosition;
+        Vector2 bottomLeftModifierPlacer = Mouse.current.position.ReadValue();
         bottomLeftModifierPlacer -= _modifierPlacerImage.rectTransform.sizeDelta / 2f;
         bottomLeftModifierPlacer = _mainCamera.ScreenToViewportPoint (bottomLeftModifierPlacer);
 
@@ -100,7 +101,7 @@ public class ModifierPlacer : MonoBehaviour
             _isModifierInPosition = false;
         }
 
-        if (Input.GetMouseButtonDown (0))
+        if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             if (_isModifierInPosition)
             {

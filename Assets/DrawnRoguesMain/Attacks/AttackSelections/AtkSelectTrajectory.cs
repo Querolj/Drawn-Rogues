@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent (typeof (SpriteRenderer))]
 public class AtkSelectTrajectory : AttackSelection
@@ -42,7 +43,7 @@ public class AtkSelectTrajectory : AttackSelection
             return;
         }
 
-        if (Input.GetMouseButtonDown (0) && _target != null &&
+        if (Mouse.current.leftButton.wasPressedThisFrame && _target != null &&
             _trajectoryPoints?.Count > 1 && _validSelectionIcon.activeInHierarchy)
         {
             _attackTrajectory.Execute (_player, _target, _validSelectionIcon.transform.position, _onAttackEnded, null, _trajectoryPoints);
@@ -56,12 +57,12 @@ public class AtkSelectTrajectory : AttackSelection
         }
         _timeSinceLastUpdate = 0f;
 
-        if (Vector3.Distance (_lastMousePos, Input.mousePosition) < 2)
+        if (Vector3.Distance (_lastMousePos, Mouse.current.position.ReadValue()) < 2)
         {
             return;
         }
 
-        TryRaycastOnAttackSelectionSprite (Input.mousePosition, out Vector3 targetPos);
+        TryRaycastOnAttackSelectionSprite (Mouse.current.position.ReadValue(), out Vector3 targetPos);
         targetPos.y = Utils.GetMapHeight (targetPos);
 
         TryTurnPlayer (targetPos);
@@ -107,7 +108,7 @@ public class AtkSelectTrajectory : AttackSelection
         _material.SetFloat ("_AttackRange", _attack.Range + _radiusAdded);
         _material.SetVector ("_AttackPosition", _attackerOriginPosition);
 
-        _lastMousePos = Input.mousePosition;
+        _lastMousePos = Mouse.current.position.ReadValue();
     }
 
     private Dictionary<int, Attackable> _attackablesUnderSwordCache = new Dictionary<int, Attackable> ();

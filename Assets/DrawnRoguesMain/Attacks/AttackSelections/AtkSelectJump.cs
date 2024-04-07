@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent (typeof (SpriteRenderer))]
 public class AtkSelectJump : AttackSelection
@@ -62,7 +63,7 @@ public class AtkSelectJump : AttackSelection
             return;
         }
 
-        if (Input.GetMouseButtonDown (0) && _attackableFocused == null && _trajectoryPoints?.Count > 1 && _attackableDetector.AttackablesInZone?.Count == 0 && !Utils.IsPointerOverUIElement ())
+        if (Mouse.current.leftButton.wasPressedThisFrame && _attackableFocused == null && _trajectoryPoints?.Count > 1 && _attackableDetector.AttackablesInZone?.Count == 0 && !Utils.IsPointerOverUIElement ())
         {
             _attackJump.Execute (_player, null, Vector3.zero, _onAttackEnded, null, _trajectoryPoints);
             Deactivate ();
@@ -76,12 +77,12 @@ public class AtkSelectJump : AttackSelection
         }
         _timeSinceLastUpdate = 0f;
 
-        if (Vector3.Distance (_lastMousePos, Input.mousePosition) < 2)
+        if (Vector3.Distance (_lastMousePos, Mouse.current.position.ReadValue()) < 2)
         {
             return;
         }
 
-        TryRaycastOnAttackSelectionSprite (Input.mousePosition, out Vector3 targetPos);
+        TryRaycastOnAttackSelectionSprite (Mouse.current.position.ReadValue(), out Vector3 targetPos);
         targetPos.y = Utils.GetMapHeight (targetPos);
         Debug.Log ("targetPos 2 " + targetPos.ToString ("F3"));
 
@@ -114,6 +115,6 @@ public class AtkSelectJump : AttackSelection
         _material.SetFloat ("_AttackRange", _attack.Range + _radiusAdded);
         _material.SetVector ("_AttackPosition", _attackerOriginPosition);
 
-        _lastMousePos = Input.mousePosition;
+        _lastMousePos = Mouse.current.position.ReadValue();
     }
 }

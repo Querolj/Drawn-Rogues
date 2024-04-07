@@ -10,44 +10,71 @@ public class QuickSand : MonoBehaviour
     private Trigger _trigger;
 
     [SerializeField]
+    private float _heavyDepressionHeight = 0.1f;
+
+    [SerializeField]
+    private float _lightDepressionHeight = 0.02f;
+
+    [SerializeField]
     private float _kilogramThreshold = 40f;
 
     [SerializeField]
     private float _playerSpeedMultiplierWhenInQuicksand = 0.2f;
-    
-    private Attackable _player = null;
+
+    private Character _player = null;
     private Bounds _playerBounds;
     private Material _material;
-    // [Inject, UsedImplicitly]
-    // private void Init ()
-    // {
-    // }
-    
-    void Start()
+
+    void Awake ()
     {
         _trigger.OnDetect += OnDetect;
         _trigger.OnExit += OnExit;
-        _material = GetComponent<MeshRenderer>().material;
+        _material = GetComponent<MeshRenderer> ().material;
     }
 
     private void OnDetect (Collider other)
     {
         if (_player == null && other.gameObject.CompareTag ("Player"))
         {
-            _player = other.gameObject.GetComponent<Attackable>();
-            _playerBounds = _player.GetSpriteBounds();
+            _player = other.gameObject.GetComponent<Character> ();
+            _playerBounds = _player.GetSpriteBounds ();
             _material.SetVector ("_BoundCenter", _playerBounds.center);
             _material.SetFloat ("_BoundExtendX", _playerBounds.extents.x);
-            Debug.Log("Player detected");
+            _material.SetInt ("_IsPlayerOnTopOfQuickSand", 1);
+            if (_player.Stats.Kilogram > _kilogramThreshold)
+            {
+                _material.SetFloat ("_MaxDepressionHeight", _heavyDepressionHeight);
+                _player.CharMovement.SetOffsetY (_heavyDepressionHeight);
+                _player.CharMovement.SetWalkingSpeedMultiplier (_playerSpeedMultiplierWhenInQuicksand);
+            }
+            else
+            {
+                _material.SetFloat ("_MaxDepressionHeight", _lightDepressionHeight);
+                _player.CharMovement.SetOffsetY (_lightDepressionHeight);
+            }
+            Debug.Log ("Player detected");
         }
     }
 
     private void OnExit (Collider other)
     {
-        if (other.gameObject.CompareTag ("Player"))
+        if (other.gameObject.CompareTag ("Player") && _player != null)
         {
+            _player.CharMovement.SetWalkingSpeedMultiplier (1f);
+            _player.CharMovement.SetOffsetY (0f);
             _player = null;
-            Debug.Log("Player exited");
+            _material.SetInt ("_IsPlayerOnTopOfQuickSand", 0);
+            Debug.Log ("Player exited");
+        }
+    }
+
+    private void Update()
+    {
+        if (_player != null)
+        {
+            _playerBounds = _player.GetSpriteBounds ();
+            _material.SetVector ("_BoundCenter", _playerBounds.center);
+            _material.SetFloat ("_BoundExtendX", _playerBounds.extents.x);
         }
     }
 }

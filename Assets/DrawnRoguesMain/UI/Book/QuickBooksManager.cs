@@ -16,10 +16,10 @@ public class QuickBookManager : MonoBehaviour
     [SerializeField]
     private Bookmark _bookmarkModifier;
 
-    private ModeSwitcher _modeSwitcher;
+    private CursorModeSwitcher _modeSwitcher;
 
     [Inject, UsedImplicitly]
-    private void Init (ModeSwitcher modeSwitcher)
+    private void Init (CursorModeSwitcher modeSwitcher)
     {
         _modeSwitcher = modeSwitcher;
     }
@@ -43,7 +43,7 @@ public class QuickBookManager : MonoBehaviour
 
     public void OpenQuickBook (BookType bookType)
     {
-        _modeSwitcher.ChangeMode (bookType == BookType.Modifier ? ModeSwitcher.Mode.Selection : ModeSwitcher.Mode.Draw);
+        _modeSwitcher.ChangeMode (bookType == BookType.Modifier ? CursorModeSwitcher.Mode.Selection : CursorModeSwitcher.Mode.Draw);
         _quickBookCharColor.gameObject.SetActive (bookType == BookType.CharColouring);
         _quickBookModifier.gameObject.SetActive (bookType == BookType.Modifier);
         _bookmarkCharColor.SetSelected (bookType == BookType.CharColouring);

@@ -54,17 +54,17 @@ public class CombatZone : MonoBehaviour
     private WorldUIContainer _worldUIContainer;
 
     [Inject, UsedImplicitly]
-    private void Init (MoveIndicator moveIndicator, BaseColorInventory baseColorPalette, WorldUIContainer worldUIContainer)
+    private void Init (MoveIndicator moveIndicator, BaseColorInventory baseColorPalette, WorldUIContainer worldUIContainer, Drawer drawer)
     {
         _baseColorPalette = baseColorPalette;
         _moveIndicator = moveIndicator;
         _worldUIContainer = worldUIContainer;
+        _drawer = drawer;
     }
 
     private void Awake ()
     {
         _turnBasedCombat = GameObject.FindObjectOfType<TurnManager> (); // TODO : Inject
-        _drawer = GameObject.FindObjectOfType<Drawer> (); // TODO : Inject
         _playerController = GameObject.FindObjectOfType<PlayerController> (); // TODO : Inject
         _rewardUI = GameObject.FindObjectOfType<RewardUI> (true); // TODO : Inject
 

@@ -8,7 +8,6 @@
         "Cinemachine",
         "AdvancedPolygonCollider",
         "Zenject",
-        "ModeSwitcher",
         "MoveIndicator",
         "GraphicUtils",
         "Utils",
@@ -27,7 +26,11 @@
         "AttackTypeDefinition",
         "AttackableState",
         "FightRegistry",
-        "MapUtils"
+        "MapUtils",
+        "Unity.InputSystem",
+        "CursorModeSwitcher",
+        "InputMapSwitcher",
+        "TextureTransition"
     ],
     "includePlatforms": [
         "Editor",

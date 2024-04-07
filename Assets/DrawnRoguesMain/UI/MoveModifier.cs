@@ -1,16 +1,17 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class MoveModifier : MonoBehaviour
 {
     private Vector3 bottomLeftScreenLimit;
     private Vector3 topRightScreenLimit;
-    private ModeSwitcher _modeSwitcher;
+    private CursorModeSwitcher _modeSwitcher;
     private Modifier _modifier;
     private Action<Modifier> _onModifierDeleted;
     private bool _initialized = false;
 
-    public void Init (Vector3 bottomLeftLimit, Vector3 topRightLimit, ModeSwitcher modeSwitcher, Modifier modifier, Action<Modifier> onModifierDeleted)
+    public void Init (Vector3 bottomLeftLimit, Vector3 topRightLimit, CursorModeSwitcher modeSwitcher, Modifier modifier, Action<Modifier> onModifierDeleted)
     {
         bottomLeftScreenLimit = bottomLeftLimit;
         topRightScreenLimit = topRightLimit;
@@ -25,10 +26,10 @@ public class MoveModifier : MonoBehaviour
         if (!_initialized)
             return;
 
-        if (_modeSwitcher.CurrentMode != ModeSwitcher.Mode.Selection)
+        if (_modeSwitcher.CurrentMode != CursorModeSwitcher.Mode.Selection)
             return;
 
-        Vector3 mousePosClamped = Input.mousePosition;
+        Vector3 mousePosClamped = Mouse.current.position.ReadValue();
         mousePosClamped.x = Mathf.Clamp (mousePosClamped.x, bottomLeftScreenLimit.x, topRightScreenLimit.x);
         mousePosClamped.y = Mathf.Clamp (mousePosClamped.y, bottomLeftScreenLimit.y, topRightScreenLimit.y);
 
@@ -41,7 +42,7 @@ public class MoveModifier : MonoBehaviour
         if (!_initialized)
             return;
 
-        if (_modeSwitcher.CurrentMode != ModeSwitcher.Mode.Selection)
+        if (_modeSwitcher.CurrentMode != CursorModeSwitcher.Mode.Selection)
             return;
 
         if (Input.GetKeyDown (KeyCode.Delete))

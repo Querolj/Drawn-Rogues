@@ -7,9 +7,9 @@ public class ModifierDisplayer : MonoBehaviour, IPointerDownHandler, IPointerEnt
     private ModifierPlacer _modifierPlacer;
 
     private ModifierInfoDisplayer _modifierInfoDisplayer;
-    private ModeSwitcher _modeSwitcher;
+    private CursorModeSwitcher _modeSwitcher;
 
-    public void Init (Modifier modifier, ModifierPlacer modifierPlacer, ModifierInfoDisplayer modifierInfoDisplayer, ModeSwitcher modeSwitcher)
+    public void Init (Modifier modifier, ModifierPlacer modifierPlacer, ModifierInfoDisplayer modifierInfoDisplayer, CursorModeSwitcher modeSwitcher)
     {
         _modifierInfoDisplayer = modifierInfoDisplayer ??
             throw new System.ArgumentNullException (nameof (modifierInfoDisplayer));
@@ -23,7 +23,7 @@ public class ModifierDisplayer : MonoBehaviour, IPointerDownHandler, IPointerEnt
 
     public void OnPointerDown (PointerEventData pointerEventData)
     {
-        _modeSwitcher.ChangeMode (ModeSwitcher.Mode.Selection);
+        _modeSwitcher.ChangeMode (CursorModeSwitcher.Mode.Selection);
         // _modifierPlacer.SetModifier (_modifier);
     }
 

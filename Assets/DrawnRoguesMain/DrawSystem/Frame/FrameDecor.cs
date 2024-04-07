@@ -58,7 +58,6 @@ public class FrameDecor : Frame
         if (colouringSpell.BehaviourPrefab == null)
             throw new Exception ("could not load prefab for colouring spell " + colouringSpell.Name + ", can't generate collider for lc " + colouringSpell.Name);
 
-        // goBehaviour = GameObject.Instantiate (colouringSpell.BehaviourPrefab);
         GameObject goBehaviour = _combatEntityFactory.Create (colouringSpell.BehaviourPrefab).gameObject;
 
         goBehaviour.transform.SetParent (gameObject.transform);
@@ -93,6 +92,8 @@ public class FrameDecor : Frame
         }
 
         Attackable attackable = goBehaviour.GetComponentInParent<Attackable> ();
+
+        // Get combat entity, cause Attackable and combathazard are both combat entities. CHeck if it's a spell 
         if (attackable != null)
         {
             if (attackable is IColouringSpellBehaviour spellBehaviour)

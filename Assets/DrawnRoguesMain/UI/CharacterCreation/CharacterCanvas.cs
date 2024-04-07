@@ -92,21 +92,21 @@ public class CharacterCanvas : MonoBehaviour
 
     private const int BASE_PIXELS_ALLOWED = 300;
 
-    private ModeSwitcher _modeSwitcher;
+    private CursorModeSwitcher _modeSwitcher;
 
     private Attackable.Factory _attackableFactory;
 
     [Inject, UsedImplicitly]
-    private void Init (ModeSwitcher modeSwitcher, Attackable.Factory attackableFactory)
+    private void Init (CursorModeSwitcher modeSwitcher, Attackable.Factory attackableFactory, Drawer drawer)
     {
         _modeSwitcher = modeSwitcher;
         _attackableFactory = attackableFactory;
+        _drawer = drawer;
     }
 
     private void Awake ()
     {
         _mainCamera = Camera.main;
-        _drawer = GameObject.FindFirstObjectByType<Drawer> (); // TODO : Inject
         _frameReader = GameObject.FindFirstObjectByType<FrameReader> (); // TODO : Inject
         _stats = new AttackableStats ();
         _modifierLayerRenderer = _modifierLayer.GetComponent<MeshRenderer> ();
@@ -171,7 +171,7 @@ public class CharacterCanvas : MonoBehaviour
 
     public void Activate (Vector3 position, DrawedCharacter dc = null)
     {
-        _modeSwitcher.ChangeMode (ModeSwitcher.Mode.Draw);
+        _modeSwitcher.ChangeMode (CursorModeSwitcher.Mode.Draw);
         transform.position = position;
         gameObject.SetActive (true);
         _drawedCharacterToModify = dc;
@@ -208,7 +208,7 @@ public class CharacterCanvas : MonoBehaviour
 
     public void Deactivate ()
     {
-        _modeSwitcher.ChangeMode (ModeSwitcher.Mode.Selection);
+        _modeSwitcher.ChangeMode (CursorModeSwitcher.Mode.Selection);
         gameObject.SetActive (false);
         _camera.Priority = 0;
     }
@@ -322,16 +322,16 @@ public class CharacterCanvas : MonoBehaviour
         drawedCharacter.Description.DisplayName = _nameField.text;
 
         CharacterPivot pivot = drawedCharacterGo.GetComponentInParent<CharacterPivot> ();
-        pivot.InitForMap ();
+        pivot.Init ();
 
         OnCharacterCreated?.Invoke (drawedCharacterGo);
-        _modeSwitcher.ChangeMode (ModeSwitcher.Mode.Selection);
+        _modeSwitcher.ChangeMode (CursorModeSwitcher.Mode.Selection);
     }
 
     private void ModifyDrawedCharacter ()
     {
         _drawedCharacterToModify.Init (_drawedCharacterFormDescription, _frame, _modifiersAdded, false);
-        _modeSwitcher.ChangeMode (ModeSwitcher.Mode.Selection);
+        _modeSwitcher.ChangeMode (CursorModeSwitcher.Mode.Selection);
         OnCharacterModified?.Invoke ();
     }
 

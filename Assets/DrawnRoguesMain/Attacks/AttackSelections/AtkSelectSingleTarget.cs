@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent (typeof (SpriteRenderer))]
 public class AtkSelectSingleTarget : AttackSelection
@@ -77,7 +78,7 @@ public class AtkSelectSingleTarget : AttackSelection
             return;
         }
 
-        TryRaycastOnAttackSelectionSprite (Input.mousePosition, out Vector3 worldMousePos);
+        TryRaycastOnAttackSelectionSprite (Mouse.current.position.ReadValue(), out Vector3 worldMousePos);
         worldMousePos.z = _attackerOriginPosition.z;
         TryTurnPlayer (worldMousePos);
 
@@ -97,7 +98,7 @@ public class AtkSelectSingleTarget : AttackSelection
         _material.SetFloat ("_AttackRange", _attack.Range + _radiusAdded);
         _material.SetVector ("_AttackPosition", _attackerOriginPosition);
 
-        if (Input.GetMouseButtonDown (0) && _targetAttackable != null && _validSelectionIcon.activeInHierarchy)
+        if (Mouse.current.leftButton.wasPressedThisFrame && _targetAttackable != null && _validSelectionIcon.activeInHierarchy)
         {
             _attackSingleTarget.Execute (_player, _targetAttackable, _validSelectionIcon.transform.position, _onAttackEnded);
             Deactivate ();

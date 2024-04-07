@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class AttackableFocuser : MonoBehaviour
 {
@@ -7,7 +8,7 @@ public class AttackableFocuser : MonoBehaviour
     private Camera _mainCamera;
     private void Update ()
     {
-        if (TryGetFirstAttackableUnderMouse (Input.mousePosition, out Attackable attackable))
+        if (TryGetFirstAttackableUnderMouse (Mouse.current.position.ReadValue(), out Attackable attackable))
         {
             if (attackable != _lastFocusedAttackable)
             {

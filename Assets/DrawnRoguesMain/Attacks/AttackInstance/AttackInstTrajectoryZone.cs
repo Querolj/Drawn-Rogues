@@ -56,7 +56,7 @@ public class AttackInstTrajectoryZone : AttackInstance
         _targetToHitCount = allTargets.Count;
 
         attacker.CharMovement.ActivateWalk = false;
-        attacker.CharMovement.FollowTrajectory (trajectory, () =>
+        attacker.CharMovement.Jump (trajectory, () =>
         {
 
             foreach (Attackable attackable in allTargets)
@@ -85,7 +85,7 @@ public class AttackInstTrajectoryZone : AttackInstance
             attacker.Squasher.SquashHorizontally (0.6f, 0.1f, 0.05f, () =>
             {
                 trajectory.Reverse ();
-                attacker.CharMovement.FollowTrajectory (trajectory, () =>
+                attacker.CharMovement.Jump (trajectory, () =>
                 {
                     attacker.CharMovement.ActivateWalk = true;
                     TryInvokeCallback ();

@@ -13,17 +13,13 @@ public class SpellButtonGenerator : MonoBehaviour
 
     private Character _lastPlayerCharacter = null;
 
-    private ModeSwitcher _modeSwitcher;
+    private CursorModeSwitcher _modeSwitcher;
 
     [Inject, UsedImplicitly]
-    private void Init (ModeSwitcher modeSwitcher)
+    private void Init (CursorModeSwitcher modeSwitcher, Drawer drawer)
     {
         _modeSwitcher = modeSwitcher;
-    }
-
-    private void Awake ()
-    {
-        _drawer = FindObjectOfType<Drawer> (); // TODO: inject
+        _drawer = drawer;
     }
 
     public void GenerateButtons (DrawedCharacter playerCharacter)
@@ -51,7 +47,7 @@ public class SpellButtonGenerator : MonoBehaviour
             spellButton.Button.onClick.AddListener (
                 () =>
                 {
-                    _modeSwitcher.ChangeMode (ModeSwitcher.Mode.Draw);
+                    _modeSwitcher.ChangeMode (CursorModeSwitcher.Mode.Draw);
                     _drawer.SetSelectedColouring (spell);
                 }
             );

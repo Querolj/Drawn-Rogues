@@ -40,7 +40,7 @@ public class AttackInstTrajectory : AttackInstance
         _targetToHitCount = 1;
 
         attacker.CharMovement.ActivateWalk = false;
-        attacker.CharMovement.FollowTrajectory (trajectory, () =>
+        attacker.CharMovement.Jump (trajectory, () =>
         {
             AttackInstTrajectory attackInstCopy = GetCopy () as AttackInstTrajectory;
             ApplyTargetAttackDefPassive (target, ref attackInstCopy);
@@ -67,7 +67,7 @@ public class AttackInstTrajectory : AttackInstance
         attacker.Squasher.SquashHorizontally (0.6f, 0.1f, 0.05f, () =>
         {
             trajectory.Reverse ();
-            attacker.CharMovement.FollowTrajectory (trajectory, () =>
+            attacker.CharMovement.Jump (trajectory, () =>
             {
                 attacker.CharMovement.ActivateWalk = true;
                 TryInvokeCallback ();

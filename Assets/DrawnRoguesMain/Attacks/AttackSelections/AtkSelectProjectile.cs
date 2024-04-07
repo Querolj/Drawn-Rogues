@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent (typeof (SpriteRenderer))]
 public class AtkSelectProjectile : AttackSelection
@@ -61,7 +62,7 @@ public class AtkSelectProjectile : AttackSelection
             return;
         }
 
-        if (Input.GetMouseButtonDown (0) && _targettedAttackable != null && _trajectoryPoints?.Count > 1)
+        if (Mouse.current.leftButton.wasPressedThisFrame && _targettedAttackable != null && _trajectoryPoints?.Count > 1)
         {
             _attackProjectile.Execute (_player, _targettedAttackable, _validSelectionIcon.transform.position, _onAttackEnded, null, _trajectoryPoints);
             Deactivate ();
@@ -74,12 +75,12 @@ public class AtkSelectProjectile : AttackSelection
         }
         _timeSinceLastUpdate = 0f;
 
-        if (Vector3.Distance (_lastMousePos, Input.mousePosition) < 1)
+        if (Vector3.Distance (_lastMousePos, Mouse.current.position.ReadValue()) < 1)
         {
             return;
         }
 
-        TryRaycastOnAttackSelectionSprite (Input.mousePosition, out Vector3 targetPos);
+        TryRaycastOnAttackSelectionSprite (Mouse.current.position.ReadValue(), out Vector3 targetPos);
         targetPos.y = Utils.GetMapHeight (targetPos);
         UpdateProjectileStartPos ();
         TryTurnPlayer (targetPos);
@@ -132,6 +133,6 @@ public class AtkSelectProjectile : AttackSelection
         _material.SetFloat ("_AttackRange", _attack.Range + _radiusAdded);
         _material.SetVector ("_AttackPosition", _attackerOriginPosition);
 
-        _lastMousePos = Input.mousePosition;
+        _lastMousePos = Mouse.current.position.ReadValue();
     }
 }
