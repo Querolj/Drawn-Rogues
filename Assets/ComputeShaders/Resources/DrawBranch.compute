@@ -10,14 +10,6 @@ Texture2D<float4> BrushTex;
 float4 BrushColor;
 RWTexture2D<float4> DrawnTex;
 
-RWStructuredBuffer<int> BranchTouch;
-
-
-bool IsPixelColored(int3 id)
-{
-    return DrawnTex[id.xy].w > 0.01;
-}
-
 bool ShouldDraw(uint2 brushOrigin, int3 id)
 {
     return (id.x - brushOrigin.x) >= 0 && (id.x - brushOrigin.x) < (BrushWidth )
@@ -32,12 +24,6 @@ int2 GetBrushOrigin()
 [numthreads(32,32,1)]
 void DrawBranch (int3 id : SV_DispatchThreadID)
 {
-    // if(DrawnTex[id.xy].w > 0.01)
-    // {
-    //     BranchTouch[0] = 1;
-    //     return;
-    // }
-
     int2 brushOrigin = GetBrushOrigin();
     
     if(ShouldDraw(brushOrigin, id) && !Equals(BrushTex[id.xy - brushOrigin].a, 0))

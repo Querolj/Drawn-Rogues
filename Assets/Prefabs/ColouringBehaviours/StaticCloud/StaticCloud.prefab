@@ -111,6 +111,9 @@ MonoBehaviour:
   _middleCloudColor: {r: 0.7372549, g: 0.74509805, b: 0.78431374, a: 1}
   _bottomCloudColor: {r: 0.72156864, g: 0.7176471, b: 0.7372549, a: 1}
   _drawCloudCs: {fileID: 7200000, guid: 00bd1e6214be13b40a13078391662cd6, type: 3}
+  _getVisiblePixelCountCs: {fileID: 7200000, guid: e7e785684d39ae1468b78ebd0daa3e39, type: 3}
+  _pixelTransitionTimePerFrame: 0.2
+  _colorTransitionTime: 0.8
 --- !u!64 &2389963481228850400
 MeshCollider:
   m_ObjectHideFlags: 0

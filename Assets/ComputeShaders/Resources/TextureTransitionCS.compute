@@ -1,0 +1,60 @@
+#pragma kernel Transition
+#include "Utils.cginc"
+
+RWTexture2D<float4> TexToTransition;
+Texture2D<float4> Tex;
+Texture2D<float4> TargetTex;
+
+RWStructuredBuffer<uint> PixelRemovedOrAdded;
+
+float ColorLerp;
+
+bool IsOnBorder(uint2 id)
+{
+    float alphaSummed = 0;
+    alphaSummed += Tex[id.xy + uint2(1,0)].w;
+    alphaSummed += Tex[id.xy + uint2(-1,0)].w;
+    alphaSummed += Tex[id.xy + uint2(0,1)].w;
+    alphaSummed += Tex[id.xy + uint2(0,-1)].w;
+
+    return alphaSummed < 3.999;
+}
+
+bool IsOnContour(uint2 id)
+{
+    float alphaSummed = 0;
+    alphaSummed += Tex[id.xy + uint2(1,0)].w;
+    alphaSummed += Tex[id.xy + uint2(-1,0)].w;
+    alphaSummed += Tex[id.xy + uint2(0,1)].w;
+    alphaSummed += Tex[id.xy + uint2(0,-1)].w;
+
+    return alphaSummed > 0.001;
+}
+
+[numthreads(32,32,1)]
+void Transition (uint3 id : SV_DispatchThreadID)
+{
+    float alpha = Tex[id.xy].w;
+
+    if(alpha > 0.1 && TargetTex[id.xy].w < 0.1) // Remove pixels ?
+    {
+        if(IsOnBorder(id.xy))
+        {
+            PixelRemovedOrAdded[0] = 1;
+            TexToTransition[id.xy] = float4(0,0,0,0);
+            return;
+        }
+    }
+    else if(alpha < 0.1 && TargetTex[id.xy].w > 0.1) // Add pixels ?
+    {
+        if(IsOnContour(id.xy))
+        {
+            PixelRemovedOrAdded[0] = 1;
+            TexToTransition[id.xy] = TargetTex[id.xy];
+            return;
+        }
+    }
+    
+    if(alpha > 0.1 && TargetTex[id.xy].w > 0.1)
+        TexToTransition[id.xy] = lerp(TexToTransition[id.xy], TargetTex[id.xy], ColorLerp);
+}

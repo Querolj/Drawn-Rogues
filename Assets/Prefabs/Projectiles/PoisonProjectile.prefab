@@ -29,8 +29,8 @@ Transform:
   m_GameObject: {fileID: 8473946744376720239}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.03, y: 0.257, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -124,6 +124,7 @@ MonoBehaviour:
   _frameTime: 0.025
   _maxLoopCount: 1
   _autoStart: 0
+  _dontDestroyOnAnimeEnd: 0
 --- !u!135 &1606546550987980190
 SphereCollider:
   m_ObjectHideFlags: 0

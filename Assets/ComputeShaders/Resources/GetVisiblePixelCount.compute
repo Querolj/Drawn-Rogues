@@ -1,0 +1,13 @@
+#pragma kernel GetVisiblePixelCount
+
+Texture2D<float4> Tex;
+RWStructuredBuffer<uint> Count;
+
+[numthreads(32,32,1)]
+void GetVisiblePixelCount (uint3 id : SV_DispatchThreadID)
+{
+    if( Tex[id.xy].w > 0.01)
+    {   
+        InterlockedAdd(Count[0], 1);
+    }
+}

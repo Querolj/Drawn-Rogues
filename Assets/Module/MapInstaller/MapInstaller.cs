@@ -49,7 +49,7 @@ public class MapInstaller : MonoInstaller
         Container.Bind<TrajectoryDrawer> ().FromComponentsInNewPrefab (_trajectoryDrawer).AsSingle ();
         Container.Bind<AttackSelectionManager> ().FromComponentsInNewPrefab (_attackSelectionManager).AsSingle ();
         Container.Bind<InputMapSwitcher> ().FromComponentsInNewPrefab (_inputMapSwitcher).AsSingle ();
-        Container.Bind<TextureTransition> ().FromComponentsInNewPrefab (_textureTransition).AsSingle ();
+        Container.Bind<TextureTransition> ().FromComponentsInNewPrefab (_textureTransition).AsTransient ();
         Container.Bind<Drawer> ().FromComponentsInNewPrefab (_drawer).AsSingle ();
 
 

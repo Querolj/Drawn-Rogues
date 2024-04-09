@@ -87,6 +87,13 @@ public class Frame : MonoBehaviour
             return _drawTexture;
         }
     }
+    public Texture2D MainTexture
+    {
+        get
+        {
+            return (Texture2D) _renderer.material.mainTexture;
+        }
+    }
 
     protected Color[] _clearPixels;
     protected Color[] _mainTexPixels;

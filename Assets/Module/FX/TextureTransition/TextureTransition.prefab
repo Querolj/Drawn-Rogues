@@ -44,3 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb4eebcd28a6f7c41af83cb3dad58ef1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _textureTransitionCs: {fileID: 7200000, guid: 90096e7263fd07140a6a998fb1002a30, type: 3}

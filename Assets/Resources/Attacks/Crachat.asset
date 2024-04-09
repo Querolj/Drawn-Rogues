@@ -23,9 +23,7 @@ MonoBehaviour:
   _range: 6
   AttackSelectionType: 1
   AttackType: 2
-  EffectsSerialized:
-  - Effect: {fileID: 11400000, guid: a1171f3f9d7e36b40bd707d209547f29, type: 2}
-    Value: 100
+  EffectsSerialized: []
   AvailableForPlayer: 1
   RequiredLevel: 0
   RequiredWidthAdjectives: 
@@ -35,6 +33,6 @@ MonoBehaviour:
   RequiredNumberOfArmsMax: -1
   RequiredNumberOfLegsMin: -1
   RequiredNumberOfLegsMax: -1
-  TrajectorySpeed: 10
+  TrajectorySpeed: 15
   TrajectoryRadius: 0.05
   ProjectileTemplate: {fileID: 8473946744376720238, guid: 81bcc3b052942ca4baefd573586a9c2c, type: 3}

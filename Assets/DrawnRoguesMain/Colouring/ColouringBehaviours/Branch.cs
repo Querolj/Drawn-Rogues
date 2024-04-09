@@ -48,6 +48,7 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
     private Action _onInitDone;
     private List<Attackable> _attackableInRange = new List<Attackable> ();
     private bool _branchTouchingGround = false;
+    private FrameDecor _frameDecor;
 
     private class BranchFork
     {
@@ -80,6 +81,8 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
     private Texture2D _drawedTex;
     private RenderTexture _rendTex;
     private Color[] _drawedTexInitialPixels;
+    private Color[] _frameTexPixels;
+
     private int[] _branchIds;
 
     // Flower grow 
@@ -97,7 +100,7 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
     {
         _attackInstanceFactory = attackInstanceFactory;
     }
-    
+
     private void Awake ()
     {
         _turnManager = FindObjectOfType<TurnManager> (); // TODO : inject
@@ -134,7 +137,7 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
             Character character = attackable as Character;
             if (character == null)
                 continue;
-            
+
             AttackInstance attackInstance = _attackInstanceFactory.Create (_healingAttack, character);
             attackInstance.ApplyMultiplierToEffect (healingEffectName, mult);
 
@@ -180,6 +183,7 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
 
     public void Init (TurnManager turnBasedCombat, List<Vector2> strokeDrawUVs, FrameDecor frameDecor, Action onInitDone = null)
     {
+        _frameDecor = frameDecor;
         if (!IsMainBranchTouchingGround (strokeDrawUVs, frameDecor))
         {
             Debug.Log ("Branch not touching ground, aborting");
@@ -199,6 +203,7 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
         _lastStep = 1;
         _currentStep = 1;
         _drawedTexInitialPixels = frameDecor.DrawTexture.GetPixels ();
+        _frameTexPixels = frameDecor.MainTexture.GetPixels ();
         _branchIds = new int[_drawedTexInitialPixels.Length];
 
         // set draw texture
@@ -362,6 +367,10 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
                     if (nextIndex >= 0 && nextIndex < _drawedTexInitialPixels.Length &&
                         _drawedTexInitialPixels[nextIndex].a > 0.99f && _branchIds[nextIndex] != branchFork.Id)
                         stopGrow = true;
+
+                    if (nextIndex >= 0 && nextIndex < _frameTexPixels.Length &&
+                        _frameTexPixels[nextIndex].a < 0.01f)
+                        stopGrow = true;
                 }
 
                 if (stopGrow)
@@ -516,13 +525,12 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
         return true;
     }
 
-    // return false if the branch needs to stop growing
-    private bool DrawBranchPart (BranchFork branchFork, Brush brush)
+    private void DrawBranchPart (BranchFork branchFork, Brush brush)
     {
         // Debug.Log ("DrawBranchPart, branchFork.CurrentPositionInPixel : " + branchFork.CurrentPositionInPixel + ", brushPos : " + brushPos);
         int i = branchFork.CurrentPositionInPixel.x + branchFork.CurrentPositionInPixel.y * _drawedTex.width;
         if (i < 0 || i >= _drawedTexInitialPixels.Length)
-            return false;
+            return;
 
         _branchIds[i] = branchFork.Id;
 
@@ -536,18 +544,7 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
 
         _drawBranchCs.SetTexture (_kernelCS, "BrushTex", brush.Texture);
 
-        int[] branchTouched = new int[1];
-        branchTouched[0] = 0;
-        ComputeBuffer branchTouchedBuffer = new ComputeBuffer (1, sizeof (int));
-        branchTouchedBuffer.SetData (branchTouched);
-        _drawBranchCs.SetBuffer (_kernelCS, "BranchTouch", branchTouchedBuffer);
-
         _drawBranchCs.Dispatch (_kernelCS, _groupThreadCS.x, _groupThreadCS.y, _groupThreadCS.z);
-
-        branchTouchedBuffer.GetData (branchTouched);
-        branchTouchedBuffer.Dispose ();
-
-        return true;
     }
 
     private void ApplyDrawTex ()

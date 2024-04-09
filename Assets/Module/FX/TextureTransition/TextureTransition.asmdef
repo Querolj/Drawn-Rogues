@@ -1,7 +1,9 @@
 {
     "name": "TextureTransition",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:477c084fb4736604189d1ecc7afd0347"
+    ],
     "includePlatforms": [
         "Editor",
         "WindowsStandalone64"

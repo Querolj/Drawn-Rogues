@@ -14,7 +14,7 @@ public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
     private LightningBoltScript _lightningBoltTemplate;
 
     [SerializeField]
-    private const float _LIGHTING_BOLT_DURATION = 0.5f;
+    private const float _LIGHTING_BOLT_DURATION = 0.75f;
 
     [SerializeField]
     private Attack _attack;
@@ -33,6 +33,15 @@ public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
 
     [SerializeField]
     ComputeShader _drawCloudCs;
+
+    [SerializeField]
+    ComputeShader _getVisiblePixelCountCs;
+
+    [SerializeField]
+    private float _pixelTransitionTimePerFrame = 0.3f;
+
+    [SerializeField]
+    private float _colorTransitionTime = 1.5f;
     #endregion
 
     #region private fields
@@ -46,21 +55,37 @@ public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
     private float _damageMultiplier = 1f;
     private float _xMinBounds = float.MaxValue, _xMaxBounds = float.MinValue;
     private TurnManager _turnManager;
+    private Action _onInitDone;
+    private FrameDecor _frameDecor;
+    private float _averageCloudTickness;
     #endregion  
 
     #region Injected
     private AttackInstance.Factory _attackInstanceFactory;
+    private TextureTransition _textureTransition;
     #endregion
 
     [Inject, UsedImplicitly]
-    private void Init (AttackInstance.Factory attackInstanceFactory)
+    private void Init (AttackInstance.Factory attackInstanceFactory, TextureTransition textureTransition)
     {
         _attackInstanceFactory = attackInstanceFactory;
+        _textureTransition = textureTransition;
         _renderer = GetComponent<SpriteRenderer> ();
+
+        float cloudTicknessTotal = 0;
+        // TODO : we should get the number of pixels for cloud instead of their height
+        foreach (Texture2D tex in _cloudTexs)
+        {
+            cloudTicknessTotal += tex.height * 0.45f; // 0.6f is a arbitrary number to get the cloud total pixel count
+        }
+
+        _averageCloudTickness = cloudTicknessTotal / _cloudTexs.Length;
     }
 
     public void Init (TurnManager turnManager, List<Vector2> lastStrokeDrawUVs, FrameDecor frameDecor, Action onInitDone = null)
     {
+        _frameDecor = frameDecor;
+        _onInitDone = onInitDone;
         _lightningBolt = Instantiate (_lightningBoltTemplate);
         _lightningBolt.transform.SetParent (transform);
         Vector3 locPos = Vector3.zero;
@@ -79,15 +104,15 @@ public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
         int lastIndexSelected = -1;
         Vector3 lastLocalPos = Vector3.zero;
 
-        Texture2D drawedTex = new Texture2D (frameDecor.Width, frameDecor.Height, TextureFormat.RGBA32, false);
-        drawedTex.filterMode = FilterMode.Point;
-        Color[] pixels = new Color[frameDecor.Width * frameDecor.Height];
+        Texture2D textureWithClouds = new Texture2D (_frameDecor.Width, _frameDecor.Height, TextureFormat.RGBA32, false, true);
+        textureWithClouds.filterMode = FilterMode.Point;
+        Color[] pixels = new Color[_frameDecor.Width * _frameDecor.Height];
         for (int i = 0; i < pixels.Length; i++)
         {
             pixels[i] = Color.clear;
         }
-        drawedTex.SetPixels (pixels);
-        drawedTex.Apply ();
+        textureWithClouds.SetPixels (pixels);
+        textureWithClouds.Apply ();
 
         if (_drawCloudCs == null)
         {
@@ -97,10 +122,10 @@ public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
 
         int kernel = _drawCloudCs.FindKernel ("Draw");
 
-        RenderTexture rendTex = new RenderTexture (drawedTex.width, drawedTex.height, 0, RenderTextureFormat.ARGB32);
+        RenderTexture rendTex = new RenderTexture (textureWithClouds.width, textureWithClouds.height, 0, RenderTextureFormat.ARGB32);
         rendTex.filterMode = FilterMode.Point;
         rendTex.enableRandomWrite = true;
-        Graphics.Blit (drawedTex, rendTex);
+        Graphics.Blit (textureWithClouds, rendTex);
         _drawCloudCs.SetTexture (kernel, "DrawnTex", rendTex);
 
         _drawCloudCs.SetVector ("TopColor", _topCloudColor);
@@ -113,15 +138,15 @@ public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
         Vector2 uvTotal = Vector2.zero;
         float lowestYuv = float.MaxValue;
 
-        int x = GraphicUtils.GetComputeShaderDispatchCount (frameDecor.Width, 32);
-        int y = GraphicUtils.GetComputeShaderDispatchCount (frameDecor.Height, 32);
+        int x = GraphicUtils.GetComputeShaderDispatchCount (_frameDecor.Width, 32);
+        int y = GraphicUtils.GetComputeShaderDispatchCount (_frameDecor.Height, 32);
         int z = 1;
 
         foreach (Vector2 uv in lastStrokeDrawUVs)
         {
             Vector3 localPos = uv - new Vector2 (0.5f, 0.5f);
-            localPos.x *= frameDecor.Bounds.extents.x * 2f;
-            localPos.y *= frameDecor.Bounds.extents.y * 2f;
+            localPos.x *= _frameDecor.Bounds.extents.x * 2f;
+            localPos.y *= _frameDecor.Bounds.extents.y * 2f;
             localPos.z = -0.001f;
 
             lowestYuv = Mathf.Min (lowestYuv, uv.y);
@@ -153,8 +178,8 @@ public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
             _drawCloudCs.SetInt ("TexToApplyHeight", tex.height);
             _drawCloudCs.SetTexture (kernel, "TexToApply", tex);
 
-            _drawCloudCs.SetInt ("DrawOriginX", (int) (uv.x * frameDecor.Width) - (tex.width / 2));
-            _drawCloudCs.SetInt ("DrawOriginY", (int) (uv.y * frameDecor.Height) - (tex.height / 2));
+            _drawCloudCs.SetInt ("DrawOriginX", (int) (uv.x * _frameDecor.Width) - (tex.width / 2));
+            _drawCloudCs.SetInt ("DrawOriginY", (int) (uv.y * _frameDecor.Height) - (tex.height / 2));
 
             _drawCloudCs.Dispatch (kernel, x, y, z);
 
@@ -197,51 +222,48 @@ public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
         }
 
         RenderTexture.active = rendTex;
-        drawedTex.ReadPixels (new Rect (0, 0, drawedTex.width, drawedTex.height), 0, 0);
-        drawedTex.Apply ();
+        textureWithClouds.ReadPixels (new Rect (0, 0, textureWithClouds.width, textureWithClouds.height), 0, 0);
+        textureWithClouds.Apply ();
+        // RenderTexture.active = null;
 
-        // GraphicUtils.SavePixelsAsPNG (drawedTex.GetPixels (), "Test/statiCloud.png", drawedTex.width, drawedTex.height);
+        _textureTransition.PlayTransition (_renderer.sprite.texture, textureWithClouds, _pixelTransitionTimePerFrame, _colorTransitionTime, OnTextureTransitionEnd);
+    }
 
-        Vector4 borderInPixel = GraphicUtils.GetTextureBorder (drawedTex);
-        Vector2 texSize = new Vector2 (borderInPixel.z - borderInPixel.x, borderInPixel.w - borderInPixel.y);
-        _renderer.sprite = Sprite.Create (drawedTex, new Rect (0, 0, drawedTex.width, drawedTex.height), new Vector2 (0.5f, 0.5f));
-        _renderer.material.mainTexture = drawedTex;
+    private void OnTextureTransitionEnd (Texture2D finalTexture)
+    {
+        _renderer.sprite = Sprite.Create (finalTexture, new Rect (0, 0, finalTexture.width, finalTexture.height), new Vector2 (0.5f, 0.5f));
+
+        _renderer.material.mainTexture = finalTexture;
 
         // Calculate damage multiplier, the more thick the cloud is, the more damage it does
-        ComputeShader getThicknessCs = Resources.Load<ComputeShader> ("GetThickness");
+        int kernelGetThickness = _getVisiblePixelCountCs.FindKernel ("GetVisiblePixelCount");
 
-        if (getThicknessCs == null)
-        {
-            Debug.LogError (nameof (getThicknessCs) + "null, it was not loaded (not found?)");
-            return;
-        }
+        _getVisiblePixelCountCs.SetTexture (kernelGetThickness, "Tex", finalTexture);
+        ComputeBuffer countBuffer = new ComputeBuffer (1, sizeof (uint));
+        uint[] countBufferData = new uint[1];
+        countBufferData[0] = 0;
+        countBuffer.SetData (countBufferData);
 
-        int kernelGetThickness = getThicknessCs.FindKernel ("GetThickness");
+        _getVisiblePixelCountCs.SetBuffer (kernelGetThickness, "Count", countBuffer);
 
-        getThicknessCs.SetTexture (kernelGetThickness, "Tex", frameDecor.DrawTexture);
-        ComputeBuffer thicknessBuffer = new ComputeBuffer (frameDecor.DrawTexture.width, sizeof (uint));
-        uint[] thickness = new uint[frameDecor.DrawTexture.width];
-        thicknessBuffer.SetData (thickness);
+        int x = GraphicUtils.GetComputeShaderDispatchCount (_frameDecor.Width, 32);
+        int y = GraphicUtils.GetComputeShaderDispatchCount (_frameDecor.Height, 32);
+        int z = 1;
 
-        getThicknessCs.SetBuffer (kernelGetThickness, "ThicknessBuffer", thicknessBuffer);
-        getThicknessCs.SetInt ("MinX", (int) borderInPixel.x);
-        getThicknessCs.SetInt ("MaxX", (int) borderInPixel.z);
+        _getVisiblePixelCountCs.Dispatch (kernelGetThickness, x, y, z);
+        uint[] totalPixelArray = new uint[1];
+        countBuffer.GetData (totalPixelArray);
+        uint totalPixel = totalPixelArray[0];
+        countBuffer.Release ();
 
-        getThicknessCs.Dispatch (kernelGetThickness, x, y, z);
-        thicknessBuffer.GetData (thickness);
+        Vector4 borderInPixel = GraphicUtils.GetTextureBorder (finalTexture);
+        uint width = (uint) (borderInPixel.z - borderInPixel.x);
+        uint drawThickness = totalPixel / width;
 
-        uint averageThickness = 0;
-        for (int i = 0; i < thickness.Length; i++)
-        {
-            averageThickness += thickness[i];
-        }
-
-        averageThickness /= (uint) texSize.x;
-
-        _damageMultiplier = (float) averageThickness / 14f; // 14f is the average thickness of the brush used
-        _damageMultiplier = Mathf.Clamp (_damageMultiplier, 1f, _damageMultiplier);
-
-        onInitDone?.Invoke ();
+        _damageMultiplier = (float) drawThickness / _averageCloudTickness;
+        Debug.Log ("Cloud thickness : " + drawThickness + " average cloud thickness : " + _averageCloudTickness + " damage multiplier : " + _damageMultiplier);
+        _damageMultiplier = Mathf.Max (_damageMultiplier, 1f);
+        _onInitDone?.Invoke ();
     }
 
     private void Update ()
