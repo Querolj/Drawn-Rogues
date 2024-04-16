@@ -39,7 +39,10 @@ public class Attack : ScriptableObject
 
     public string GetEffectsString ()
     {
-        string effectsString = "";
+        if (EffectsSerialized == null || EffectsSerialized.Length == 0)
+            return string.Empty;
+
+        string effectsString = string.Empty;
         foreach (EffectSerialized effect in EffectsSerialized)
         {
             effectsString += effect.ToString () + "\n";

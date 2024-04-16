@@ -7,6 +7,22 @@ using Zenject;
 
 public class Drawer : MonoBehaviour
 {
+    public enum DrawMode
+    {
+        Character,
+        Spell
+    }
+
+    #region Serialized Fields
+    [SerializeField]
+    private InputActionReference _changeBrushInput;
+    #endregion
+
+    private DrawMode _drawMode = DrawMode.Character;
+    public void SetDrawMode (DrawMode drawMode)
+    {
+        _drawMode = drawMode;
+    }
     private (Frame, Vector2) _coordinateByFocusedFrame;
 
     private Colouring _selectedColouring;
@@ -218,9 +234,9 @@ public class Drawer : MonoBehaviour
                 disalowDrawUntilNewStroke = false;
         }
 
-        if (!_selectedColouring.HasBrushSize && Input.mouseScrollDelta.y != 0)
+        if (!_selectedColouring.HasBrushSize && _changeBrushInput.action.ReadValue<Vector2> ().y != 0)
         {
-            _resizableBrush.ChangeBrushFromIndexOffset (Input.mouseScrollDelta.y < 0 ? -1 : 1);
+            _resizableBrush.ChangeBrushFromIndexOffset (_changeBrushInput.action.ReadValue<Vector2> ().y < 0 ? -1 : 1);
         }
 
         ExecuteActionForFrame ((frame, uv) =>
@@ -337,6 +353,7 @@ public class Drawer : MonoBehaviour
 
     private void DrawOnFocusedFrame (bool drawStrokeJustStarting)
     {
+
         if (_coordinateByFocusedFrame.Item1 == null)
             throw new ArgumentNullException (nameof (_coordinateByFocusedFrame));
 
@@ -345,18 +362,17 @@ public class Drawer : MonoBehaviour
 
         ChangeBrushFromAvailableColorQuantity ();
         int maxDrawablePixCount = _baseColorInventory.GetMaxDrawablePixelsFromColouring (_selectedColouring.BaseColorsUsedPerPixel);
-        // check pixel left on the char 
 
+        // check pixel left on the char 
         if (drawStrokeJustStarting)
         {
-            Debug.Log ("Draw stroke just starting");
             _lastStrokeDrawUVs.Clear ();
         }
 
         ExecuteActionForFrame ((frame, uv) =>
         {
             bool drawDone = frame.TryDraw (uv, _selectedColouring.Id, _selectedColouring.Texture, _selectedColouring.BaseColorsUsedPerPixel,
-                _currentPixelUsage, drawStrokeJustStarting, _resizableBrush, maxDrawablePixCount,
+                _currentPixelUsage, drawStrokeJustStarting, _resizableBrush, maxDrawablePixCount, _drawMode,
                 out _currentStrokeInfo, out int pixelsAdded);
 
             if (!drawDone)

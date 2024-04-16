@@ -1,5 +1,6 @@
 #pragma kernel DrawColor
-#pragma kernel DrawTex
+#pragma kernel DrawTexCharacter
+#pragma kernel DrawTexSpell
 #pragma kernel DrawBrushTex
 #include "Utils.cginc"
 
@@ -69,7 +70,7 @@ uint2 GetBrushOrigin()
     return uint2(MousePosX - ((BrushWidth) / 2), MousePosY - ((BrushHeight ) / 2) );
 }
 
-bool ShouldUseBrush(uint2 brushOrigin, int3 id)
+bool IsInBrushArea(uint2 brushOrigin, int3 id)
 {
     return (id.x - brushOrigin.x) >= 0 && (id.x - brushOrigin.x) < (BrushWidth )
         && (id.y - brushOrigin.y) >= 0 && (id.y - brushOrigin.y) < (BrushHeight );
@@ -87,9 +88,9 @@ void DrawColor (int3 id : SV_DispatchThreadID)
         return;
 
     uint2 brushOrigin = GetBrushOrigin();
-    bool useBrush = ShouldUseBrush(brushOrigin, id);
+    bool isInBrushArea = IsInBrushArea(brushOrigin, id);
 
-    if(useBrush && Equals(BrushTex[id.xy - brushOrigin].r, 0))
+    if(isInBrushArea && Equals(BrushTex[id.xy - brushOrigin].r, 0))
     {
         // stroke validation
         CheckPixelUsagesNear(id);
@@ -110,17 +111,19 @@ void DrawColor (int3 id : SV_DispatchThreadID)
 }
 
 [numthreads(32,32,1)]
-void DrawTex (int3 id : SV_DispatchThreadID)
+void DrawTexCharacter (int3 id : SV_DispatchThreadID)
 {
     if(IsPixelColored(id))
         return;
 
     uint2 brushOrigin = GetBrushOrigin();
-    bool useBrush = ShouldUseBrush(brushOrigin, id);
+    bool isInBrushArea = IsInBrushArea(brushOrigin, id);
 
     int2 texUv = int2(id.x % ColorTexWidth, id.y % ColorTexHeight); 
+    int index = (id.y * FrameWidth ) + id.x;
+    int currentPixelId = PixelIds[index];
 
-    if(useBrush && Equals(BrushTex[id.xy - brushOrigin].r, 0))
+    if(isInBrushArea && Equals(BrushTex[id.xy - brushOrigin].r, 0) && currentPixelId <= 0)
     {
         // stroke validation
         CheckPixelUsagesNear(id);
@@ -131,9 +134,41 @@ void DrawTex (int3 id : SV_DispatchThreadID)
         FrameTex[id.xy] = ColorTex[texUv];
 
         // Complete texture infos
-        PixelIds[(id.y * FrameWidth ) + id.x] = PixelId;
-        PixelUsages[(id.y * FrameWidth ) + id.x] = PixelUsage;
-        PixelTimestamps[(id.y * FrameWidth ) + id.x] = PixelTimestamp;
+        PixelIds[index] = PixelId;
+        PixelUsages[index] = PixelUsage;
+        PixelTimestamps[index] = PixelTimestamp;
+
+        // Count pixels drawed
+        InterlockedAdd(PixelsAdded[0],1);
+    }
+}
+
+[numthreads(32,32,1)]
+void DrawTexSpell (int3 id : SV_DispatchThreadID)
+{
+    if(IsPixelColored(id))
+        return;
+
+    uint2 brushOrigin = GetBrushOrigin();
+    bool isInBrushArea = IsInBrushArea(brushOrigin, id);
+
+    int2 texUv = int2(id.x % ColorTexWidth, id.y % ColorTexHeight); 
+    int index = (id.y * FrameWidth ) + id.x;
+    
+    if(isInBrushArea && Equals(BrushTex[id.xy - brushOrigin].r, 0))
+    {
+        // stroke validation
+        CheckPixelUsagesNear(id);
+        if(DownBorderTouched[0] == 0)
+            DownBorderTouched[0] = id.y == 0 ? 1 : 0;
+
+        // Color texture
+        FrameTex[id.xy] = ColorTex[texUv];
+
+        // Complete texture infos
+        PixelIds[index] = PixelId;
+        PixelUsages[index] = PixelUsage;
+        PixelTimestamps[index] = PixelTimestamp;
 
         // Count pixels drawed
         InterlockedAdd(PixelsAdded[0],1);
@@ -147,16 +182,17 @@ void DrawBrushTex (int3 id : SV_DispatchThreadID)
         return;
 
     uint2 brushOrigin = GetBrushOrigin();
-    bool useBrush = ShouldUseBrush(brushOrigin, id);
+    bool useBrush = IsInBrushArea(brushOrigin, id);
     
     int2 brushPixCoordinate = id.xy - brushOrigin;
+    int index = (id.y * FrameWidth ) + id.x;
 
     if(useBrush && !Equals(BrushTex[brushPixCoordinate].a, 0))
     {
+        PixelIds[index] = PixelId;
+        PixelUsages[index] = PixelUsage;
+        PixelTimestamps[index] = PixelTimestamp;
         FrameTex[id.xy] = BrushTex[brushPixCoordinate];
-        PixelIds[(id.y * FrameWidth ) + id.x] = PixelId;
-        PixelUsages[(id.y * FrameWidth ) + id.x] = PixelUsage;
-        PixelTimestamps[(id.y * FrameWidth ) + id.x] = PixelTimestamp;
 
         InterlockedAdd(PixelsAdded[0],1);
     }

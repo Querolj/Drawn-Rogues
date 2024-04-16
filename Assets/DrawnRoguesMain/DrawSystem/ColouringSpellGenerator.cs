@@ -14,19 +14,20 @@ public class ColouringSpellGenerator : MonoBehaviour
     private void Init (Drawer drawer)
     {
         _drawer = drawer;
+        _drawer.OnDrawStrokeEnd += OnDrawStrokeEnd;
     }
 
     private void Awake ()
     {
-        _drawer = FindAnyObjectByType<Drawer> (); // TODO : inject
         _turnManager = FindAnyObjectByType<TurnManager> (); // TODO : inject
         _playerController = FindAnyObjectByType<PlayerController> (); // TODO : inject
-
-        _drawer.OnDrawStrokeEnd += OnDrawStrokeEnd;
     }
 
     private void OnDrawStrokeEnd (Colouring c, StrokeInfo si)
     {
+        if (!_turnManager.InCombat)
+            return;
+
         FrameDecor frameDecor = si.FrameTouched as FrameDecor;
         if (frameDecor == null)
         {

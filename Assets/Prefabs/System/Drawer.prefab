@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea6b5cb682f5a2419f83ca05bebda45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bodyPartSelection: {fileID: 0}
+  _changeBrushInput: {fileID: 6403337206430064785, guid: f48b7dca5d25ad249a73f27d32ed12c4, type: 3}

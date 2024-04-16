@@ -1,10 +1,15 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class ModifierPlacer : MonoBehaviour
 {
+    [SerializeField]
+    private InputActionReference _placeModifierInput;
+
+    [SerializeField]
+    private InputActionReference _flipModifierInput;
+
     [SerializeField]
     private Image _modifierPlacerImage;
 
@@ -24,6 +29,14 @@ public class ModifierPlacer : MonoBehaviour
     private void Awake ()
     {
         _mainCamera = Camera.main;
+        _flipModifierInput.action.performed += FlipModifier;
+        _placeModifierInput.action.performed += PlaceModifier;
+    }
+
+    private void OnDestroy ()
+    {
+        _flipModifierInput.action.performed -= FlipModifier;
+        _placeModifierInput.action.performed -= PlaceModifier;
     }
 
     public bool TrySetModifier (Modifier modifier, Image modifierImage)
@@ -51,25 +64,17 @@ public class ModifierPlacer : MonoBehaviour
         _isSelectionFlipped = false;
     }
 
-    private void FlipModifier ()
+    private void FlipModifier (InputAction.CallbackContext context)
     {
+        _isSelectionFlipped = !_isSelectionFlipped;
         _modifierPlacerImage.rectTransform.rotation = Quaternion.Euler (0f, _isSelectionFlipped ? 180f : 0f, 0f);
     }
 
-    private void Update ()
+    private void PlaceModifier (InputAction.CallbackContext context)
     {
-        if (Input.GetMouseButtonUp (0))
+        if (_activateDrawerAfterMouseUp)
         {
-            if (_activateDrawerAfterMouseUp)
-            {
-                _activateDrawerAfterMouseUp = false;
-            }
-        }
-
-        if (Input.GetKeyDown (KeyCode.F))
-        {
-            _isSelectionFlipped = !_isSelectionFlipped;
-            FlipModifier ();
+            _activateDrawerAfterMouseUp = false;
         }
 
         if (_selectedModifier == null)
@@ -77,15 +82,28 @@ public class ModifierPlacer : MonoBehaviour
             return;
         }
 
-        _modifierPlacerImage.transform.position = Mouse.current.position.ReadValue();
+        if (_isModifierInPosition)
+        {
+            Vector2 viewportMousePosition = _mainCamera.ScreenToViewportPoint (Mouse.current.position.ReadValue ());
+            _characterCanvas.AddModifierFromViewport (_selectedModifier, viewportMousePosition, _isSelectionFlipped);
+            RemoveModifierSelection ();
+        }
+    }
 
-        Vector2 viewportMousePosition = _mainCamera.ScreenToViewportPoint (Mouse.current.position.ReadValue());
+    private void Update ()
+    {
+        if (_selectedModifier == null)
+        {
+            return;
+        }
 
-        Vector2 topRightModifierPlacer = Mouse.current.position.ReadValue();
+        _modifierPlacerImage.transform.position = Mouse.current.position.ReadValue ();
+
+        Vector2 topRightModifierPlacer = Mouse.current.position.ReadValue ();
         topRightModifierPlacer += _modifierPlacerImage.rectTransform.sizeDelta / 2f;
         topRightModifierPlacer = _mainCamera.ScreenToViewportPoint (topRightModifierPlacer);
 
-        Vector2 bottomLeftModifierPlacer = Mouse.current.position.ReadValue();
+        Vector2 bottomLeftModifierPlacer = Mouse.current.position.ReadValue ();
         bottomLeftModifierPlacer -= _modifierPlacerImage.rectTransform.sizeDelta / 2f;
         bottomLeftModifierPlacer = _mainCamera.ScreenToViewportPoint (bottomLeftModifierPlacer);
 
@@ -99,15 +117,6 @@ public class ModifierPlacer : MonoBehaviour
         {
             _modifierPlacerImage.color = Color.red;
             _isModifierInPosition = false;
-        }
-
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            if (_isModifierInPosition)
-            {
-                _characterCanvas.AddModifierFromViewport (_selectedModifier, viewportMousePosition, _isSelectionFlipped);
-                RemoveModifierSelection ();
-            }
         }
     }
 

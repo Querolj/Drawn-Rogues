@@ -4,11 +4,16 @@ using Cinemachine;
 using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Zenject;
 
 public class CharacterCanvas : MonoBehaviour
 {
+    #region Serializable Fields
+    [SerializeField]
+    private InputActionReference _debugSaveCharacterInput;
+
     [SerializeField]
     private Frame _frame;
 
@@ -30,6 +35,12 @@ public class CharacterCanvas : MonoBehaviour
     [SerializeField]
     private CinemachineVirtualCamera _camera;
 
+    [SerializeField]
+    private int _basePixelAllowed = 300;
+
+    #endregion
+
+    #region Fields
     private FrameReader _frameReader;
 
     private AttackableStats _stats;
@@ -90,11 +101,10 @@ public class CharacterCanvas : MonoBehaviour
 
     public event Action OnCharFormUpdated;
 
-    private const int BASE_PIXELS_ALLOWED = 300;
-
     private CursorModeSwitcher _modeSwitcher;
 
     private Attackable.Factory _attackableFactory;
+    #endregion
 
     [Inject, UsedImplicitly]
     private void Init (CursorModeSwitcher modeSwitcher, Attackable.Factory attackableFactory, Drawer drawer)
@@ -129,6 +139,13 @@ public class CharacterCanvas : MonoBehaviour
         if (_frameMeshRenderer == null)
             throw new Exception ("No mesh renderer found on " + _frame.name);
         UpdateViewportCornersPos ();
+
+        _debugSaveCharacterInput.action.performed += SaveCharacter;
+    }
+
+    private void OnDestroy ()
+    {
+        _debugSaveCharacterInput.action.performed -= SaveCharacter;
     }
 
     private void UpdateViewportCornersPos ()
@@ -202,7 +219,7 @@ public class CharacterCanvas : MonoBehaviour
         else
         {
             _validateButton.gameObject.SetActive (false);
-            _frame.ResetPixelAllowed (BASE_PIXELS_ALLOWED);
+            _frame.ResetPixelAllowed (_basePixelAllowed);
         }
     }
 
@@ -293,15 +310,7 @@ public class CharacterCanvas : MonoBehaviour
         return true;
     }
 
-    private void Update ()
-    {
-        if (Input.GetKey (KeyCode.LeftControl) && Input.GetKeyDown (KeyCode.S))
-        {
-            SaveCharacter ();
-        }
-    }
-
-    private void SaveCharacter ()
+    private void SaveCharacter (InputAction.CallbackContext context)
     {
         if (!ValidateDrawing ())
         {

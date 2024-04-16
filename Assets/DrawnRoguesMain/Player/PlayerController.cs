@@ -70,7 +70,7 @@ public class PlayerController : MonoBehaviour
         get { return _controlledCharacter; }
     }
 
-    private const int STARTING_DROP_TOTAL = 300;
+    private const int STARTING_DROP_TOTAL = 3000;
 
     #region combat mode
     private float _leftLimitX;
@@ -171,7 +171,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCharacterCreated (GameObject characterGo)
     {
-        SetAllColorDrop (0);
+        // SetAllColorDrop (0);
         StopCharacterDraw ();
 
         _controlledCharacter = characterGo.GetComponentInChildren<DrawedCharacter> ();

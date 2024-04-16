@@ -29,9 +29,10 @@ public class CursorModeSwitcher : MonoBehaviour
 
     public void ChangeMode (Mode mode)
     {
-        return;
         _currentMode = mode;
+        OnChangeMode?.Invoke (_currentMode);
 
+        return;
         switch (_currentMode)
         {
             case Mode.Selection:
@@ -45,7 +46,6 @@ public class CursorModeSwitcher : MonoBehaviour
                 break;
         }
 
-        OnChangeMode?.Invoke (_currentMode);
     }
 
     public void SetSelectionMode ()

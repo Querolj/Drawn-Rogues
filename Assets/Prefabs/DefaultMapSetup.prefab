@@ -631,6 +631,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00a05bf0df7b5304dbf36768108c4164, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _debugSaveCharacterInput: {fileID: -2089041669541092035, guid: f48b7dca5d25ad249a73f27d32ed12c4, type: 3}
   _frame: {fileID: 2938481486065906143}
   _modifierLayer: {fileID: 7950156954422733065}
   _modifierGoInstanceFactory: {fileID: 5171745207102494805}
@@ -638,6 +639,7 @@ MonoBehaviour:
   _drawedCharacterTemplate: {fileID: 5713328439661675838, guid: 99a279f4509d6e54eb7278c7e766f207, type: 3}
   _validateButton: {fileID: 8770494634639945116}
   _camera: {fileID: 1416322204105088475}
+  _basePixelAllowed: 300
 --- !u!1 &7477991099250537603
 GameObject:
   m_ObjectHideFlags: 0
@@ -1008,7 +1010,7 @@ PrefabInstance:
     - target: {fileID: 2912898461845946603, guid: 882101d8b8a43ba4e9cb7940d6094279, type: 3}
       propertyPath: _drawer
       value: 
-      objectReference: {fileID: 1926925346135529772}
+      objectReference: {fileID: 0}
     - target: {fileID: 2912898461845946603, guid: 882101d8b8a43ba4e9cb7940d6094279, type: 3}
       propertyPath: _colouringLoader
       value: 
@@ -1017,6 +1019,42 @@ PrefabInstance:
       propertyPath: _characterCanvas
       value: 
       objectReference: {fileID: 6316978481085843462}
+    - target: {fileID: 3431879768141330451, guid: 882101d8b8a43ba4e9cb7940d6094279, type: 3}
+      propertyPath: _flipModifierInput
+      value: 
+      objectReference: {fileID: -6902711348164244875, guid: f48b7dca5d25ad249a73f27d32ed12c4, type: 3}
+    - target: {fileID: 3431879768141330451, guid: 882101d8b8a43ba4e9cb7940d6094279, type: 3}
+      propertyPath: _placeModifierInput
+      value: 
+      objectReference: {fileID: 598206936186615308, guid: f48b7dca5d25ad249a73f27d32ed12c4, type: 3}
+    - target: {fileID: 5618301581218886683, guid: 882101d8b8a43ba4e9cb7940d6094279, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5618301581218886683, guid: 882101d8b8a43ba4e9cb7940d6094279, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5618301581218886683, guid: 882101d8b8a43ba4e9cb7940d6094279, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2834363402076285740}
+    - target: {fileID: 5618301581218886683, guid: 882101d8b8a43ba4e9cb7940d6094279, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5618301581218886683, guid: 882101d8b8a43ba4e9cb7940d6094279, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: StartDrawCharacter
+      objectReference: {fileID: 0}
+    - target: {fileID: 5618301581218886683, guid: 882101d8b8a43ba4e9cb7940d6094279, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PlayerController, DrawnRoguesMain
+      objectReference: {fileID: 0}
+    - target: {fileID: 5618301581218886683, guid: 882101d8b8a43ba4e9cb7940d6094279, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 5971340141216385036, guid: 882101d8b8a43ba4e9cb7940d6094279, type: 3}
       propertyPath: _characterCanvas
       value: 
@@ -1108,7 +1146,7 @@ PrefabInstance:
     - target: {fileID: 8434291706225625683, guid: 882101d8b8a43ba4e9cb7940d6094279, type: 3}
       propertyPath: _drawer
       value: 
-      objectReference: {fileID: 1926925346135529772}
+      objectReference: {fileID: 0}
     - target: {fileID: 8434291706225625683, guid: 882101d8b8a43ba4e9cb7940d6094279, type: 3}
       propertyPath: _characterCanvas
       value: 
@@ -1372,17 +1410,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbb04aeff697ace489bd5a84530c965a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1926925346135529772 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8025974442055564346, guid: 5cbf6a5eaec0cb04cb1bab81c7b9ffad, type: 3}
-  m_PrefabInstance: {fileID: 8492712886950372630}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ea6b5cb682f5a2419f83ca05bebda45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2249690485836310495 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7702471254897738441, guid: 5cbf6a5eaec0cb04cb1bab81c7b9ffad, type: 3}
@@ -1392,6 +1419,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b145154fb2d36846b83083d6a29c5b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2834363402076285740 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5947428958916103738, guid: 5cbf6a5eaec0cb04cb1bab81c7b9ffad, type: 3}
+  m_PrefabInstance: {fileID: 8492712886950372630}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db1085b0427febc47bc78923317a2a4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &5171745207102494805 stripped

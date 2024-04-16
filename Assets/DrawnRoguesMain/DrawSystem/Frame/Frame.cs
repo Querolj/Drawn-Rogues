@@ -55,8 +55,8 @@ public class Frame : MonoBehaviour
     protected Material _mat;
     private ComputeShader _drawOnFrameCs;
     private const string KERNEL_DRAW_COLOR = "DrawColor";
-    private const string KERNEL_DRAW_TEX = "DrawTex";
-    private const string KERNEL_DRAW_BRUSH_TEX = "DrawBrushTex";
+    private const string KERNEL_DRAW_TEX_CHARACTER = "DrawTexCharacter";
+    private const string KERNEL_DRAW_TEX_SPELL = "DrawTexSpell";
 
     private ComputeShader _countAvailablePixelsCs;
 
@@ -161,7 +161,8 @@ public class Frame : MonoBehaviour
         _pixelTimestamps = new int[Width * Height];
 
         _clearPixels = new Color[_width * _height];
-        _mainTexPixels = ((Texture2D) _renderer.material.mainTexture).GetPixels ();
+        if (_disallowDrawOnTransparency)
+            _mainTexPixels = ((Texture2D) _renderer.material.mainTexture).GetPixels ();
 
         _mat.SetTexture ("_DrawTex", _drawTexture);
         _mat.SetFloat ("Width", _width);
@@ -197,7 +198,9 @@ public class Frame : MonoBehaviour
 
         int kernel = _drawOnFrameCs.FindKernel (KERNEL_DRAW_COLOR);
         _drawOnFrameCs.SetTexture (kernel, "BrushTex", brush.Texture);
-        kernel = _drawOnFrameCs.FindKernel (KERNEL_DRAW_TEX);
+        kernel = _drawOnFrameCs.FindKernel (KERNEL_DRAW_TEX_CHARACTER);
+        _drawOnFrameCs.SetTexture (kernel, "BrushTex", brush.Texture);
+        kernel = _drawOnFrameCs.FindKernel (KERNEL_DRAW_TEX_SPELL);
         _drawOnFrameCs.SetTexture (kernel, "BrushTex", brush.Texture);
     }
 
@@ -229,7 +232,7 @@ public class Frame : MonoBehaviour
 
     // return false if can't draw on the given position on the frame
     public bool TryDraw (Vector2 coordinate, int colouringId, Texture2D texture, List<BaseColorDrops> baseColorDrops,
-        PixelUsage pixelUsage, bool isNewStroke, ResizableBrush resizableBrush, int maxDrawablePixCount,
+        PixelUsage pixelUsage, bool isNewStroke, ResizableBrush resizableBrush, int maxDrawablePixCount, Drawer.DrawMode drawMode,
         out StrokeInfo strokeInfo, out int totalPixelDraw)
     {
         totalPixelDraw = 0;
@@ -273,7 +276,11 @@ public class Frame : MonoBehaviour
         SetBrush (resizableBrush.ActiveBrush);
 
         ComputeShader cs = _drawOnFrameCs;
-        int kernel = cs.FindKernel (KERNEL_DRAW_TEX);
+        int kernel;
+        if (drawMode == Drawer.DrawMode.Character)
+            kernel = cs.FindKernel (KERNEL_DRAW_TEX_CHARACTER);
+        else
+            kernel = cs.FindKernel (KERNEL_DRAW_TEX_SPELL);
 
         // Set Frame tex
         RenderTexture rendTex = new RenderTexture (_width, _height, 0, RenderTextureFormat.ARGB32);

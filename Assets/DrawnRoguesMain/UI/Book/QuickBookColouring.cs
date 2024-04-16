@@ -8,6 +8,7 @@ using Zenject;
 
 public class QuickBookColouring : MonoBehaviour
 {
+    #region Serialized Fields
     [SerializeField]
     private ToggleGroup _toggleGroup;
 
@@ -34,10 +35,10 @@ public class QuickBookColouring : MonoBehaviour
 
     [SerializeField]
     private ColouringType _colouringType;
+    #endregion
 
-    [SerializeField]
+    #region private Fields
     private Drawer _drawer;
-
     private ColouringInventory _colouringInventory;
 
     private List<BookmarkColouring> _bookmarksCreated = new List<BookmarkColouring> ();
@@ -47,7 +48,18 @@ public class QuickBookColouring : MonoBehaviour
     private Colouring _selectedColouring;
 
     private Dictionary<BaseColor, List<Colouring>> _colouringsByBaseColor;
+    #endregion
+
+    #region public fields
     public event Action<Colouring> OnColouringSelectionChanged;
+    #endregion
+
+    #region private methods
+    [Inject, UsedImplicitly]
+    private void Init (Drawer drawer)
+    {
+        _drawer = drawer;
+    }
 
     private void Awake ()
     {
@@ -162,4 +174,5 @@ public class QuickBookColouring : MonoBehaviour
             }
         }
     }
+    #endregion
 }

@@ -31,4 +31,4 @@ MonoBehaviour:
     AttackOffPassiveValues: []
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
-    effectValues: []
+  EffectsSerialized: []

@@ -1,13 +1,15 @@
 using System;
 using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Zenject;
 
 public class ModifierGoInstanceFactory : MonoBehaviour
 {
     [SerializeField]
-    private Drawer _drawer;
+    private InputActionReference _deleteModifierInput;
 
+    private Drawer _drawer;
     private CursorModeSwitcher _modeSwitcher;
     private ActionDelayer _actionDelayer;
 
@@ -42,7 +44,7 @@ public class ModifierGoInstanceFactory : MonoBehaviour
 
             topRightLimit = Camera.main.WorldToScreenPoint (topRightLimit);
 
-            moveModifier.Init (bottomLeftLimit, topRightLimit, _modeSwitcher, modifier, onModifierDeleted);
+            moveModifier.Init (bottomLeftLimit, topRightLimit, _modeSwitcher, modifier, _deleteModifierInput, onModifierDeleted);
         });
 
         BoxCollider2D box = go.AddComponent<BoxCollider2D> ();
