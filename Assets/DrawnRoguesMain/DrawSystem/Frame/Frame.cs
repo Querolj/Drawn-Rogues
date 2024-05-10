@@ -54,7 +54,6 @@ public class Frame : MonoBehaviour
 
     protected Material _mat;
     private ComputeShader _drawOnFrameCs;
-    private const string KERNEL_DRAW_COLOR = "DrawColor";
     private const string KERNEL_DRAW_TEX_CHARACTER = "DrawTexCharacter";
     private const string KERNEL_DRAW_TEX_SPELL = "DrawTexSpell";
 
@@ -151,6 +150,8 @@ public class Frame : MonoBehaviour
 
         _renderer = GetComponent<MeshRenderer> ();
         _mat = GetComponent<MeshRenderer> ().material;
+        _mat.SetFloat ("_Width", _dimension.x);
+        _mat.SetFloat ("_Height", _dimension.y);
 
         _drawTexture = GraphicUtils.GetUniqueTransparentTex (_dimension);
 
@@ -161,12 +162,10 @@ public class Frame : MonoBehaviour
         _pixelTimestamps = new int[Width * Height];
 
         _clearPixels = new Color[_width * _height];
-        if (_disallowDrawOnTransparency)
+        if (_disallowDrawOnTransparency && _renderer.material.mainTexture != null)
             _mainTexPixels = ((Texture2D) _renderer.material.mainTexture).GetPixels ();
 
         _mat.SetTexture ("_DrawTex", _drawTexture);
-        _mat.SetFloat ("Width", _width);
-        _mat.SetFloat ("Height", _height);
     }
 
     public FrameInfos GetTextureInfos ()
@@ -176,29 +175,37 @@ public class Frame : MonoBehaviour
 
     public virtual void UpdateBrushDrawingPrediction (Vector2 uv)
     {
-        _mat.SetInt ("MousePosX", (int) (uv.x * _width));
-        _mat.SetInt ("MousePosY", (int) (uv.y * _height));
+        _mat.SetInt ("_MousePosX", (int) (uv.x * _width));
+        _mat.SetInt ("_MousePosY", (int) (uv.y * _height));
     }
 
     public void StopBrushDrawingPrediction ()
     {
-        _mat.SetInt ("BrushWidth", -1);
-        _mat.SetInt ("BrushHeight", -1);
+        _mat.SetInt ("_BrushWidth", -1);
+        _mat.SetInt ("_BrushHeight", -1);
     }
 
-    public void SetBrush (Brush brush)
+    public void SetBrush (Brush brush, Texture2D colorTex = null)
     {
         if (brush == null)
             throw new ArgumentNullException (nameof (brush));
 
         (int width, int height) = brush.GetDimensions ();
 
+        if (colorTex != null)
+        {
+            _mat.SetTexture ("_ColorTex", colorTex);
+            _mat.SetInt ("_ColorTexWidth", colorTex.width);
+            _mat.SetInt ("_ColorTexHeight", colorTex.height);
+            _mat.SetInt ("_BrushWidth", width);
+            _mat.SetInt ("_BrushHeight", height);
+            _mat.SetTexture ("_BrushTex", brush.Texture);
+        }
+
         _drawOnFrameCs.SetInt ("BrushWidth", width);
         _drawOnFrameCs.SetInt ("BrushHeight", height);
 
-        int kernel = _drawOnFrameCs.FindKernel (KERNEL_DRAW_COLOR);
-        _drawOnFrameCs.SetTexture (kernel, "BrushTex", brush.Texture);
-        kernel = _drawOnFrameCs.FindKernel (KERNEL_DRAW_TEX_CHARACTER);
+        int kernel = _drawOnFrameCs.FindKernel (KERNEL_DRAW_TEX_CHARACTER);
         _drawOnFrameCs.SetTexture (kernel, "BrushTex", brush.Texture);
         kernel = _drawOnFrameCs.FindKernel (KERNEL_DRAW_TEX_SPELL);
         _drawOnFrameCs.SetTexture (kernel, "BrushTex", brush.Texture);
@@ -248,10 +255,6 @@ public class Frame : MonoBehaviour
 
         strokeInfo = _currentStrokeInfo;
 
-        maxDrawablePixCount = Mathf.Min (_currentPixelsAllowed, maxDrawablePixCount);
-        if (maxDrawablePixCount == 0)
-            return false;
-
         // check if we draw on transparency
         if (_disallowDrawOnTransparency)
         {
@@ -269,6 +272,10 @@ public class Frame : MonoBehaviour
                 return false;
             }
         }
+
+        maxDrawablePixCount = Mathf.Min (_currentPixelsAllowed, maxDrawablePixCount);
+        if (maxDrawablePixCount == 0)
+            return false;
 
         int initialAvailablePixels = maxDrawablePixCount;
 
@@ -360,6 +367,8 @@ public class Frame : MonoBehaviour
                         _currentPixelsAllowed -= Mathf.Clamp (initialAvailablePixels - maxDrawablePixCount, 0, _maxPixelsAllowed);
                         return true;
                     }
+                    
+                    resizableBrush.SetBiggestBrushPossible (maxDrawablePixCount);
 
                     freePixelCount = CountDrawablePixelsUnderBrush (new Vector2Int (lerpedMousePosX, lerpedMousePosY), resizableBrush.ActiveBrush);
                     if (freePixelCount <= maxDrawablePixCount)

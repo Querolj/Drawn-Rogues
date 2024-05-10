@@ -205,20 +205,24 @@ public class TurnManager : MonoBehaviour
         yield return new WaitForSeconds (1f);
     }
 
-    private void EndCombat ()
+    private void ClearFightData ()
     {
-        _fightRegistry.Report ("Combat ended!");
+        _roundCount = 0;
+        _fightRegistry.Clean ();
         _inCombat = false;
         _playerController.StopCombatMode ();
+    }
+
+    private void EndCombat ()
+    {
+        ClearFightData ();
         OnCombatEnded?.Invoke (_currentCombatZone);
         _currentCombatZone.EndFight ();
     }
 
     public void EscapeFight ()
     {
-        _fightRegistry.Report ("Escaped!");
-        _inCombat = false;
-        _playerController.StopCombatMode ();
+        ClearFightData ();
         OnCombatEnded?.Invoke (_currentCombatZone);
         _currentCombatZone.EscapeFight ();
     }

@@ -53,8 +53,6 @@ public class Swamp : CombatEnvironnementHazard, IColouringSpellBehaviour
         topRight += frameDecor.transform.position;
         topRight -= frameDecor.Bounds.extents;
 
-        // Debug.Log (bottomLeft.ToString ("F3") + " : " + topRight.ToString ("F3"));
-
         // cast raycast from left to right
         int drawWidth = Mathf.RoundToInt (border.z - border.x + 1);
         int drawHeight = Mathf.RoundToInt (border.w - border.y + 1);
@@ -173,6 +171,7 @@ public class Swamp : CombatEnvironnementHazard, IColouringSpellBehaviour
         hasMovedBuffer.GetData (hasMoved);
         if (hasMoved[0] == 0)
         {
+            Debug.Log ("Collapse ended");
             hasMovedBuffer.Release ();
             return true;
         }

@@ -102,6 +102,13 @@ public class MoveIndicator : MonoBehaviour
         _arrowIndicator.SetActive (true);
     }
 
+    public void Hide()
+    {
+        _arrowIndicator.SetActive (false);
+        _moveDecal.SetActive (false);
+        _combatMoveIndicator.gameObject.SetActive (false);
+    }
+
     public Vector3 GetPosition ()
     {
         return _arrowIndicator.transform.position;

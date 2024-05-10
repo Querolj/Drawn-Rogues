@@ -15,8 +15,10 @@ public class ForceField : Attackable, IColouringSpellBehaviour, IPlayerProjectil
 
         _waveCurrentDuration = WAVE_MAX_DURATION;
 
-        Stats.Life = (int) ((float) _turnManager.ActivePlayerCharacter.Stats.Intelligence * 0.1f);
-
+        int life = (int) ((float) _turnManager.ActivePlayerCharacter.Stats.Intelligence * 0.1f);
+        life = Mathf.Max (life, 1);
+        Stats.Life = life;
+        
         onInitDone?.Invoke ();
     }
 

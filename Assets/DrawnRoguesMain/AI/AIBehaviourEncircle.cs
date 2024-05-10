@@ -33,7 +33,7 @@ public class AIBehaviourEncircle : AIBehaviour
         Bounds bounds = (Bounds) _character.GetSpriteBounds ();
         if (TryAllowCircle (combatZone, playerCharacter, bounds, out Vector3 targetPos))
         {
-            Debug.Log ("Encircle " + _character.Description.DisplayName + " to " + targetPos);
+            // Debug.Log ("Encircle " + _character.Description.DisplayName + " to " + targetPos);
             _character.CharMovement.TurnTowardTarget (targetPos);
             AttackInstJump jump = _attackInstanceFactory.Create (_circleAttack, _character) as AttackInstJump;
             float radius = bounds.extents.x > bounds.extents.y ? bounds.extents.x : bounds.extents.y;

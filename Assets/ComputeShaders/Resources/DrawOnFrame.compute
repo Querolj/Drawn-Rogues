@@ -1,23 +1,24 @@
-#pragma kernel DrawColor
 #pragma kernel DrawTexCharacter
 #pragma kernel DrawTexSpell
-#pragma kernel DrawBrushTex
 #include "Utils.cginc"
 
 RWTexture2D<float4> FrameTex;
 Texture2D<float4> BrushTex;
 
-int MousePosX;
-int MousePosY;
-int BrushWidth;
-int BrushHeight;
-float4 Color;
+uint MousePosX;
+uint MousePosY;
+uint BrushWidth;
+uint BrushHeight;
 int PixelId;
 int PixelUsage;
 int PixelTimestamp;
+uint FrameWidth;
+uint FrameHeight;
+uint ColorTexWidth;
+uint ColorTexHeight;
 
-int FrameWidth;
-int FrameHeight;
+Texture2D<float4> ColorTex;
+
 RWStructuredBuffer<int> DownBorderTouched;
 RWStructuredBuffer<int> PixelsAdded;
 RWStructuredBuffer<int> PixelIds;
@@ -25,14 +26,10 @@ RWStructuredBuffer<int> PixelUsages;
 RWStructuredBuffer<int> PixelTimestamps;
 RWStructuredBuffer<int> PixelUsagesTouched;
 
-Texture2D<float4> ColorTex;
-int ColorTexWidth;
-int ColorTexHeight;
-
-void CheckPixelUsagesNear(int3 coord)
+void CheckPixelUsagesNear(uint3 coord)
 {
     int colorUsageNear;
-    int index = (coord.y + 1) * FrameWidth + coord.x;
+    uint index = (coord.y + 1) * FrameWidth + coord.x;
     if(coord.y + 1 < FrameHeight && PixelTimestamp != PixelTimestamps[index] && PixelTimestamps[index] != 0)
     {
         int north = ((coord.y + 1) * FrameWidth) + coord.x;
@@ -70,44 +67,9 @@ uint2 GetBrushOrigin()
     return uint2(MousePosX - ((BrushWidth) / 2), MousePosY - ((BrushHeight ) / 2) );
 }
 
-bool IsInBrushArea(uint2 brushOrigin, int3 id)
-{
-    return (id.x - brushOrigin.x) >= 0 && (id.x - brushOrigin.x) < (BrushWidth )
-        && (id.y - brushOrigin.y) >= 0 && (id.y - brushOrigin.y) < (BrushHeight );
-}
-
 bool IsPixelColored(int3 id)
 {
     return PixelIds[(id.y * FrameWidth ) + id.x] == PixelId;
-}
-
-[numthreads(32,32,1)]
-void DrawColor (int3 id : SV_DispatchThreadID)
-{
-    if(IsPixelColored(id))
-        return;
-
-    uint2 brushOrigin = GetBrushOrigin();
-    bool isInBrushArea = IsInBrushArea(brushOrigin, id);
-
-    if(isInBrushArea && Equals(BrushTex[id.xy - brushOrigin].r, 0))
-    {
-        // stroke validation
-        CheckPixelUsagesNear(id);
-        if(DownBorderTouched[0] == 0)
-            DownBorderTouched[0] = id.y == FrameHeight - 1 ? 1 : 0;
-
-        // Color texture
-        FrameTex[id.xy] = Color;
-
-        // Complete texture infos
-        PixelIds[(id.y * FrameWidth ) + id.x] = PixelId;
-        PixelUsages[(id.y * FrameWidth ) + id.x] = PixelUsage;
-        PixelTimestamps[(id.y * FrameWidth ) + id.x] = PixelTimestamp;
-
-        // Count pixels drawed
-        InterlockedAdd(PixelsAdded[0],1);
-    }
 }
 
 [numthreads(32,32,1)]
@@ -117,13 +79,19 @@ void DrawTexCharacter (int3 id : SV_DispatchThreadID)
         return;
 
     uint2 brushOrigin = GetBrushOrigin();
-    bool isInBrushArea = IsInBrushArea(brushOrigin, id);
+    uint2 brushPixCoordinate = uint2(id.xy - brushOrigin);
 
-    int2 texUv = int2(id.x % ColorTexWidth, id.y % ColorTexHeight); 
-    int index = (id.y * FrameWidth ) + id.x;
-    int currentPixelId = PixelIds[index];
+    if(brushPixCoordinate.x >= BrushWidth || brushPixCoordinate.y >= BrushHeight)
+        return;
 
-    if(isInBrushArea && Equals(BrushTex[id.xy - brushOrigin].r, 0) && currentPixelId <= 0)
+    uint2 texUv = uint2(id.x % ColorTexWidth, id.y % ColorTexHeight); 
+    uint index = (id.y * FrameWidth ) + id.x;
+    uint currentPixelId = PixelIds[index];
+    
+    if(currentPixelId > 0)
+        return;
+
+    if(Equals(BrushTex[brushPixCoordinate].r, 0))
     {
         // stroke validation
         CheckPixelUsagesNear(id);
@@ -150,12 +118,15 @@ void DrawTexSpell (int3 id : SV_DispatchThreadID)
         return;
 
     uint2 brushOrigin = GetBrushOrigin();
-    bool isInBrushArea = IsInBrushArea(brushOrigin, id);
+    uint2 brushPixCoordinate = uint2(id.xy - brushOrigin);
 
-    int2 texUv = int2(id.x % ColorTexWidth, id.y % ColorTexHeight); 
-    int index = (id.y * FrameWidth ) + id.x;
-    
-    if(isInBrushArea && Equals(BrushTex[id.xy - brushOrigin].r, 0))
+    if(brushPixCoordinate.x >= BrushWidth || brushPixCoordinate.y >= BrushHeight)
+        return;
+
+    uint2 texUv = uint2(id.x % ColorTexWidth, id.y % ColorTexHeight); 
+    uint index = (id.y * FrameWidth ) + id.x;
+
+    if(Equals(BrushTex[brushPixCoordinate].r, 0))
     {
         // stroke validation
         CheckPixelUsagesNear(id);
@@ -171,29 +142,6 @@ void DrawTexSpell (int3 id : SV_DispatchThreadID)
         PixelTimestamps[index] = PixelTimestamp;
 
         // Count pixels drawed
-        InterlockedAdd(PixelsAdded[0],1);
-    }
-}
-
-[numthreads(32,32,1)]
-void DrawBrushTex (int3 id : SV_DispatchThreadID)
-{
-    if(IsPixelColored(id))
-        return;
-
-    uint2 brushOrigin = GetBrushOrigin();
-    bool useBrush = IsInBrushArea(brushOrigin, id);
-    
-    int2 brushPixCoordinate = id.xy - brushOrigin;
-    int index = (id.y * FrameWidth ) + id.x;
-
-    if(useBrush && !Equals(BrushTex[brushPixCoordinate].a, 0))
-    {
-        PixelIds[index] = PixelId;
-        PixelUsages[index] = PixelUsage;
-        PixelTimestamps[index] = PixelTimestamp;
-        FrameTex[id.xy] = BrushTex[brushPixCoordinate];
-
         InterlockedAdd(PixelsAdded[0],1);
     }
 }

@@ -25,7 +25,8 @@ public class ColouringSpellGenerator : MonoBehaviour
 
     private void OnDrawStrokeEnd (Colouring c, StrokeInfo si)
     {
-        if (!_turnManager.InCombat)
+        if (_playerController.CurrentControlMode != PlayerController.ControlMode.Combat &&
+            _playerController.CurrentControlMode != PlayerController.ControlMode.FreeDecorDraw)
             return;
 
         FrameDecor frameDecor = si.FrameTouched as FrameDecor;

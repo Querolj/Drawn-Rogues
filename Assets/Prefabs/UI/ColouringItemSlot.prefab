@@ -126,8 +126,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.2786, y: -7.6}
-  m_SizeDelta: {x: 24.9618, y: 18.3799}
+  m_AnchoredPosition: {x: 0.2786, y: -3.4503}
+  m_SizeDelta: {x: 24.9618, y: 18.0292}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2067371383704900377
 CanvasRenderer:
@@ -261,8 +261,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.2786, y: -7.6}
-  m_SizeDelta: {x: 24.9618, y: 18.3799}
+  m_AnchoredPosition: {x: 0.2786, y: -3.4503}
+  m_SizeDelta: {x: 24.9618, y: 18.0292}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4025448452567643339
 CanvasRenderer:
@@ -782,7 +782,7 @@ MonoBehaviour:
   _colorTexImage: {fileID: 7414190988939275540}
   _dropNumText1: {fileID: 5255247612527683422}
   _dropNumText2: {fileID: 2687826975776489960}
-  _description: {fileID: 5718715669345922769}
+  _description: {fileID: 8697082781145269623}
 --- !u!114 &4227892665100859239 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1336752465222017765, guid: 8db6d709ad1c13f4c83b9376b98822e4, type: 3}
@@ -799,9 +799,9 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7334599646004088756, guid: 8db6d709ad1c13f4c83b9376b98822e4, type: 3}
   m_PrefabInstance: {fileID: 2891703153059648898}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5718715669345922769 stripped
+--- !u!114 &8697082781145269623 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7457276160241417043, guid: 8db6d709ad1c13f4c83b9376b98822e4, type: 3}
+  m_CorrespondingSourceObject: {fileID: 5806083333837017333, guid: 8db6d709ad1c13f4c83b9376b98822e4, type: 3}
   m_PrefabInstance: {fileID: 2891703153059648898}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}

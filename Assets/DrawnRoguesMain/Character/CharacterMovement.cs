@@ -9,6 +9,9 @@ public class CharacterMovement : MonoBehaviour
     private float _walkingSpeedMultiplier = 1f;
 
     [SerializeField]
+    private float _jumpSpeed = 1.4f;
+
+    [SerializeField]
     private bool _initialDirectionIsRight = true;
     private const float _ROTATION_SPEED = 1000f;
 
@@ -37,7 +40,7 @@ public class CharacterMovement : MonoBehaviour
     {
         get
         {
-            return _currentLerpValue < 1f;
+            return _currentLerpValue < 1f || _moveTimer > 0f;
         }
     }
 
@@ -48,6 +51,8 @@ public class CharacterMovement : MonoBehaviour
     private float _lerpTrajectory = 0f;
     public bool ActivateWalk = false;
 
+    //TODO : quick stuff to actionnated the walking animation when moving the char with inputs
+    public float _moveTimer = 0f;
     protected virtual void Awake ()
     {
         _positionTarget = transform.position;
@@ -72,6 +77,7 @@ public class CharacterMovement : MonoBehaviour
 
     private void Update ()
     {
+        _moveTimer -= Time.deltaTime;
         UpdateYRotationInTime ();
         _lastPosition = transform.position;
 
@@ -108,9 +114,12 @@ public class CharacterMovement : MonoBehaviour
 
     public void Move (Vector2 direction)
     {
+        if(direction == Vector2.zero)
+            return;
         Vector3 newPos = transform.position + new Vector3 (direction.x, 0f, direction.y) * Time.deltaTime * _walkingSpeed * _walkingSpeedMultiplier;
         float mapHeight = Utils.GetMapHeight (newPos);
         newPos.y = mapHeight + _offsetY;
+        _moveTimer = 0.05f;
         transform.position = newPos;
     }
 
@@ -128,7 +137,7 @@ public class CharacterMovement : MonoBehaviour
     {
         if (_lerpTrajectory < 1f)
         {
-            _lerpTrajectory += Time.deltaTime * _walkingSpeed;
+            _lerpTrajectory += Time.deltaTime * _jumpSpeed;
             int index = (int) Mathf.Lerp (0, _jumpTrajectory.Count - 1, _lerpTrajectory);
             transform.position = _jumpTrajectory[index];
         }

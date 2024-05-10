@@ -30,7 +30,7 @@ public class Character : Attackable
 
     public float MaxDistanceToMove
     {
-        get { return Mathf.Max (0.1f, (Stats.Mobility / 150f)); }
+        get { return Mathf.Max (0.1f, (Stats.Mobility / 65f)); }
     }
 
     private Action OnTurnStarted;

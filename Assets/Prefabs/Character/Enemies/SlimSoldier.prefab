@@ -216,6 +216,18 @@ PrefabInstance:
       propertyPath: _attacksReferences.Array.data[1]
       value: 
       objectReference: {fileID: 11400000, guid: 334916fb33594944cab47a2bc9c5438a, type: 2}
+    - target: {fileID: 7443770227485021697, guid: 3d2af5877e7a19b409afb20ad7b1d1e3, type: 3}
+      propertyPath: _statsSerialized.AttackDefPassiveValues.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7443770227485021697, guid: 3d2af5877e7a19b409afb20ad7b1d1e3, type: 3}
+      propertyPath: _statsSerialized.AttackDefPassiveValues.Array.data[0].Value
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 7443770227485021697, guid: 3d2af5877e7a19b409afb20ad7b1d1e3, type: 3}
+      propertyPath: _statsSerialized.AttackDefPassiveValues.Array.data[0].Passive
+      value: 
+      objectReference: {fileID: 11400000, guid: ccd88b20ee856fe43ac6d08362b8dbb7, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -225,7 +237,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4898511978951924373, guid: 3d2af5877e7a19b409afb20ad7b1d1e3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 924651758897293864}
+      addedObject: {fileID: 4325695351986736164}
   m_SourcePrefab: {fileID: 100100000, guid: 3d2af5877e7a19b409afb20ad7b1d1e3, type: 3}
 --- !u!4 &2296663981848045597 stripped
 Transform:
@@ -237,7 +249,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4898511978951924373, guid: 3d2af5877e7a19b409afb20ad7b1d1e3, type: 3}
   m_PrefabInstance: {fileID: 7178129661623369257}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &924651758897293864
+--- !u!114 &4325695351986736164
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -246,6 +258,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 2334786915585074364}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b50762ca2de690d468deeec170a70c64, type: 3}
+  m_Script: {fileID: 11500000, guid: 50f15b4549b51fa45ac3e60df0fe29f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

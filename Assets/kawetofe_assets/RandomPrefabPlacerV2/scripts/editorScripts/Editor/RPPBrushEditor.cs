@@ -134,6 +134,8 @@ namespace kawetofe.randomPrefabPlacer
                 p.maxSlopeAngle = EditorGUILayout.Slider("max slope angle:", p.maxSlopeAngle, 1f, 360f);
                 EditorGUILayout.EndHorizontal();
                 p.useNormalsForRotation = EditorGUILayout.Toggle("use normals for rotation",p.useNormalsForRotation);
+                p.keepPrefabRotation = EditorGUILayout.Toggle("Keep prefab rotation",p.keepPrefabRotation);
+                p.placementOffset = EditorGUILayout.Vector3Field("Placement Offset", p.placementOffset);
             }
         }
 

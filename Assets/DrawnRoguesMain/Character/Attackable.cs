@@ -28,7 +28,7 @@ public class Attackable : CombatEntity
 
     [SerializeField]
     protected StatsSerialized _statsSerialized = new StatsSerialized ();
-    
+
     [SerializeField]
     protected List<EffectSerialized> _effectsSerialized = new List<EffectSerialized> ();
 
@@ -142,14 +142,15 @@ public class Attackable : CombatEntity
         if (_statsSerialized.HasAnyStats ())
         {
             Stats.AddStats (_statsSerialized);
-            Stats.AttackableState.OnLifeReachZero += () =>
-            {
-                _willBeDestroyed = true;
-                StartCoroutine (DestroyInSeconds (DEATH_DELAY));
-            };
         }
 
-        if(_effectsSerialized?.Count > 0)
+        Stats.AttackableState.OnLifeReachZero += () =>
+        {
+            _willBeDestroyed = true;
+            StartCoroutine (DestroyInSeconds (DEATH_DELAY));
+        };
+
+        if (_effectsSerialized?.Count > 0)
         {
             AddEffectSerialized (_effectsSerialized);
         }
@@ -393,7 +394,7 @@ public class Attackable : CombatEntity
         });
     }
 
-    public void AddEffectSerialized(List<EffectSerialized> effectsSerialized, float multiplicator = 1f)
+    public void AddEffectSerialized (List<EffectSerialized> effectsSerialized, float multiplicator = 1f)
     {
         foreach (EffectSerialized effectSerialized in effectsSerialized)
         {

@@ -35,6 +35,9 @@ public class WoodObstacle : Attackable, IColouringSpellBehaviour
         // Set kilogram
         Stats.Kilogram = pixelCount * KG_PER_PIXEL;
 
+        // TODO : to be replaced by a proper way of placing obstacle
+        transform.localPosition = Vector3.back * 0.7f;
+
         onInitDone?.Invoke ();
     }
 }

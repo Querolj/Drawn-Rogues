@@ -15,22 +15,21 @@ public class PlayerController : MonoBehaviour
         FreeDecorDraw
     }
 
-    #region Debug
+    #region Serialized Fields
 
+    //debug
     [SerializeField]
     private string _playerNameToLoad;
 
+    //debug
     [SerializeField]
     private GameObject _drawedCharacterTestPrefab;
-    #endregion
 
-    #region Inputs
     [SerializeField, BoxGroup ("Inputs")]
     private InputActionReference _mapMoveInput;
 
     [SerializeField, BoxGroup ("Inputs")]
     private InputActionReference _drawModeInput;
-    #endregion
 
     [SerializeField]
     private AttackRegistry _attackRegistry;
@@ -40,8 +39,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private CinemachineVirtualCamera _freeDrawVirtualCamera;
-
-    private ControlMode _controlMode = ControlMode.Map;
 
     [SerializeField]
     private CharacterCanvas _characterCanvas;
@@ -60,15 +57,13 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private FreeDrawUI _freeDrawUI;
+    #endregion
 
+    #region private fields
     private TurnManager _turnBasedCombat;
+    private ControlMode _controlMode = ControlMode.Map;
 
-    // [SerializeField]
     private DrawedCharacter _controlledCharacter;
-    public DrawedCharacter ControlledCharacter
-    {
-        get { return _controlledCharacter; }
-    }
 
     private const int STARTING_DROP_TOTAL = 3000;
 
@@ -90,6 +85,20 @@ public class PlayerController : MonoBehaviour
     private BaseColorInventory _baseColorInventory;
     private Attackable.Factory _attackableFactory;
     private InputMapSwitcher _inputMapSwitcher;
+    #endregion
+
+    #region public fields
+    public ControlMode CurrentControlMode
+    {
+        get { return _controlMode; }
+    }
+    public DrawedCharacter ControlledCharacter
+    {
+        get { return _controlledCharacter; }
+    }
+    #endregion
+
+    #region private functions
 
     [Inject, UsedImplicitly]
     private void Init (CursorModeSwitcher modeSwitcher, MoveIndicator moveIndicator, BaseColorInventory baseColorInventory, Attackable.Factory attackableFactory, InputMapSwitcher inputMapSwitcher)
@@ -99,6 +108,7 @@ public class PlayerController : MonoBehaviour
         _baseColorInventory = baseColorInventory;
         _attackableFactory = attackableFactory;
         _inputMapSwitcher = inputMapSwitcher;
+        _moveIndicator.Hide ();
     }
 
     private void Awake ()
@@ -107,7 +117,7 @@ public class PlayerController : MonoBehaviour
 
         if (!string.IsNullOrEmpty (_playerNameToLoad)) // for debug
         {
-            SetAllColorDrop (100000);
+            SetAllColorDrop (10000);
             LoadDrawCharacterTest ();
         }
         else if (_ownedCharacters.Count == 0)
@@ -159,23 +169,15 @@ public class PlayerController : MonoBehaviour
         _freeDrawVirtualCamera.LookAt = _controlledCharacter.transform;
     }
 
-    public void StartDrawCharacter ()
-    {
-        if (_charCreationUI.gameObject.activeSelf)
-            return;
-
-        _characterCanvas.Activate (_controlledCharacter == null ? _startPosition.position : _controlledCharacter.Pivot.transform.position, _controlledCharacter);
-        _charCreationUI.SetActive (true);
-        _mapUI.SetActive (false);
-    }
-
-    private void OnCharacterCreated (GameObject characterGo)
+    private void OnCharacterCreated (DrawedCharacter character)
     {
         // SetAllColorDrop (0);
         StopCharacterDraw ();
 
-        _controlledCharacter = characterGo.GetComponentInChildren<DrawedCharacter> ();
-        characterGo.transform.position = _startPosition.position;
+        _controlledCharacter = character;
+        CharacterPivot pivot = _controlledCharacter.GetComponentInParent<CharacterPivot> ();
+        pivot.transform.position = _startPosition.position;
+
         _playerVirtualCamera.Follow = _controlledCharacter.transform;
         _playerVirtualCamera.LookAt = _controlledCharacter.transform;
         _freeDrawVirtualCamera.Follow = _controlledCharacter.transform;
@@ -302,6 +304,72 @@ public class PlayerController : MonoBehaviour
         _moveIndicator.SetPosition (position);
     }
 
+    private void StopFreeDrawMode ()
+    {
+        _freeDrawUI.gameObject.SetActive (false);
+        _controlledCharacter.CharMovement.StopMovement ();
+        SetControlMode (ControlMode.Map);
+        _freeDrawVirtualCamera.Priority = 0;
+        _modeSwitcher.ChangeMode (CursorModeSwitcher.Mode.Selection);
+        _moveIndicator.DeactivateCombatMode ();
+        _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Map);
+    }
+
+    private void ChooseNewAttack (int additionalAttackToChoose)
+    {
+        SetControlMode (ControlMode.None);
+        if (!_attackRegistry.TryGetAttacksToChooseFrom (_controlledCharacter, out List<Attack> attacks))
+        {
+            Debug.LogWarning ("No attack found for " + _controlledCharacter.Description.DisplayName);
+            SetControlMode (ControlMode.Map);
+            _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Map);
+            return;
+        }
+
+        _attackChoserUI.DisplayAttackToChose (attacks, (attack) =>
+        {
+            _controlledCharacter.Attacks.Add (attack);
+            additionalAttackToChoose--;
+            if (additionalAttackToChoose > 0)
+                ChooseNewAttack (additionalAttackToChoose - 1);
+            else
+                SetControlMode (ControlMode.Map);
+        });
+    }
+    private void SetControlMode (ControlMode mode)
+    {
+        _controlMode = mode;
+
+        switch (mode)
+        {
+            case ControlMode.Combat:
+                _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Combat);
+                break;
+            case ControlMode.Map:
+                _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Map);
+                break;
+            case ControlMode.FreeDecorDraw:
+                _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Map);
+                break;
+            case ControlMode.None:
+                _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.None);
+                break;
+        }
+    }
+
+    #endregion
+
+    #region public functions
+    public void StartDrawCharacter ()
+    {
+        if (_charCreationUI.gameObject.activeSelf)
+            return;
+
+        _characterCanvas.Activate (_controlledCharacter == null ? _startPosition.position : _controlledCharacter.Pivot.transform.position, _controlledCharacter);
+        _charCreationUI.SetActive (true);
+        _mapUI.SetActive (false);
+    }
+
     public void InitForCombat (CombatZone combatZone)
     {
         if (_controlledCharacter == null)
@@ -326,17 +394,6 @@ public class PlayerController : MonoBehaviour
         SetControlMode (ControlMode.FreeDecorDraw);
         _freeDrawUI.gameObject.SetActive (true);
         _freeDrawUI.Init (_controlledCharacter);
-    }
-
-    private void StopFreeDrawMode ()
-    {
-        _freeDrawUI.gameObject.SetActive (false);
-        _controlledCharacter.CharMovement.StopMovement ();
-        SetControlMode (ControlMode.Map);
-        _freeDrawVirtualCamera.Priority = 0;
-        _modeSwitcher.ChangeMode (CursorModeSwitcher.Mode.Selection);
-        _moveIndicator.DeactivateCombatMode ();
-        _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Map);
     }
 
     private bool _combatMoveStarted = false;
@@ -380,27 +437,6 @@ public class PlayerController : MonoBehaviour
             ChooseNewAttack (levelDiff - 1);
     }
 
-    private void ChooseNewAttack (int additionalAttackToChoose)
-    {
-        SetControlMode (ControlMode.None);
-        if (!_attackRegistry.TryGetAttacksToChooseFrom (_controlledCharacter, out List<Attack> attacks))
-        {
-            Debug.LogWarning ("No attack found for " + _controlledCharacter.Description.DisplayName);
-            SetControlMode (ControlMode.Map);
-            _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Map);
-            return;
-        }
-
-        _attackChoserUI.DisplayAttackToChose (attacks, (attack) =>
-        {
-            _controlledCharacter.Attacks.Add (attack);
-            additionalAttackToChoose--;
-            if (additionalAttackToChoose > 0)
-                ChooseNewAttack (additionalAttackToChoose - 1);
-            else
-                SetControlMode (ControlMode.Map);
-        });
-    }
     public void SetMoveMode (ControlMode moveMode)
     {
         _controlMode = moveMode;
@@ -411,24 +447,5 @@ public class PlayerController : MonoBehaviour
         _controlledCharacter.RemoveAllTempEffect ();
     }
 
-    private void SetControlMode (ControlMode mode)
-    {
-        _controlMode = mode;
-
-        switch (mode)
-        {
-            case ControlMode.Combat:
-                _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Combat);
-                break;
-            case ControlMode.Map:
-                _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Map);
-                break;
-            case ControlMode.FreeDecorDraw:
-                _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.Map);
-                break;
-            case ControlMode.None:
-                _inputMapSwitcher.SwitchActionMap (InputActionMapEnum.None);
-                break;
-        }
-    }
+    #endregion
 }

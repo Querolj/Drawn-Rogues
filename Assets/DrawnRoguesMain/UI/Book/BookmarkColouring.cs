@@ -13,9 +13,13 @@ public class BookmarkColouring : MonoBehaviour
     [SerializeField]
     private Button _button;
 
+    private BaseColor _baseColor;
+    public BaseColor BaseColor => _baseColor;
+
     public void Init (BaseColor bc, Action onClick)
     {
         _button.onClick.AddListener (() => onClick ());
+        _baseColor = bc;
         _unselectedBookmarkColorRend.color = BaseColorUtils.GetColor (bc);
         _selectedBookmarkColorRend.color = BaseColorUtils.GetColor (bc);
     }

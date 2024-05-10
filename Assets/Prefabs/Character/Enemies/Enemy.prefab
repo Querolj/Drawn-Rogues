@@ -142,7 +142,7 @@ MonoBehaviour:
     AttackOffPassiveValues: []
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
-    effectValues: []
+  _effectsSerialized: []
   _outline: {fileID: 5248139933037473357}
   _eventsOnDeath: []
   _attacksReferences: []
@@ -247,7 +247,7 @@ Transform:
   m_Children:
   - {fileID: 2365694158653926233}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8390882248923520469
 MonoBehaviour:
@@ -262,7 +262,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _character: {fileID: 7443770227485021697}
-  _initForMapOnStart: 1
 --- !u!114 &4003242265093012347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -275,7 +274,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c78c9b784c5c6143b48248cfc5dab50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _initialWalkingSpeed: 3
+  _walkingSpeed: 0.7
+  _jumpSpeed: 1.7
   _initialDirectionIsRight: 1
   _characterAnimation: {fileID: 1711619237582415671}
   ActivateWalk: 0

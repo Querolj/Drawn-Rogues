@@ -350,7 +350,10 @@ namespace kawetofe.randomPrefabPlacer
                         Object prefabObj = PrefabUtility.InstantiatePrefab (obj.prefab);
                         newObj = (GameObject) prefabObj;
                         newObj.transform.position = pos;
-                        newObj.transform.rotation = rot;
+                        if(!obj.keepPrefabRotation)
+                        {
+                            newObj.transform.rotation = rot;
+                        }
                     }
 #endif
                 }
@@ -623,6 +626,8 @@ namespace kawetofe.randomPrefabPlacer
         [SerializeField]
         [Tooltip ("max slope angle of the surface to Vector3.up to place the object")]
         public float maxSlopeAngle = 45f;
+        [SerializeField]
+        public bool keepPrefabRotation = false;
         private Texture2D thumbnbnail;
     }
 

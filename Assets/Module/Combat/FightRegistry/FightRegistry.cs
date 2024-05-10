@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class FightRegistry : MonoBehaviour
+public class FightRegistry : MonoBehaviour, IPointerClickHandler, IPointerExitHandler
 {
+    #region Serialized Fields
     [SerializeField]
     private GameObject _content;
 
@@ -17,7 +18,9 @@ public class FightRegistry : MonoBehaviour
 
     [SerializeField]
     private string _playerTag = "Player";
+    #endregion
 
+    #region Private Fields
     private float spacingBetweenLines = 0;
     private float _contentHeight = 0;
     private bool _isZoomed = false;
@@ -25,21 +28,18 @@ public class FightRegistry : MonoBehaviour
     private const float TOP_SCROLL_VIEW_ZOOMED = -75;
     private const float TOP_SCROLL_VIEW_UNZOOMED = -275;
 
+    private VerticalLayoutGroup _layout;
+    #endregion
+
+    #region Private Methods
     private void Awake ()
     {
-        //AttackInstFactory.Init (this);
-        VerticalLayoutGroup layout = _content.GetComponent<VerticalLayoutGroup> ();
-        if (layout == null)
+        _layout = _content.GetComponent<VerticalLayoutGroup> ();
+        if (_layout == null)
             throw new System.Exception ("FightDescription content must have a VerticalLayoutGroup component");
 
-        _contentHeight = layout.padding.top;
-        spacingBetweenLines = layout.spacing + _lineTemplate.GetComponent<RectTransform> ().rect.height;
-    }
-
-    public void ReportRoundStart (int roundNumber)
-    {
-        string text = "------ Starting round <b>" + roundNumber + "</b> ------";
-        AddLine (text);
+        _contentHeight = _layout.padding.top;
+        spacingBetweenLines = _layout.spacing + _lineTemplate.GetComponent<RectTransform> ().rect.height;
     }
 
     private void AddLine (string text)
@@ -50,7 +50,56 @@ public class FightRegistry : MonoBehaviour
         line.transform.localScale = Vector3.one;
 
         _contentHeight += spacingBetweenLines;
-        // StartCoroutine (RepositionContent ());
+        StartCoroutine (RepositionContent ());
+    }
+
+    public void OnPointerExit (PointerEventData eventData)
+    {
+        _isZoomed = false;
+        ZoomOut ();
+    }
+
+    public void OnPointerClick (PointerEventData eventData)
+    {
+        if (_isZoomed)
+        {
+            _isZoomed = false;
+            ZoomOut ();
+        }
+        else
+        {
+            _isZoomed = true;
+            ZoomIn ();
+        }
+
+    }
+
+    private void ZoomIn ()
+    {
+        _scrollViewRect.offsetMax = new Vector2 (_scrollViewRect.offsetMax.x, TOP_SCROLL_VIEW_ZOOMED);
+        StartCoroutine (RepositionContent ());
+    }
+
+    private void ZoomOut ()
+    {
+        _scrollViewRect.offsetMax = new Vector2 (_scrollViewRect.offsetMax.x, TOP_SCROLL_VIEW_UNZOOMED);
+        StartCoroutine (RepositionContent ());
+    }
+    #endregion 
+
+    #region Public methods
+
+    public void ReportRoundStart (int roundNumber)
+    {
+        string text = "------ Starting round <b>" + roundNumber + "</b> ------";
+        AddLine (text);
+    }
+
+    public void Clean ()
+    {
+        foreach (Transform child in _content.transform)
+            Destroy (child.gameObject);
+        _contentHeight = _layout.padding.top;
     }
 
     public void ReportAttackDamage (string attackerName, string targetName,
@@ -122,44 +171,12 @@ public class FightRegistry : MonoBehaviour
         AddLine (text);
     }
 
-    // private IEnumerator RepositionContent ()
-    // {
-    //     yield return new WaitForEndOfFrame ();
-    //     Vector3 newContentPos = _content.transform.localPosition;
-    //     newContentPos.y = _contentHeight;
-    //     _content.transform.localPosition = newContentPos;
-    // }
-
-    // public void OnPointerExit (PointerEventData eventData)
-    // {
-    //     _isZoomed = false;
-    //     ZoomOut ();
-    // }
-
-    // public void OnPointerClick (PointerEventData eventData)
-    // {
-    //     if (_isZoomed)
-    //     {
-    //         _isZoomed = false;
-    //         ZoomOut ();
-    //     }
-    //     else
-    //     {
-    //         _isZoomed = true;
-    //         ZoomIn ();
-    //     }
-
-    // }
-
-    // private void ZoomIn ()
-    // {
-    //     _scrollViewRect.offsetMax = new Vector2 (_scrollViewRect.offsetMax.x, TOP_SCROLL_VIEW_ZOOMED);
-    //     StartCoroutine (RepositionContent ());
-    // }
-
-    // private void ZoomOut ()
-    // {
-    //     _scrollViewRect.offsetMax = new Vector2 (_scrollViewRect.offsetMax.x, TOP_SCROLL_VIEW_UNZOOMED);
-    //     StartCoroutine (RepositionContent ());
-    // }
+    private IEnumerator RepositionContent ()
+    {
+        yield return new WaitForEndOfFrame ();
+        Vector3 newContentPos = _content.transform.localPosition;
+        newContentPos.y = _contentHeight;
+        _content.transform.localPosition = newContentPos;
+    }
+    #endregion
 }

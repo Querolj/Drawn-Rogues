@@ -4,6 +4,7 @@ using Cinemachine;
 using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Zenject;
@@ -81,7 +82,7 @@ public class CharacterCanvas : MonoBehaviour
     private Camera _mainCamera;
     private MeshRenderer _modifierLayerRenderer;
     private DrawedCharacter _drawedCharacterToModify;
-    public event Action<GameObject> OnCharacterCreated;
+    public event Action<DrawedCharacter> OnCharacterCreated;
     public event Action OnCharacterModified;
     private int _maxModifieurAllowed = 3;
     public int MaxModifieurAllowed
@@ -120,7 +121,7 @@ public class CharacterCanvas : MonoBehaviour
         _frameReader = GameObject.FindFirstObjectByType<FrameReader> (); // TODO : Inject
         _stats = new AttackableStats ();
         _modifierLayerRenderer = _modifierLayer.GetComponent<MeshRenderer> ();
-        _validateButton.gameObject.SetActive (false);
+        // _validateButton.gameObject.SetActive (false);
 
         ComputeShader getCharProportionCs = Resources.Load<ComputeShader> ("GetCharacterProportion");
         if (getCharProportionCs == null)
@@ -143,11 +144,6 @@ public class CharacterCanvas : MonoBehaviour
         _debugSaveCharacterInput.action.performed += SaveCharacter;
     }
 
-    private void OnDestroy ()
-    {
-        _debugSaveCharacterInput.action.performed -= SaveCharacter;
-    }
-
     private void UpdateViewportCornersPos ()
     {
         _viewportTopRightFramePos = _mainCamera.WorldToViewportPoint (_frameMeshRenderer.bounds.max);
@@ -157,33 +153,39 @@ public class CharacterCanvas : MonoBehaviour
     private void Start ()
     {
         _frame.SetOnPixelsAdded ((c, pc) => UpdateStats ());
+        _validateButton.onClick.AddListener (OnValidateButtonClick);
+        _drawer.OnDrawStrokeEnd += OnDrawStrokeEnd;
+        _drawer.OnUndo += UpdateStats;
+    }
 
-        _validateButton.onClick.AddListener (() =>
+    private void OnDestroy ()
+    {
+        _debugSaveCharacterInput.action.performed -= SaveCharacter;
+        _drawer.OnDrawStrokeEnd -= OnDrawStrokeEnd;
+        _validateButton.onClick.RemoveListener (OnValidateButtonClick);
+        _drawer.OnUndo -= UpdateStats;
+    }
+
+    private void OnValidateButtonClick ()
+    {
+        // _validateButton.gameObject.SetActive (false);
+        _drawedCharacterFormDescription.CalculateCharProportion (_frame.DrawTexture, _frame.PixelUsages);
+        if (_drawedCharacterToModify == null)
+            CreateDrawedCharacter ();
+        else
+            ModifyDrawedCharacter ();
+    }
+
+    private void OnDrawStrokeEnd (Colouring colouring, StrokeInfo strokeInfo)
+    {
+        _drawedCharacterFormDescription.AddStrokeInfo (strokeInfo);
+        _drawedCharacterFormDescription.CalculateCharProportion (_frame.DrawTexture, _frame.PixelUsages);
+        GraphicUtils.SavePixelsAsPNG (_frame.DrawTexture.GetPixels (), "Test/player.png", _frame.DrawTexture.width, _frame.DrawTexture.height);
+
+        if (_drawedCharacterFormDescription.HasAnyForm ())
         {
-            _validateButton.gameObject.SetActive (false);
-            _drawedCharacterFormDescription.CalculateCharProportion (_frame.DrawTexture, _frame.PixelUsages);
-            if (_drawedCharacterToModify == null)
-                CreateDrawedCharacter ();
-            else
-                ModifyDrawedCharacter ();
-        });
-
-        _drawer.OnDrawStrokeEnd += (lc, si) =>
-        {
-            _drawedCharacterFormDescription.AddStrokeInfo (si);
-            _drawedCharacterFormDescription.CalculateCharProportion (_frame.DrawTexture, _frame.PixelUsages);
-            GraphicUtils.SavePixelsAsPNG (_frame.DrawTexture.GetPixels (), "Test/player.png", _frame.DrawTexture.width, _frame.DrawTexture.height);
-
-            if (_drawedCharacterFormDescription.HasAnyForm ())
-            {
-                _validateButton.gameObject.SetActive (true);
-            }
-        };
-
-        _drawer.OnUndo += () =>
-        {
-            UpdateStats ();
-        };
+            _validateButton.gameObject.SetActive (true);
+        }
     }
 
     public void Activate (Vector3 position, DrawedCharacter dc = null)
@@ -218,7 +220,7 @@ public class CharacterCanvas : MonoBehaviour
         }
         else
         {
-            _validateButton.gameObject.SetActive (false);
+            // _validateButton.gameObject.SetActive (false);
             _frame.ResetPixelAllowed (_basePixelAllowed);
         }
     }
@@ -228,6 +230,11 @@ public class CharacterCanvas : MonoBehaviour
         _modeSwitcher.ChangeMode (CursorModeSwitcher.Mode.Selection);
         gameObject.SetActive (false);
         _camera.Priority = 0;
+    }
+
+    private void UpdateStats ()
+    {
+        UpdateStats (true);
     }
 
     private void UpdateStats (bool resetCurrentLife = true)
@@ -333,7 +340,7 @@ public class CharacterCanvas : MonoBehaviour
         CharacterPivot pivot = drawedCharacterGo.GetComponentInParent<CharacterPivot> ();
         pivot.Init ();
 
-        OnCharacterCreated?.Invoke (drawedCharacterGo);
+        OnCharacterCreated?.Invoke (drawedCharacter);
         _modeSwitcher.ChangeMode (CursorModeSwitcher.Mode.Selection);
     }
 

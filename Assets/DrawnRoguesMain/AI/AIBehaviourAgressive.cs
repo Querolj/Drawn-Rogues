@@ -6,6 +6,7 @@ public class AIBehaviourAgressive : AIBehaviour
 {
     public override void ExecuteTurn (CombatZone combatZone, Character playerCharacter, FightRegistry fightDescription, Action onTurnEnd)
     {
+        
         float playerToCharDist = Vector3.Distance (playerCharacter.transform.position, _character.transform.position);
         Bounds bounds = (Bounds) _character.GetSpriteBounds ();
         float radiusAdded = bounds.extents.x;

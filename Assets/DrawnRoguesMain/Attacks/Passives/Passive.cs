@@ -1,4 +1,5 @@
 using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public enum OperationTypeEnum
@@ -15,7 +16,9 @@ public class Passive : ScriptableObject
     public float MaxValue = float.MaxValue;
     public float MinValue = float.MinValue;
 
-    public string Name;
+    [TextArea (3, 10), InfoBox ("Can contain {value} to display the value, and {sign} to display + or - depending on the value.")]
+    public string Description;
+    public bool InverseDisplayedSignInDescription;
     public OperationTypeEnum OperationType;
     protected float Value;
 
@@ -31,7 +34,12 @@ public class Passive : ScriptableObject
 
     public override string ToString ()
     {
-        return Name + " " + Value;
+        string descriptionWithValue = Description.Replace ("{value}", Mathf.Abs (Value).ToString ());
+        if (InverseDisplayedSignInDescription)
+            descriptionWithValue = descriptionWithValue.Replace ("{sign}", Value < 0 ? "+" : "-");
+        else
+            descriptionWithValue = descriptionWithValue.Replace ("{sign}", Value >= 0 ? "+" : "-");
+        return descriptionWithValue;
     }
 }
 
@@ -50,6 +58,6 @@ public class PassiveSerialized<T> where T : Passive
 
     public override string ToString ()
     {
-        return Passive.Name + " " + Value;
+        return Passive.Description + " " + Value;
     }
 }

@@ -1497,6 +1497,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3345403486790755330, guid: 883e521c2d58f0945b467f866c812342, type: 3}
+      propertyPath: m_AllowSwitchOff
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3992955713718848861, guid: 883e521c2d58f0945b467f866c812342, type: 3}
       propertyPath: m_Name
       value: SelectedColouringItemSlot
@@ -1650,7 +1654,6 @@ MonoBehaviour:
   _selectedSlot: {fileID: 4153693329076063358}
   _colouringLoader: {fileID: 0}
   _colouringType: 0
-  _drawer: {fileID: 0}
 --- !u!224 &9027830708296884907 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7753843996966043172, guid: 883e521c2d58f0945b467f866c812342, type: 3}

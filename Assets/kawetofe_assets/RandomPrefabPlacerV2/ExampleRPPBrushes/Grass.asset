@@ -16,7 +16,7 @@ MonoBehaviour:
   prefabs:
   - allowedLayers:
       serializedVersion: 2
-      m_Bits: 311
+      m_Bits: 55
     prefab: {fileID: 1775142227453386, guid: dabc3c370470e2b4a8b0235afd00c42c, type: 3}
     possibility: 0.8
     scaleMin: 0.8

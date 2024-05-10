@@ -346,7 +346,7 @@ public class StaticCloud : CombatEnvironnementHazard, IColouringSpellBehaviour
 
         Attackable target = other.GetComponent<Attackable> ();
         if (target == null)
-            throw new System.ArgumentNullException (nameof (target));
+            return;
         _triggeredAttackableGoIds.Add (otherGoId);
         _targetsDetected.Add ((cloud, target));
     }

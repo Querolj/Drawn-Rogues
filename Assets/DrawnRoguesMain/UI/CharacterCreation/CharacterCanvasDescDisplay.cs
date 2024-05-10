@@ -145,7 +145,7 @@ public class CharacterCanvasDescDisplay : MonoBehaviour
             if (icon.HeightAdjective == _characterCanvas.DrawedCharacterFormDescription.HeightAdjective)
             {
                 _heightIcon.sprite = icon.IconTex;
-                _heightDescription.text = icon.Description;
+                _heightDescription.text = icon.HeightAdjective.ToString ();
                 return;
             }
         }
@@ -160,7 +160,7 @@ public class CharacterCanvasDescDisplay : MonoBehaviour
             if (icon.WidthAdjective == _characterCanvas.DrawedCharacterFormDescription.WidthAdjective)
             {
                 _widthIcon.sprite = icon.IconTex;
-                _widthDescription.text = icon.Description;
+                _widthDescription.text = icon.WidthAdjective.ToString ();
                 return;
             }
         }
@@ -175,6 +175,7 @@ public class CharacterCanvasDescDisplay : MonoBehaviour
             if (icon.NumberOfMembers <= _characterCanvas.DrawedCharacterFormDescription.NumberOfArms)
             {
                 _numberOfArmsIcon.sprite = icon.IconTex;
+                _armsDescription.text = icon.NumberOfMembers.ToString ();
                 _armsDescription.text = icon.Description;
                 return;
             }

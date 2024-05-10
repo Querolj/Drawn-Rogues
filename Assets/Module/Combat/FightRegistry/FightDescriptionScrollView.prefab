@@ -420,9 +420,9 @@ MonoBehaviour:
     m_Left: 5
     m_Right: 0
     m_Top: 20
-    m_Bottom: 0
+    m_Bottom: 10
   m_ChildAlignment: 0
-  m_Spacing: 30
+  m_Spacing: 15
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0

@@ -1,0 +1,101 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab40fa445ff22fc479be407303fecb08, type: 3}
+  m_Name: ThinGrass
+  m_EditorClassIdentifier: 
+  Notes: "This script needs Random Prefab Placer Asset to work \n https://assetstore.unity.com/packages/tools/terrain/random-prefab-placer-104765 "
+  prefabs:
+  - allowedLayers:
+      serializedVersion: 2
+      m_Bits: 32768
+    prefab: {fileID: 2013941804896702258, guid: 6980195195087b34b8d438e1107c2356, type: 3}
+    possibility: 0.8
+    scaleMin: 0.60260785
+    scaleMax: 1.3169572
+    placementOffset: {x: 0, y: 0.09, z: 0}
+    lockedRotations: {x: 1, y: 1, z: 1}
+    useNormalsForRotation: 0
+    maxSlopeAngle: 45
+    keepPrefabRotation: 1
+  - allowedLayers:
+      serializedVersion: 2
+      m_Bits: 32768
+    prefab: {fileID: 2013941804896702258, guid: bd737d4a13b4a184bb1f732f8f4cf4b3, type: 3}
+    possibility: 0.8
+    scaleMin: 0.8843477
+    scaleMax: 1.4226096
+    placementOffset: {x: 0, y: 0.09, z: 0}
+    lockedRotations: {x: 1, y: 1, z: 1}
+    useNormalsForRotation: 0
+    maxSlopeAngle: 45
+    keepPrefabRotation: 1
+  - allowedLayers:
+      serializedVersion: 2
+      m_Bits: 32768
+    prefab: {fileID: 2013941804896702258, guid: 9bd0011ad48b45b4db7e391ed437234e, type: 3}
+    possibility: 0.8
+    scaleMin: 0.8334587
+    scaleMax: 1.3717208
+    placementOffset: {x: 0, y: 0.09, z: 0}
+    lockedRotations: {x: 1, y: 0, z: 1}
+    useNormalsForRotation: 0
+    maxSlopeAngle: 45
+    keepPrefabRotation: 1
+  - allowedLayers:
+      serializedVersion: 2
+      m_Bits: 32768
+    prefab: {fileID: 2013941804896702258, guid: 9a55d43c84df0b14e90949cc5973c06b, type: 3}
+    possibility: 0.8
+    scaleMin: 0.84913015
+    scaleMax: 1.3873922
+    placementOffset: {x: 0, y: 0.09, z: 0}
+    lockedRotations: {x: 1, y: 0, z: 1}
+    useNormalsForRotation: 0
+    maxSlopeAngle: 45
+    keepPrefabRotation: 1
+  - allowedLayers:
+      serializedVersion: 2
+      m_Bits: 32768
+    prefab: {fileID: 2013941804896702258, guid: a39fdc916ffcb0f4f8f70361a7ffa645, type: 3}
+    possibility: 0.8
+    scaleMin: 0.84913015
+    scaleMax: 1.2465224
+    placementOffset: {x: 0, y: 0.09, z: 0}
+    lockedRotations: {x: 1, y: 0, z: 1}
+    useNormalsForRotation: 0
+    maxSlopeAngle: 45
+    keepPrefabRotation: 1
+  - allowedLayers:
+      serializedVersion: 2
+      m_Bits: 32768
+    prefab: {fileID: 2013941804896702258, guid: b3f5fa378a9f13c4fa3dff4a5864a3d4, type: 3}
+    possibility: 0.8
+    scaleMin: 0.8843476
+    scaleMax: 1.5282619
+    placementOffset: {x: 0, y: 0.09, z: 0}
+    lockedRotations: {x: 1, y: 0, z: 1}
+    useNormalsForRotation: 0
+    maxSlopeAngle: 45
+    keepPrefabRotation: 1
+  - allowedLayers:
+      serializedVersion: 2
+      m_Bits: 32768
+    prefab: {fileID: 2013941804896702258, guid: 3fc9064a88bec894caa9aaf80e5e7b57, type: 3}
+    possibility: 0.8
+    scaleMin: 0.7982414
+    scaleMax: 1.2660685
+    placementOffset: {x: 0, y: 0.09, z: 0}
+    lockedRotations: {x: 1, y: 0, z: 1}
+    useNormalsForRotation: 0
+    maxSlopeAngle: 45
+    keepPrefabRotation: 1
+  objectsToPlace: 10

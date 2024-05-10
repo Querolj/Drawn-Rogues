@@ -310,29 +310,29 @@ public class AttackableStats
 
     private void AddToPassiveDict<T> (Dictionary<string, T> passiveDict, PassiveSerialized<T> passiveSer, int multiplicator) where T : Passive
     {
-        if (passiveDict.ContainsKey (passiveSer.Passive.Name))
+        if (passiveDict.ContainsKey (passiveSer.Passive.Description))
         {
-            passiveDict[passiveSer.Passive.Name].Add (passiveSer.Value * multiplicator);
+            passiveDict[passiveSer.Passive.Description].Add (passiveSer.Value * multiplicator);
         }
         else
         {
             T passiveInstance = passiveSer.GetInstance ();
             passiveInstance.SetValue (passiveSer.Value * multiplicator);
-            passiveDict.Add (passiveSer.Passive.Name, passiveInstance);
+            passiveDict.Add (passiveSer.Passive.Description, passiveInstance);
         }
     }
 
     private void OverwriteToPassiveDict<T> (Dictionary<string, T> passiveDict, PassiveSerialized<T> passiveSer, int multiplicator) where T : Passive
     {
-        if (passiveDict.ContainsKey (passiveSer.Passive.Name))
+        if (passiveDict.ContainsKey (passiveSer.Passive.Description))
         {
-            passiveDict[passiveSer.Passive.Name].SetValue (passiveSer.Value * multiplicator);
+            passiveDict[passiveSer.Passive.Description].SetValue (passiveSer.Value * multiplicator);
         }
         else
         {
             T passiveInstance = passiveSer.GetInstance ();
             passiveInstance.SetValue (passiveSer.Value * multiplicator);
-            passiveDict.Add (passiveSer.Passive.Name, passiveInstance);
+            passiveDict.Add (passiveSer.Passive.Description, passiveInstance);
         }
     }
 
@@ -399,7 +399,7 @@ public class AttackableStats
 
     public override string ToString ()
     {
-        string s = "Life : " + Life + "\nIntelligence : " + Intelligence + "\nStrenght : " + Strenght + "\nMobility : " + Mobility;
+        string s = "Life : " + Life + "\nIntelligence : " + Intelligence + "\nStrenght : " + Strenght + "\nMobility : " + Mobility + "\n";
 
         foreach (KeyValuePair<string, AttackOffPassive> stat in _attackoffPassiveByNames)
         {

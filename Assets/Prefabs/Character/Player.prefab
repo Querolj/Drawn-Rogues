@@ -117,7 +117,12 @@ MonoBehaviour:
   _attacksReferences: []
   _reduceEscapeChanceValue: 0.2
   _modifierLayer: {fileID: 2268071720730420520}
-  _colouringSpell: []
+  _colouringSpell:
+  - {fileID: 11400000, guid: 05eb0ed6c0c48b545beeee32bc9f55da, type: 2}
+  - {fileID: 11400000, guid: 15e5296d03a0f254a9193841150271a4, type: 2}
+  - {fileID: 11400000, guid: ab90b6fe2ffebf6449483dd76b8539d9, type: 2}
+  - {fileID: 11400000, guid: 4bb0692e1c0bc6941940b39723fdf3fa, type: 2}
+  - {fileID: 11400000, guid: 7b073087bff36d448a189c9c5b30b92a, type: 2}
 --- !u!65 &6380750594029326618
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -423,7 +428,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5713328439661675838}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 30.901564, y: 0.8451938, z: -19.48}
+  m_LocalPosition: {x: 0, y: 0.8451938, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -457,6 +462,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _walkingSpeed: 3
-  _initialDirectionIsRight: 1
+  _jumpSpeed: 1.4
+  _initialDirectionIsRight: 0
   _characterAnimation: {fileID: 587915763813740162}
   ActivateWalk: 0
+  _moveTimer: 0

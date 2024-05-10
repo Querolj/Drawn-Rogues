@@ -154,7 +154,7 @@ public class DrawedCharacter : Character
         _modifierAdded.Add (modifierInfos);
 
         GameObject modifierGoInstance = _modifierGoInstanceFactory.Create (Renderer.bounds, _modifierLayer.transform, modifier,
-            modifierInfos.GetLocalPosition (Renderer.bounds, new Vector3 (0.5f, 0.5f, 0f)), modifierInfos.IsFlipped);
+            modifierInfos.GetLocalPosition (Renderer.bounds, new Vector3 (0.5f, 0.5f, 0f)), modifierInfos.IsFlipped, 0.1f);
 
         if (modifier.Stats?.HasAnyStats () == true)
         {
@@ -204,7 +204,10 @@ public class DrawedCharacter : Character
         {
             Modifier modifier = Resources.Load<Modifier> ("Modifier/" + modifierInfos.SOFileName);
             if (modifier == null)
-                throw new Exception ("Modifier " + modifierInfos.SOFileName + " not found");
+            {
+                Debug.LogError ("Modifier " + modifierInfos.SOFileName + " not found");
+                continue;
+            }
             AddModifier (modifier, modifierInfos);
         }
 

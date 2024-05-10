@@ -3,12 +3,12 @@
 
 RWStructuredBuffer<int> Count;
 
-int FrameWidth;
-int FrameHeight;
-int MousePosX;
-int MousePosY;
-int BrushWidth;
-int BrushHeight;
+uint FrameWidth;
+uint FrameHeight;
+uint MousePosX;
+uint MousePosY;
+uint BrushWidth;
+uint BrushHeight;
 Texture2D<float4> BrushTex;
 
 RWStructuredBuffer<int> PixelIds;

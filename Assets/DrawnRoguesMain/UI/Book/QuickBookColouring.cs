@@ -81,7 +81,12 @@ public class QuickBookColouring : MonoBehaviour
             CreateBookmark (bc);
         }
 
-        Display (BaseColor.Green);
+        if (_bookmarksCreated.Count > 0)
+        {
+            _bookmarksCreated[0].SetSelected (true);
+            Display (_bookmarksCreated[0].BaseColor);
+        }
+
         _colouringInventory.OnColouringAdded += OnColouringAdded;
     }
 
@@ -108,6 +113,8 @@ public class QuickBookColouring : MonoBehaviour
             return;
 
         BookmarkColouring bookmark = Instantiate (_bookmarkTemplate, _bookmarkContainer);
+        _bookmarksCreated.Add (bookmark);
+
         bookmark.Init (bc, () =>
         {
             if (_currentBaseColor == bc)
@@ -122,8 +129,6 @@ public class QuickBookColouring : MonoBehaviour
                     b.SetSelected (false);
             }
         });
-
-        _bookmarksCreated.Add (bookmark);
     }
 
     private void CreateSlotColouring ()

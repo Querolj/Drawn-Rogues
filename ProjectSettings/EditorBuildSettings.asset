@@ -11,8 +11,11 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/CharacterCreation.unity
     guid: 2adf8e470959f644aadc59e17e87c022
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TestScenes/CombatTestScene.unity
     guid: 84f10cb779a172147bffd56221e9361d
+  - enabled: 1
+    path: Assets/Scenes/DemoPresentationScene.unity
+    guid: da9f1ea6616b44a4b9081a4f97c510d2
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 9b009da2bde80e14db8337cbc3ae96b6, type: 2}

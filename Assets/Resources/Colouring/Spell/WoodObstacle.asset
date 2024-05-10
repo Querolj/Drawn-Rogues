@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WoodObstacle
   m_EditorClassIdentifier: 
   _id: 1
-  Name: Obstacle de bois
+  Name: Wood obstacle
   BaseColorsUsedPerPixel:
   - BaseColor: 5
     TotalDrops: 1
@@ -25,4 +25,3 @@ MonoBehaviour:
   TextureUI: {fileID: 2800000, guid: 659fcf6ab1dfb6b419d03e35cd4ff372, type: 3}
   Description: 
   BehaviourPrefab: {fileID: 7487989168559669234, guid: 95b1f23e5e9f320438902f784bcf4c71, type: 3}
-  ClearMetadataOnFrame: 1

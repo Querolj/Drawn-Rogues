@@ -213,20 +213,27 @@ public class Drawer : MonoBehaviour
             }
         }
 
+        ExecuteActionForFrame ((frame, uv) =>
+        {
+            frame.UpdateBrushDrawingPrediction (uv);
+        });
+
         if (Mouse.current.leftButton.wasReleasedThisFrame || _stopDraw)
         {
             _stopDraw = false;
             _leftMouseJustPressed = false;
             if (_drawStartedWithBrush)
             {
-                if (_strokeValidation != null && !_strokeValidation.IsValid)
-                {
-                    ResetCurrentStroke ();
-                }
-                else
-                {
-                    OnDrawStrokeEnd?.Invoke (_selectedColouring, _currentStrokeInfo);
-                }
+                OnDrawStrokeEnd?.Invoke (_selectedColouring, _currentStrokeInfo);
+
+                // if (_strokeValidation != null && !_strokeValidation.IsValid)
+                // {
+                //     ResetCurrentStroke ();
+                // }
+                // else
+                // {
+                //     OnDrawStrokeEnd?.Invoke (_selectedColouring, _currentStrokeInfo);
+                // }
                 _drawStartedWithBrush = false;
             }
 
@@ -237,12 +244,9 @@ public class Drawer : MonoBehaviour
         if (!_selectedColouring.HasBrushSize && _changeBrushInput.action.ReadValue<Vector2> ().y != 0)
         {
             _resizableBrush.ChangeBrushFromIndexOffset (_changeBrushInput.action.ReadValue<Vector2> ().y < 0 ? -1 : 1);
+            if (_coordinateByFocusedFrame.Item1 != null)
+                _coordinateByFocusedFrame.Item1.SetBrush (_resizableBrush.ActiveBrush, _selectedColouring.Texture);
         }
-
-        ExecuteActionForFrame ((frame, uv) =>
-        {
-            frame.UpdateBrushDrawingPrediction (uv);
-        });
     }
 
     private void SetFocusedFrame (Vector3 screenPos)
@@ -420,7 +424,9 @@ public class Drawer : MonoBehaviour
             throw new ArgumentNullException ((nameof (drawAction)));
 
         if (_coordinateByFocusedFrame.Item1 == null)
+        {
             return;
+        }
 
         // Add frame pixels to the undo history
         // List < (Frame, Color[]) > framePixels = null;
@@ -442,7 +448,7 @@ public class Drawer : MonoBehaviour
 
     private void InitFrame (Frame frame)
     {
-        frame.SetBrush (_resizableBrush.ActiveBrush);
+        frame.SetBrush (_resizableBrush.ActiveBrush, _selectedColouring.Texture);
         frame.SetOnPixelsAdded (OnPixelsAdded);
         _initedFrames.Add (frame);
     }

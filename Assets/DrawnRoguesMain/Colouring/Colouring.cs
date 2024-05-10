@@ -20,6 +20,7 @@ public class Colouring : ScriptableObject
     public int BrushSize;
     public Texture2D Texture;
     public Texture2D TextureUI;
+    [TextArea (3, 10)]
     public string Description;
 
     private Sprite _spriteUI = null;

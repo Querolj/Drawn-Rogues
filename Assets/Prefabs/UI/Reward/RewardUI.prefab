@@ -190,8 +190,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Validate
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 430ad64e67bdd5c409b974ea331915f6, type: 2}
+  m_sharedMaterial: {fileID: 3740661377514008095, guid: 430ad64e67bdd5c409b974ea331915f6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -210,7 +210,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
+  m_TextStyleHashCode: -2025251023
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -346,7 +346,7 @@ RectTransform:
   m_GameObject: {fileID: 7604161043452957584}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.3, y: 1.3, z: 1.3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1767835361964573769}
@@ -371,7 +371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96c88415bad881448a0c61e28362c1b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _colorDropRewardPrefab: {fileID: 7597942037477672411, guid: ab3addeba5cbe874f836b8c05aaa71d7, type: 3}
+  _colorDropRewardPrefab: {fileID: 8326344218718374734, guid: ab3addeba5cbe874f836b8c05aaa71d7, type: 3}
   _colouringSlotRewardPrefab: {fileID: 2252051714374237677, guid: 805974433dc1b1e45810f4469ce5b191, type: 3}
   _rewardContainer: {fileID: 1767835361964573769}
   _validateButton: {fileID: 1982523141245453263}

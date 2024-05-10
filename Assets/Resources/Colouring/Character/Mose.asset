@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4944c349d99b02c4cbe6204b1a6f92a2, type: 3}
+  m_Name: Mose
+  m_EditorClassIdentifier: 
+  _id: 1
+  Name: Mose
+  BaseColorsUsedPerPixel:
+  - BaseColor: 1
+    TotalDrops: 1
+  PixelUsages: 01000000020000000300000004000000
+  HasBrushSize: 0
+  UseTextureAsBrush: 0
+  BrushSize: 0
+  Texture: {fileID: 2800000, guid: 73dc69de553d5764792cf92128a160b6, type: 3}
+  TextureUI: {fileID: 2800000, guid: 819277a51ea4f314da3dc28357892813, type: 3}
+  Description: +0.2% heal power per pixel
+  BaseBonusToMainStats: 1
+  KilogramPerPixel: 0.1
+  Stats:
+    AttackDefPassiveValues: []
+    AttackOffPassiveValues: []
+    EffectDefPassiveValues: []
+    EffectOffPassiveValues:
+    - Passive: {fileID: 11400000, guid: 9442fd763d2d81e42977d83510457601, type: 2}
+      Value: 0.2
+  EffectsSerialized: []

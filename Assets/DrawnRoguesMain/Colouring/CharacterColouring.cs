@@ -7,6 +7,5 @@ public class CharacterColouring : Colouring
     public bool BaseBonusToMainStats = true; // Bonus to main stats or not
     public float KilogramPerPixel = 0.1f;
     public StatsSerialized Stats;
-    public List<EffectSerialized> EffectsSerialized;
-
+    public EffectSerialized[] EffectsSerialized;
 }
