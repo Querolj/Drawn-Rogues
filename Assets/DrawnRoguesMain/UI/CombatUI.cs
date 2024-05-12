@@ -80,7 +80,7 @@ public class CombatUI : MonoBehaviour
             _turnAnnouncer.SetText (_turnManager.ActivePlayerCharacter, true);
         };
 
-        _turnManager.OneEnemyTurnStart += (character) =>
+        _turnManager.OnEnemyTurnStart += (character) =>
         {
             _attackSelectionManager.DeactivateCurrentAttackSelection ();
             ActivateActionsToggleGOs (false);

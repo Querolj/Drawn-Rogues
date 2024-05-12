@@ -9,15 +9,13 @@ using Zenject;
 [RequireComponent (typeof (AttackableDescription))]
 public class Attackable : CombatEntity
 {
-    protected const float PIXEL_PER_UNIT = 100f;
+    #region Serialized Fields
     [SerializeField]
     private bool _generateStateUI = true;
 
     [SerializeField]
     private AttackableStatesUI _stateUITemplate;
     protected AttackableStatesUI _stateUI;
-
-    private WorldUIContainer _worldUIContainer;
 
     [SerializeField]
     private Squasher _squasher;
@@ -37,29 +35,15 @@ public class Attackable : CombatEntity
 
     [SerializeField]
     private List<EventMap> _eventsOnDeath = new List<EventMap> ();
+    #endregion Serialized Fields
+
+    protected const float PIXEL_PER_UNIT = 100f;
 
     protected SpriteRenderer _renderer;
+    public AttackableStats Stats = new AttackableStats ();
     public SpriteRenderer Renderer
     {
         get { return _renderer; }
-    }
-
-    public AttackableStats Stats = new AttackableStats ();
-    public Dictionary<string, Effect> EffectInstancesByName
-    {
-        get
-        {
-            Dictionary<string, Effect> effectsInstByNames = new Dictionary<string, Effect> ();
-            foreach (Effect effect in Stats.EffectByNames.Values)
-            {
-                if (!effectsInstByNames.ContainsKey (effect.Description))
-                    effectsInstByNames.Add (effect.Description, effect.GetCopy ());
-                else
-                    effectsInstByNames[effect.Description].AddToInitialValue (effect.InitialValue);
-            }
-
-            return effectsInstByNames;
-        }
     }
 
     protected Dictionary<TempEffect.Timeline, List<TempEffect>> _tempEffects = new Dictionary<TempEffect.Timeline, List<TempEffect>> ();
@@ -72,26 +56,6 @@ public class Attackable : CombatEntity
     {
         get { return _tempEffects.Values.SelectMany (x => x).ToList (); }
     }
-
-    // private Dictionary<string, Effect> _effectByNames = new Dictionary<string, Effect> ();
-    // public Dictionary<string, Effect> EffectByNames
-    // {
-    //     get { return _effectByNames; }
-    // }
-
-    // public Dictionary<string, Effect> EffectByNamesCopy
-    // {
-    //     get
-    //     {
-    //         Dictionary<string, Effect> effectsInstByNames = new Dictionary<string, Effect> ();
-    //         foreach (KeyValuePair<string, Effect> effectByName in _effectByNames)
-    //         {
-    //             effectsInstByNames.Add (effectByName.Key, effectByName.Value.GetCopy ());
-    //         }
-
-    //         return effectsInstByNames;
-    //     }
-    // }
 
     private bool _hightLightSprite = false;
     private Color _hightLightColorLow = new Color (1f, 0.5f, 0.5f, 1f);
@@ -126,7 +90,9 @@ public class Attackable : CombatEntity
     public event Action<Attackable> OnMouseExited;
     public event Action<Attackable> OnDestroyed;
 
+    #region Injection
     private ActionDelayer _actionDelayer;
+    private WorldUIContainer _worldUIContainer;
 
     [Inject, UsedImplicitly]
     private void Init (ActionDelayer actionDelayer, WorldUIContainer worldUIContainer)
@@ -134,6 +100,7 @@ public class Attackable : CombatEntity
         _actionDelayer = actionDelayer;
         _worldUIContainer = worldUIContainer;
     }
+    #endregion Injection
 
     protected virtual void Awake ()
     {
@@ -242,6 +209,11 @@ public class Attackable : CombatEntity
         _renderer.color = Color.white;
     }
 
+    public bool IsLifeUpdating ()
+    {
+        return _stateUI.IsSliderValueUpdating;
+    }
+
     public virtual Bounds GetSpriteBounds ()
     {
         Vector4 border = GraphicUtils.GetTextureBorder (_renderer.sprite.texture);
@@ -347,13 +319,13 @@ public class Attackable : CombatEntity
             _tempEffects.Add (tempEffect.EffectApplicationTimeline, new List<TempEffect> ());
 
         _tempEffects[tempEffect.EffectApplicationTimeline].Add (tempEffect);
-        _stateUI.UpdateStateIcons ();
+        _stateUI.UpdateStatusIcons ();
     }
 
     public void RemoveAllTempEffect ()
     {
         _tempEffects.Clear ();
-        _stateUI.UpdateStateIcons ();
+        _stateUI.UpdateStatusIcons ();
     }
 
     public bool HasTempEffect (TempEffect tmpEffect)
@@ -388,7 +360,7 @@ public class Attackable : CombatEntity
                 _tempEffects[timeline].RemoveAt (index);
                 nextIndex = index;
             }
-            _stateUI.UpdateStateIcons ();
+            _stateUI.UpdateStatusIcons ();
 
             if (nextIndex < _tempEffects[timeline].Count)
             {

@@ -5,8 +5,7 @@ using UnityEngine.UI;
 
 public class AttackableStatesUI : MonoBehaviour
 {
-    private Attackable _attackable;
-
+    #region Serialized Fields
     [SerializeField]
     private Image _fillImage;
 
@@ -20,21 +19,15 @@ public class AttackableStatesUI : MonoBehaviour
     private Slider _sliderHealthBar;
 
     [SerializeField]
-    private StateIconsDisplayer _stateIconsDisplayer;
+    private StatusIconsDisplayer _statusIconsDisplayer;
 
     [SerializeField]
     private float _updateHealthPerSecond = 10f;
+    #endregion
 
-    public float CurrentValue
-    {
-        get { return _sliderHealthBar.value; }
-    }
+    public bool IsSliderValueUpdating { get { return _attackable.Stats.AttackableState.CurrentLife != Mathf.RoundToInt (_sliderHealthBar.value); } }
 
-    // private float _lerpTotalTime = 0.5f;
-    // private float _lerp = 0f;
-
-    private float _lastTargetValue;
-    private bool _changeSliderValue = false;
+    private Attackable _attackable;
 
     private Dictionary < (float, float), Color > _colorPerPercentage = new Dictionary < (float, float), Color > ()
     {
@@ -86,24 +79,14 @@ public class AttackableStatesUI : MonoBehaviour
         if (!_initialized)
             return;
 
-        if (!_changeSliderValue && _attackable.Stats.AttackableState.CurrentLife != Mathf.RoundToInt(_sliderHealthBar.value))
-        {
-            _changeSliderValue = true;
-            _lastTargetValue = _sliderHealthBar.value;
-        }
-
-        if (_changeSliderValue)
+        if (IsSliderValueUpdating)
         {
             float updateHealthPerSecondSigned = _updateHealthPerSecond * (_attackable.Stats.AttackableState.CurrentLife > _sliderHealthBar.value ? 1 : -1);
-            float newHealthBarValue = _sliderHealthBar.value + updateHealthPerSecondSigned * Time.deltaTime;
-
-            if (updateHealthPerSecondSigned > 0)
-                _changeSliderValue = newHealthBarValue >= _attackable.Stats.AttackableState.CurrentLife;
-            else
-                _changeSliderValue = newHealthBarValue <= _attackable.Stats.AttackableState.CurrentLife;
-
-            newHealthBarValue = Mathf.Clamp (newHealthBarValue, 0, _attackable.Stats.Life);
-            _sliderHealthBar.value = newHealthBarValue;
+            float normalizedLife = _sliderHealthBar.value / _attackable.Stats.Life;
+            float newNormalizedHealthBarValue = normalizedLife + updateHealthPerSecondSigned * Time.deltaTime;
+            float normalizedCurrentLife = _attackable.Stats.AttackableState.CurrentLife / _attackable.Stats.Life;
+            newNormalizedHealthBarValue = Mathf.Clamp (newNormalizedHealthBarValue, normalizedCurrentLife, 1f);
+            _sliderHealthBar.value = newNormalizedHealthBarValue * _attackable.Stats.Life;
 
             UpdateBarColor ();
         }
@@ -129,8 +112,8 @@ public class AttackableStatesUI : MonoBehaviour
         _currentLifeText.text = ((int) _sliderHealthBar.value).ToString ();
     }
 
-    public void UpdateStateIcons ()
+    public void UpdateStatusIcons ()
     {
-        _stateIconsDisplayer.DisplayState (_attackable.TempEffectsList);
+        _statusIconsDisplayer.DisplayStatus (_attackable.TempEffectsList);
     }
 }

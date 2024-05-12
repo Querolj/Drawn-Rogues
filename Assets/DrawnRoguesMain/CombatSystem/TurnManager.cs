@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using JetBrains.Annotations;
 using UnityEngine;
 using Zenject;
@@ -20,7 +21,7 @@ public class TurnManager : MonoBehaviour
     public event Action<CombatZone> OnCombatEnded;
 
     public Action OnPlayerTurnStart;
-    public Action<Character> OneEnemyTurnStart;
+    public Action<Character> OnEnemyTurnStart;
 
     public CombatZone CurrentCombatZone
     {
@@ -90,11 +91,27 @@ public class TurnManager : MonoBehaviour
         }
     }
 
+    private IEnumerator WaitUntilLifeUpdated ()
+    {
+        List<CombatEntity> combatEntities = new List<CombatEntity> (_currentCombatZone.EnemiesInZone);
+        combatEntities.Add (_playerController.ControlledCharacter);
+
+        foreach (Character character in combatEntities)
+        {
+            while (character.IsLifeUpdating ())
+            {
+                yield return null;
+            }
+        }
+    }
+
     private IEnumerator StartCharacterTurn (Character character)
     {
         if (character == null)
             throw new ArgumentNullException (nameof (character));
         Debug.Log ("Start turn : " + character.Description.DisplayName);
+
+        yield return WaitUntilLifeUpdated ();
 
         if (!character.CanPlayTurn ())
         {
@@ -115,10 +132,9 @@ public class TurnManager : MonoBehaviour
             }
             else if (!character.WillBeDestroyed)
             {
-                Debug.Log ("Enemy turn : " + character.Description.DisplayName);
                 _enemyTurnIndicator.SetOnCharacter (character);
 
-                OneEnemyTurnStart?.Invoke (character);
+                OnEnemyTurnStart?.Invoke (character);
                 yield return new WaitForSeconds (0.5f);
                 if (character.HasAI ())
                     character.GetAI ().ExecuteTurn (_currentCombatZone, _playerController.ControlledCharacter, _fightRegistry, () => EndTurn (character));

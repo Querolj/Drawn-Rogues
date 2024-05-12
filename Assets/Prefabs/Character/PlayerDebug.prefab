@@ -113,10 +113,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LinkedCombatEntities: []
-  _name: 
   _generateStateUI: 1
   _stateUITemplate: {fileID: 3672888832262447436, guid: 954c24245626a7c43923820414f698b8, type: 3}
-  _outlineThickness: 1
   _squasher: {fileID: 5701979679958082771}
   _statsSerialized:
     AttackDefPassiveValues: []
@@ -124,11 +122,14 @@ MonoBehaviour:
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
     effectValues: []
+  _effectsSerialized: []
   _outline: {fileID: 863070234400948420}
   _eventsOnDeath: []
   _attacksReferences:
   - {fileID: 11400000, guid: 39a435e0b4849504bada3babfbe867ea, type: 2}
   - {fileID: 11400000, guid: 5bd3379e720f99048afa30729f1fdc8b, type: 2}
+  - {fileID: 11400000, guid: 5000a08dce99fda409411ff3a8806ccd, type: 2}
+  - {fileID: 11400000, guid: 8ac445d94056f3e4f923ac38300abba0, type: 2}
   _reduceEscapeChanceValue: 0.2
   _modifierLayer: {fileID: 9151200112178715415}
   _colouringSpell:

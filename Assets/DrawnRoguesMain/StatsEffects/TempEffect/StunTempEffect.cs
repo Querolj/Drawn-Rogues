@@ -42,7 +42,7 @@ public class StunTempEffect : TempEffect
     protected override void DecrementTurn (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription)
     {
         _turnDuration--;
-        if (_turnDuration < 0) // Need to be < 0 to be sure to call OnEffectWearsOff() after the character has his attack blocked
+        if (_turnDuration <= 0) // Need to be < 0 to be sure to call OnEffectWearsOff() after the character has his attack blocked
         {
             OnEffectWearsOff (ownerTransform, ownerName, ownerStats, fightDescription);
         }

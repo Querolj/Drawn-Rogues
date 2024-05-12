@@ -15,15 +15,17 @@ MonoBehaviour:
   Name: Crushing
   AnimationTemplate: {fileID: 8686212205060676263, guid: 37cb070c6bfea3f4db88db807237611a, type: 3}
   ParticleTemplate: {fileID: 0}
-  MinDamage: 5
-  MaxDamage: 8
+  MinDamage: 3
+  MaxDamage: 5
   NoDamage: 0
   Precision: 100
   DamageType: 0
   _range: 2
   AttackSelectionType: 6
   AttackType: 1
-  Effects: []
+  EffectsSerialized:
+  - Effect: {fileID: 11400000, guid: be4f370f1d26d5f4d90a9feff9e51942, type: 2}
+    Value: 100
   AvailableForPlayer: 1
   RequiredLevel: 0
   RequiredWidthAdjectives: 

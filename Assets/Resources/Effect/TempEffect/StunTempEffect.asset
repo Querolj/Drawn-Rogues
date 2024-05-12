@@ -15,5 +15,5 @@ MonoBehaviour:
   Name: Stunned
   AnimationOnApplyTemplate: {fileID: 8686212205060676263, guid: a2f12ac4e9bab4a4399ef6a2e68e93e9, type: 3}
   ParticleOnApplyTemplate: {fileID: 0}
-  EffectApplicationTimeline: 0
+  EffectApplicationTimeline: 1
   Icon: {fileID: 21300000, guid: 5356898a6fb41924e8a2b9932a2df3d5, type: 3}

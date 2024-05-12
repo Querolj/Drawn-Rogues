@@ -23,8 +23,7 @@ public class TempEffect : ScriptableObject
 
     protected int _turnDuration = 1;
     public int TurnDuration { get { return _turnDuration; } }
-    protected bool _effectWoreOff = false;
-    public bool EffectWoreOff { get { return _effectWoreOff; } }
+    public bool EffectWoreOff { get { return _turnDuration < 1; } }
     public Action _onEffectWoreOff;
     public void Init (int duration)
     {
@@ -88,6 +87,5 @@ public class TempEffect : ScriptableObject
     protected virtual void OnEffectWearsOff (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription)
     {
         _onEffectWoreOff?.Invoke ();
-        _effectWoreOff = true;
     }
 }

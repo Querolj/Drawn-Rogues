@@ -742,7 +742,8 @@ MonoBehaviour:
   _maxLifeText: {fileID: 3672888831043355092}
   _currentLifeText: {fileID: 3672888832168788356}
   _sliderHealthBar: {fileID: 3672888832262447437}
-  _stateIconsDisplayer: {fileID: 7249799168947081459}
+  _statusIconsDisplayer: {fileID: 7249799168947081459}
+  _updateHealthPerSecond: 0.06
 --- !u!1 &5029477893013834770
 GameObject:
   m_ObjectHideFlags: 0
@@ -755,7 +756,7 @@ GameObject:
   - component: {fileID: 7249799168947081459}
   - component: {fileID: 5182016920305986484}
   m_Layer: 5
-  m_Name: StateIconDisplayer
+  m_Name: StatusIconDisplayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -793,7 +794,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b6df59cea162d94d9b797ba08679bdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _templateStateIcon: {fileID: 5812493415616615266, guid: 102e461454e51d548a619a04423101d8, type: 3}
+  _templateStatusIcon: {fileID: 5812493415616615266, guid: 102e461454e51d548a619a04423101d8, type: 3}
 --- !u!114 &5182016920305986484
 MonoBehaviour:
   m_ObjectHideFlags: 0
