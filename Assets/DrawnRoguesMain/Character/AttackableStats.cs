@@ -210,6 +210,26 @@ public class AttackableStats
         get { return _effectOffPassiveByNames; }
     }
 
+    private Dictionary<string, Effect> _effectByNames = new Dictionary<string, Effect> ();
+    public Dictionary<string, Effect> EffectByNames
+    {
+        get { return _effectByNames; }
+    }
+
+    // public Dictionary<string, Effect> EffectByNamesCopy
+    // {
+    //     get
+    //     {
+    //         Dictionary<string, Effect> effectsInstByNames = new Dictionary<string, Effect> ();
+    //         foreach (KeyValuePair<string, Effect> effectByName in _effectByNames)
+    //         {
+    //             effectsInstByNames.Add (effectByName.Key, effectByName.Value.GetCopy ());
+    //         }
+
+    //         return effectsInstByNames;
+    //     }
+    // }
+
     private float _kilogram = 0f;
     public float Kilogram
     {
@@ -357,6 +377,21 @@ public class AttackableStats
         {
             AddToPassiveDict (_effectOffPassiveByNames, effectOffPassiveSerialized, multiplicator);
         }
+
+        foreach (EffectSerialized effectSerialized in statsSerialized?.effectValues)
+        {
+            string effectName = effectSerialized.Effect.Description;
+            if (_effectByNames.ContainsKey (effectName))
+            {
+                _effectByNames[effectName].AddToInitialValue (effectSerialized.Value * multiplicator);
+            }
+            else
+            {
+                Effect effect = effectSerialized.GetInstance ();
+                effect.SetInitialValue (effectSerialized.Value * multiplicator);
+                _effectByNames.Add (effectSerialized.Effect.Description, effect);
+            }
+        }
     }
 
     // private void OverwriteStat (StatsSerialized statsSerialized, int multiplicator = 1)
@@ -401,6 +436,11 @@ public class AttackableStats
     {
         string s = "Life : " + Life + "\nIntelligence : " + Intelligence + "\nStrenght : " + Strenght + "\nMobility : " + Mobility + "\n";
 
+        foreach (KeyValuePair<string, Effect> stat in _effectByNames)
+        {
+            s += "\n" + stat.Value;
+        }
+
         foreach (KeyValuePair<string, AttackOffPassive> stat in _attackoffPassiveByNames)
         {
             s += "\n" + stat.Value;
@@ -432,9 +472,10 @@ public class StatsSerialized
     public List<AttackOffPassiveSerialized> AttackOffPassiveValues = new List<AttackOffPassiveSerialized> ();
     public List<EffectDefPassiveSerialized> EffectDefPassiveValues = new List<EffectDefPassiveSerialized> ();
     public List<EffectOffPassiveSerialized> EffectOffPassiveValues = new List<EffectOffPassiveSerialized> ();
+    public List<EffectSerialized> effectValues = new List<EffectSerialized> ();
 
     public bool HasAnyStats ()
     {
-        return AttackDefPassiveValues?.Count > 0 || AttackOffPassiveValues?.Count > 0 || EffectDefPassiveValues?.Count > 0 || EffectOffPassiveValues?.Count > 0;
+        return AttackDefPassiveValues?.Count > 0 || AttackOffPassiveValues?.Count > 0 || EffectDefPassiveValues?.Count > 0 || EffectOffPassiveValues?.Count > 0 || effectValues?.Count > 0;
     }
 }

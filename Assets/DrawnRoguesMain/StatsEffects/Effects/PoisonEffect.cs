@@ -16,7 +16,7 @@ public class PoisonEffect : Effect
         string coloredUserName = fightDescription.GetColoredAttackableName (user.Description.DisplayName, user.tag);
         string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description.DisplayName, target.tag);
 
-        if (TargetHasTempEffect (target, TempEffect, TempEffect.Timeline.EndRound))
+        if (target.HasTempEffect (TempEffect))
         {
             fightDescription.Report (coloredUserName + " can't poison " + coloredTargetName + " as he is already poisoned.");
             onAnimeEnded?.Invoke ();

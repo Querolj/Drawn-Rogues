@@ -15,7 +15,7 @@ public class StunEffect : Effect
         string coloredUserName = fightDescription.GetColoredAttackableName (user.Description.DisplayName, user.tag);
         string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description.DisplayName, target.tag);
 
-        if (TargetHasTempEffect (target, StunTempEffect, TempEffect.Timeline.StartTurn))
+        if (target.HasTempEffect (StunTempEffect))
         {
             fightDescription.Report (coloredUserName + " can't stun " + coloredTargetName + " as he is already stunned.");
             onAnimeEnded?.Invoke ();

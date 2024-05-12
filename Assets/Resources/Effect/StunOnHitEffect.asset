@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9afbd8c5ab08b44dbdc6595d64831a7, type: 3}
   m_Name: StunOnHitEffect
   m_EditorClassIdentifier: 
-  Name: 
+  Description: '{sign}{value}% chance to stun on hit'
   AnimationOnApplyTemplate: {fileID: 0}
   ParticleOnApplyTemplate: {fileID: 0}
   EffectApplicationTimeline: 0
   ApplyConditionsOnUser: 
   ApplyConditionsOnTarget: 
+  InverseDisplayedSignInDescription: 0
   StunTempEffect: {fileID: 11400000, guid: 2aba8f5b9123d574ebfefe67b2da0b26, type: 2}

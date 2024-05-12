@@ -81,16 +81,16 @@ public class AttackInstance
         foreach (EffectSerialized effectWithValue in attack.EffectsSerialized)
         {
             Effect effectInstance = effectWithValue.GetInstance ();
-            _effectInstancesByName.Add (effectInstance.EffectName, effectInstance);
+            _effectInstancesByName.Add (effectInstance.Description, effectInstance);
         }
 
         // merge effect from owner with effects
-        foreach (Effect effect in _owner.EffectByNames.Values)
+        foreach (Effect effect in _owner.Stats.EffectByNames.Values)
         {
-            if (!_effectInstancesByName.ContainsKey (effect.EffectName))
-                _effectInstancesByName.Add (effect.EffectName, effect);
+            if (!_effectInstancesByName.ContainsKey (effect.Description))
+                _effectInstancesByName.Add (effect.Description, effect);
             else
-                _effectInstancesByName[effect.EffectName].AddToInitialValue (effect.InitialValue);
+                _effectInstancesByName[effect.Description].AddToInitialValue (effect.InitialValue);
         }
 
         // alter attack with owner offensive passives
@@ -169,7 +169,7 @@ public class AttackInstance
             _fightDescription.ReportAttackDamage (_attacker.Description.DisplayName, target.Description.DisplayName, attackInstance.DamageType, attackInstance.Name, dammageToInflict, _attacker.tag);
             target.FadeSprite ();
             target.Stats.AttackableState.ReceiveDamage (dammageToInflict);
-            ApplyEffects (target.EffectByNamesCopy, target, Effect.AttackTimeline.ReceiveAttackDamage, _attacker, attackInstance, dammageToInflict);
+            ApplyEffects (target.Stats.EffectByNames, target, Effect.AttackTimeline.ReceiveAttackDamage, _attacker, attackInstance, dammageToInflict);
         }
         else
         {

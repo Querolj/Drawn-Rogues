@@ -50,12 +50,12 @@ public class Attackable : CombatEntity
         get
         {
             Dictionary<string, Effect> effectsInstByNames = new Dictionary<string, Effect> ();
-            foreach (Effect effect in EffectByNames.Values)
+            foreach (Effect effect in Stats.EffectByNames.Values)
             {
-                if (!effectsInstByNames.ContainsKey (effect.EffectName))
-                    effectsInstByNames.Add (effect.EffectName, effect.GetCopy ());
+                if (!effectsInstByNames.ContainsKey (effect.Description))
+                    effectsInstByNames.Add (effect.Description, effect.GetCopy ());
                 else
-                    effectsInstByNames[effect.EffectName].AddToInitialValue (effect.InitialValue);
+                    effectsInstByNames[effect.Description].AddToInitialValue (effect.InitialValue);
             }
 
             return effectsInstByNames;
@@ -73,25 +73,25 @@ public class Attackable : CombatEntity
         get { return _tempEffects.Values.SelectMany (x => x).ToList (); }
     }
 
-    private Dictionary<string, Effect> _effectByNames = new Dictionary<string, Effect> ();
-    public Dictionary<string, Effect> EffectByNames
-    {
-        get { return _effectByNames; }
-    }
+    // private Dictionary<string, Effect> _effectByNames = new Dictionary<string, Effect> ();
+    // public Dictionary<string, Effect> EffectByNames
+    // {
+    //     get { return _effectByNames; }
+    // }
 
-    public Dictionary<string, Effect> EffectByNamesCopy
-    {
-        get
-        {
-            Dictionary<string, Effect> effectsInstByNames = new Dictionary<string, Effect> ();
-            foreach (KeyValuePair<string, Effect> effectByName in _effectByNames)
-            {
-                effectsInstByNames.Add (effectByName.Key, effectByName.Value.GetCopy ());
-            }
+    // public Dictionary<string, Effect> EffectByNamesCopy
+    // {
+    //     get
+    //     {
+    //         Dictionary<string, Effect> effectsInstByNames = new Dictionary<string, Effect> ();
+    //         foreach (KeyValuePair<string, Effect> effectByName in _effectByNames)
+    //         {
+    //             effectsInstByNames.Add (effectByName.Key, effectByName.Value.GetCopy ());
+    //         }
 
-            return effectsInstByNames;
-        }
-    }
+    //         return effectsInstByNames;
+    //     }
+    // }
 
     private bool _hightLightSprite = false;
     private Color _hightLightColorLow = new Color (1f, 0.5f, 0.5f, 1f);
@@ -149,11 +149,6 @@ public class Attackable : CombatEntity
             _willBeDestroyed = true;
             StartCoroutine (DestroyInSeconds (DEATH_DELAY));
         };
-
-        if (_effectsSerialized?.Count > 0)
-        {
-            AddEffectSerialized (_effectsSerialized);
-        }
     }
 
     protected virtual void Start ()
@@ -361,6 +356,20 @@ public class Attackable : CombatEntity
         _stateUI.UpdateStateIcons ();
     }
 
+    public bool HasTempEffect (TempEffect tmpEffect)
+    {
+        foreach (List<TempEffect> tempEffects in TempEffects.Values)
+        {
+            foreach (TempEffect effect in tempEffects)
+            {
+                if (effect.Name == tmpEffect.Name)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
     private const float SECONDS_BETWEEN_EFFECTS = 0.5f;
     public void ApplyTempEffects (Action onAllEffectApplied, FightRegistry fightDescription, TempEffect.Timeline timeline, int index = 0)
     {
@@ -392,24 +401,6 @@ public class Attackable : CombatEntity
                 onAllEffectApplied?.Invoke ();
 
         });
-    }
-
-    public void AddEffectSerialized (List<EffectSerialized> effectsSerialized, float multiplicator = 1f)
-    {
-        foreach (EffectSerialized effectSerialized in effectsSerialized)
-        {
-            string effectName = effectSerialized.Effect.EffectName;
-            if (_effectByNames.ContainsKey (effectName))
-            {
-                _effectByNames[effectName].AddToInitialValue (effectSerialized.Value * multiplicator);
-            }
-            else
-            {
-                Effect effect = effectSerialized.GetInstance ();
-                effect.SetInitialValue (effectSerialized.Value * multiplicator);
-                _effectByNames.Add (effectSerialized.Effect.EffectName, effect);
-            }
-        }
     }
 
     #endregion Effects

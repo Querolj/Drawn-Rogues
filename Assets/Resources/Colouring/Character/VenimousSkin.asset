@@ -31,6 +31,6 @@ MonoBehaviour:
     AttackOffPassiveValues: []
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
-  EffectsSerialized:
-  - Effect: {fileID: 11400000, guid: d8130c2d1d537014aa38628da3c47c1d, type: 2}
-    Value: 0.1
+    effectValues:
+    - Effect: {fileID: 11400000, guid: d8130c2d1d537014aa38628da3c47c1d, type: 2}
+      Value: 0.3

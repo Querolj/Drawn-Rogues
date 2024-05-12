@@ -10,6 +10,7 @@ public class PoisoningTempEffect : TempEffect
             () =>
             {
                 int poisonDamage = (int) (ownerStats.Life * 0.1f);
+                poisonDamage = Math.Max (poisonDamage, 1);
                 fightDescription.Report (fightDescription.GetColoredAttackableName (ownerName, ownerTransform.tag) + " took <b>" + poisonDamage + "</b> damage from poisoning.");
                 ownerStats.AttackableState.ReceiveDamage (poisonDamage);
                 DecrementTurn (ownerTransform, ownerName, ownerStats, fightDescription);

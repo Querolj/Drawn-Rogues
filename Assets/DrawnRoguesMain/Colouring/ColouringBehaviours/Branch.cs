@@ -126,7 +126,7 @@ public class Branch : CombatEnvironnementHazard, IColouringSpellBehaviour
             return;
         }
 
-        string healingEffectName = _healingAttack.EffectsSerialized[0].Effect.EffectName;
+        string healingEffectName = _healingAttack.EffectsSerialized[0].Effect.Description;
         float mult = 1 + (_totalFlowerGrown * 0.075f);
 
         int attackableLeft = _attackableInRange.Count;

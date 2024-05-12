@@ -13,7 +13,7 @@ public class BleedEffect : Effect
         string coloredUserName = fightDescription.GetColoredAttackableName (user.Description.DisplayName, user.tag);
         string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description.DisplayName, target.tag);
 
-        if (TargetHasTempEffect (target, BleedingEffect, TempEffect.Timeline.EndTurn))
+        if (target.HasTempEffect (BleedingEffect))
         {
             fightDescription.Report (coloredUserName + " can't make " + coloredTargetName + " bleed as he is already bleeding.");
             onAnimeEnded?.Invoke ();

@@ -16,12 +16,13 @@ public class Effect : ScriptableObject
         AttackIsProjectile,
     }
 
-    public string EffectName;
+    public string Description;
     public SpriteAnimation AnimationOnApplyTemplate;
     public ParticleSystemCallback ParticleOnApplyTemplate;
     public AttackTimeline EffectApplicationTimeline;
     public List<ApplyCondition> ApplyConditionsOnUser;
     public List<ApplyCondition> ApplyConditionsOnTarget;
+    public bool InverseDisplayedSignInDescription;
 
     protected float _initialValue;
     public float InitialValue
@@ -147,7 +148,12 @@ public class Effect : ScriptableObject
 
     public override string ToString ()
     {
-        return EffectName + " " + InitialValue;
+        string descriptionWithValue = Description.Replace ("{value}", Mathf.Abs (InitialValue).ToString ());
+        if (InverseDisplayedSignInDescription)
+            descriptionWithValue = descriptionWithValue.Replace ("{sign}", InitialValue < 0 ? "+" : "-");
+        else
+            descriptionWithValue = descriptionWithValue.Replace ("{sign}", InitialValue >= 0 ? "+" : "-");
+        return descriptionWithValue;
     }
 
     public virtual Effect GetCopy ()
@@ -155,11 +161,6 @@ public class Effect : ScriptableObject
         Effect copy = Instantiate (this);
         copy.SetInitialValue (InitialValue);
         return copy;
-    }
-
-    protected static bool TargetHasTempEffect (Attackable target, TempEffect tmpEffect, TempEffect.Timeline timeline)
-    {
-        return target.TempEffects.ContainsKey (timeline) && target.TempEffects[timeline].Find (x => x.Name == tmpEffect.Name) != null;
     }
 }
 
@@ -178,6 +179,6 @@ public class EffectSerialized
 
     public override string ToString ()
     {
-        return Effect.EffectName + " " + Value;
+        return Effect.Description + " " + Value;
     }
 }
