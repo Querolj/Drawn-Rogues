@@ -142,6 +142,7 @@ MonoBehaviour:
     AttackOffPassiveValues: []
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
+    effectValues: []
   _effectsSerialized: []
   _outline: {fileID: 5248139933037473357}
   _eventsOnDeath: []
@@ -279,6 +280,7 @@ MonoBehaviour:
   _initialDirectionIsRight: 1
   _characterAnimation: {fileID: 1711619237582415671}
   ActivateWalk: 0
+  _moveTimer: 0
 --- !u!114 &4823711928549578760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -439,7 +441,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

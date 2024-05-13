@@ -128,7 +128,7 @@ MonoBehaviour:
   _attacksReferences:
   - {fileID: 11400000, guid: 39a435e0b4849504bada3babfbe867ea, type: 2}
   - {fileID: 11400000, guid: 5bd3379e720f99048afa30729f1fdc8b, type: 2}
-  - {fileID: 11400000, guid: 5000a08dce99fda409411ff3a8806ccd, type: 2}
+  - {fileID: 11400000, guid: 4027e861db90e0d479d9a2e9aca9d0ee, type: 2}
   - {fileID: 11400000, guid: 334916fb33594944cab47a2bc9c5438a, type: 2}
   _reduceEscapeChanceValue: 0.2
   _modifierLayer: {fileID: 9151200112178715415}
