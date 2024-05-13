@@ -23,6 +23,9 @@ public class AttackableStatesUI : MonoBehaviour
 
     [SerializeField]
     private float _updateHealthPerSecond = 10f;
+
+    [SerializeField]
+    private float _zoomedScale = 1.6f;
     #endregion
 
     public bool IsSliderValueUpdating { get { return _attackable.Stats.AttackableState.CurrentLife != Mathf.RoundToInt (_sliderHealthBar.value); } }
@@ -51,29 +54,6 @@ public class AttackableStatesUI : MonoBehaviour
 
     private bool _initialized = false;
     private Vector3 _initialOffsetFromAttackable;
-
-    private System.Collections.IEnumerator Start ()
-    {
-        //  wait for Characters to be initialized
-        yield return new WaitForEndOfFrame ();
-        yield return new WaitForEndOfFrame ();
-
-        _sliderHealthBar.maxValue = _attackable.Stats.Life;
-        _sliderHealthBar.minValue = 0;
-        _sliderHealthBar.value = _attackable.Stats.AttackableState.CurrentLife;
-        _maxLifeText.text = _attackable.Stats.Life.ToString ();
-        _currentLifeText.text = _attackable.Stats.AttackableState.CurrentLife.ToString ();
-        UpdateBarColor ();
-        _initialized = true;
-    }
-
-    public void Init (Attackable attackable)
-    {
-        _attackable = attackable ??
-            throw new System.ArgumentNullException (nameof (attackable));
-        _initialOffsetFromAttackable = transform.position - _attackable.transform.position;
-    }
-
     private void Update ()
     {
         if (!_initialized)
@@ -96,7 +76,8 @@ public class AttackableStatesUI : MonoBehaviour
 
     private void UpdatePosition ()
     {
-        transform.position = _attackable.transform.position + _initialOffsetFromAttackable;
+        Vector3 newPos = _attackable.transform.position + _initialOffsetFromAttackable;
+        transform.position = newPos;
     }
 
     private void UpdateBarColor ()
@@ -112,8 +93,36 @@ public class AttackableStatesUI : MonoBehaviour
         _currentLifeText.text = ((int) _sliderHealthBar.value).ToString ();
     }
 
+    #region Public Methods    
     public void UpdateStatusIcons ()
     {
         _statusIconsDisplayer.DisplayStatus (_attackable.TempEffectsList);
     }
+
+    public void Init (Attackable attackable)
+    {
+        _attackable = attackable ??
+            throw new System.ArgumentNullException (nameof (attackable));
+        _initialOffsetFromAttackable = transform.position - _attackable.transform.position;
+
+        _sliderHealthBar.maxValue = _attackable.Stats.Life;
+        _sliderHealthBar.minValue = 0;
+        _sliderHealthBar.value = _attackable.Stats.AttackableState.CurrentLife;
+        _maxLifeText.text = _attackable.Stats.Life.ToString ();
+        _currentLifeText.text = _attackable.Stats.AttackableState.CurrentLife.ToString ();
+        UpdateBarColor ();
+        _initialized = true;
+    }
+
+    public void Zoom ()
+    {
+        transform.localScale = Vector3.one * _zoomedScale;
+        transform.SetAsLastSibling ();
+    }
+
+    public void Unzoom ()
+    {
+        transform.localScale = Vector3.one;
+    }
+    #endregion
 }

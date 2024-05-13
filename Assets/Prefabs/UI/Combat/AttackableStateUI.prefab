@@ -367,7 +367,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 115fd3aed9b55914eb1d48bdeda69520, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -744,6 +744,7 @@ MonoBehaviour:
   _sliderHealthBar: {fileID: 3672888832262447437}
   _statusIconsDisplayer: {fileID: 7249799168947081459}
   _updateHealthPerSecond: 0.06
+  _zoomedScale: 1.6
 --- !u!1 &5029477893013834770
 GameObject:
   m_ObjectHideFlags: 0

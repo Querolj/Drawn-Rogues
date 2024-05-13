@@ -297,19 +297,18 @@ public class Attackable : CombatEntity
         _outline.DeactivateOutline ();
     }
 
-    private const float _HEATLTHBAR_SCALE = 1.6f;
     public void OnMouseEnter ()
     {
         OnMouseEntered?.Invoke (this);
         if (_stateUI != null)
-            _stateUI.transform.localScale = Vector3.one * _HEATLTHBAR_SCALE;
+            _stateUI.Zoom ();
     }
 
     public void OnMouseExit ()
     {
         OnMouseExited?.Invoke (this);
         if (_stateUI != null)
-            _stateUI.transform.localScale = Vector3.one;
+            _stateUI.Unzoom ();
     }
 
     #region Effects
