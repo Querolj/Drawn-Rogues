@@ -1,10 +1,12 @@
 using System;
-using Sirenix.OdinInspector;
 using UnityEngine;
 /*
  /!\ No passive alter any temp effect yet (not needed for now)
 */
 
+/*
+    TODO : To be renamed to Status ?? It has actually nothing to do with the Effect class, the naming is confusing
+*/
 [CreateAssetMenu (fileName = "TempEffect", menuName = "TempEffect/TempEffect", order = 1)]
 public class TempEffect : ScriptableObject
 {
@@ -38,18 +40,22 @@ public class TempEffect : ScriptableObject
         Icon = icon;
     }
 
-    public virtual void Apply (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription, Action onAnimeEnded)
+    public virtual void Apply (Attackable attackable, FightRegistry fightDescription, Action onAnimeEnded)
     {
-        DecrementTurn (ownerTransform, ownerName, ownerStats, fightDescription);
-        onAnimeEnded?.Invoke ();
+        PlayAnimation (attackable.transform.position,
+            () =>
+            {
+                DecrementTurn (attackable, fightDescription);
+                onAnimeEnded?.Invoke ();
+            });
     }
 
-    protected virtual void DecrementTurn (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription)
+    protected virtual void DecrementTurn (Attackable attackable, FightRegistry fightDescription)
     {
         _turnDuration--;
         if (_turnDuration <= 0)
         {
-            OnEffectWearsOff (ownerTransform, ownerName, ownerStats, fightDescription);
+            OnEffectWearsOff (attackable, fightDescription);
         }
     }
 
@@ -84,7 +90,7 @@ public class TempEffect : ScriptableObject
         particle.Play ();
     }
 
-    protected virtual void OnEffectWearsOff (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription)
+    protected virtual void OnEffectWearsOff (Attackable attackable, FightRegistry fightDescription)
     {
         _onEffectWoreOff?.Invoke ();
     }

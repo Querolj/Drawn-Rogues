@@ -350,7 +350,7 @@ public class Attackable : CombatEntity
             return;
         }
 
-        _tempEffects[timeline][index].Apply (transform, Description.DisplayName, Stats, fightDescription, () =>
+        _tempEffects[timeline][index].Apply (this, fightDescription, () =>
         {
             int nextIndex = index + 1;
 

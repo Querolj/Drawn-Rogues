@@ -1,4 +1,5 @@
 using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 [CreateAssetMenu (fileName = "BleedingTempEffect", menuName = "TempEffect/BleedingTempEffect", order = 1)]
@@ -9,30 +10,38 @@ public class BleedingTempEffect : TempEffect
     [HideInInspector]
     public Vector3 LastOwnerPosition;
 
-    private const float BLEED_STRENGHT = 8f;
-    public override void Apply (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription, Action onAnimeEnded)
-    {
-        float distance = Vector3.Distance (ownerTransform.position, LastOwnerPosition);
+    [SerializeField, InfoBox ("percentage of life lost per meter moved")]
+    private float _bleedStrenght = 0.1f;
 
-        PlayAnimation (ownerTransform.position,
+    [SerializeField]
+    private float _maxPercentageLifeLost = 0.33f;
+
+    public override void Apply (Attackable attackable, FightRegistry fightDescription, Action onAnimeEnded)
+    {
+        Transform attackableTransform = attackable.transform;
+        float distance = Vector3.Distance (attackableTransform.position, LastOwnerPosition);
+
+        PlayAnimation (attackableTransform.position,
             () =>
             {
-                int bleedDamage = (int) (distance * BLEED_STRENGHT);
-                bleedDamage = Mathf.Clamp (bleedDamage, 1, bleedDamage);
-                fightDescription.Report (fightDescription.GetColoredAttackableName (ownerName, ownerTransform.tag) + " took <b>" + bleedDamage + "</b> damage from " + bleeding + ".");
-                ownerStats.AttackableState.ReceiveDamage (bleedDamage);
-                DecrementTurn (ownerTransform, ownerName, ownerStats, fightDescription);
-                LastOwnerPosition = ownerTransform.position;
+                float percentageOfLifeLost = distance * _bleedStrenght;
+                percentageOfLifeLost = Mathf.Clamp (percentageOfLifeLost, 0.01f, _maxPercentageLifeLost);
+                int bleedDamage = (int) (distance * _bleedStrenght * attackable.Stats.Life);
+                bleedDamage = Mathf.Max (bleedDamage, 1);
+                fightDescription.Report (fightDescription.GetColoredAttackableName (attackable.Description.DisplayName, attackableTransform.tag) + " took <b>" + bleedDamage + "</b> damage from " + bleeding + ".");
+                attackable.Stats.AttackableState.ReceiveDamage (bleedDamage);
+                DecrementTurn (attackable, fightDescription);
+                LastOwnerPosition = attackableTransform.position;
                 onAnimeEnded?.Invoke ();
             });
     }
 
-    protected override void OnEffectWearsOff (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription)
+    protected override void OnEffectWearsOff (Attackable attackable, FightRegistry fightDescription)
     {
-        base.OnEffectWearsOff (ownerTransform, ownerName, ownerStats, fightDescription);
-        if (ownerStats.AttackableState.HasState (State.Bleed))
-            ownerStats.AttackableState.RemoveState (State.Bleed);
+        base.OnEffectWearsOff (attackable, fightDescription);
+        if (attackable.Stats.AttackableState.HasState (State.Bleed))
+            attackable.Stats.AttackableState.RemoveState (State.Bleed);
 
-        fightDescription.Report (fightDescription.GetColoredAttackableName (ownerName, ownerTransform.tag) + " is no longuer " + bleeding + "!");
+        fightDescription.Report (fightDescription.GetColoredAttackableName (attackable.Description.DisplayName, attackable.transform.tag) + " is no longuer " + bleeding + "!");
     }
 }

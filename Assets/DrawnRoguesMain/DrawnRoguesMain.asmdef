@@ -30,7 +30,8 @@
         "Unity.InputSystem",
         "CursorModeSwitcher",
         "InputMapSwitcher",
-        "TextureTransition"
+        "TextureTransition",
+        "Unity.Localization"
     ],
     "includePlatforms": [
         "Editor",

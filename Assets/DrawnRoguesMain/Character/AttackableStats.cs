@@ -15,12 +15,14 @@ public class AttackableStats
 {
     #region Main stats
     private int _baseLife;
+    private int _alteredLife;
     public int Life
     {
         get
         {
-            AlterMainStatMethod (_lifeModifiersById, ref _baseLife);
-            return _baseLife;
+            _alteredLife = _baseLife;
+            AlterMainStatMethod (_lifeModifiersById, ref _alteredLife);
+            return _alteredLife;
         }
         set
         {
@@ -41,12 +43,14 @@ public class AttackableStats
     }
 
     private int _baseIntelligence;
+    private int _alteredIntelligence;
     public int Intelligence
     {
         get
         {
-            AlterMainStatMethod (_intelligenceModifiersById, ref _baseIntelligence);
-            return _baseIntelligence;
+            _alteredIntelligence = _baseIntelligence;
+            AlterMainStatMethod (_intelligenceModifiersById, ref _alteredIntelligence);
+            return _alteredIntelligence;
         }
         set
         {
@@ -56,12 +60,14 @@ public class AttackableStats
     private Dictionary < int, (OperationTypeEnum, float) > _intelligenceModifiersById = new Dictionary < int, (OperationTypeEnum, float) > ();
 
     private int _baseStrenght;
+    private int _alteredStrenght;
     public int Strenght
     {
         get
         {
-            AlterMainStatMethod (_strenghtModifiersById, ref _baseStrenght);
-            return _baseStrenght;
+            _alteredStrenght = _baseStrenght;
+            AlterMainStatMethod (_strenghtModifiersById, ref _alteredStrenght);
+            return _alteredStrenght;
         }
         set
         {
@@ -71,12 +77,14 @@ public class AttackableStats
     private Dictionary < int, (OperationTypeEnum, float) > _strenghtModifiersById = new Dictionary < int, (OperationTypeEnum, float) > ();
 
     private int _baseMobility;
+    private int _alteredMobility;
     public int Mobility
     {
         get
         {
-            AlterMainStatMethod (_mobilityModifiersById, ref _baseMobility);
-            return _baseMobility;
+            _alteredMobility = _baseMobility;
+            AlterMainStatMethod (_mobilityModifiersById, ref _alteredMobility);
+            return _alteredMobility;
         }
         set
         {
@@ -140,11 +148,29 @@ public class AttackableStats
         }
     }
 
+    public float GetMainStatValue (MainStatType mainStatType)
+    {
+        switch (mainStatType)
+        {
+            case MainStatType.Life:
+                return Life;
+            case MainStatType.Intelligence:
+                return Intelligence;
+            case MainStatType.Strength:
+                return Strenght;
+            case MainStatType.Mobility:
+                return Mobility;
+            default:
+                Debug.LogError ("MainStatType " + mainStatType + "not supported");
+                return 0;
+        }
+    }
+
     private void AddMainStatModifierInternal (int id, OperationTypeEnum operationType, float value, ref Dictionary < int, (OperationTypeEnum, float) > modifiersById)
     {
         if (modifiersById.ContainsKey (id))
         {
-            Debug.LogWarning ("Modifier with id " + id + " already exists, overwriting it");
+            Debug.Log ("Modifier with id " + id + " already exists, overwriting it");
             modifiersById[id] = (operationType, value);
         }
         else

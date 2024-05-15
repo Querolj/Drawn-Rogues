@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 753b77113fd5352438f5f53211a6b88a, type: 3}
+  m_Name: RootOnHitEffect
+  m_EditorClassIdentifier: 
+  Description: '{sign}{value}% chance to root on hit'
+  AnimationOnApplyTemplate: {fileID: 0}
+  ParticleOnApplyTemplate: {fileID: 0}
+  EffectApplicationTimeline: 0
+  ApplyConditionsOnUser: 
+  ApplyConditionsOnTarget: 
+  InverseDisplayedSignInDescription: 0
+  _tempEffect: {fileID: 11400000, guid: 33737acdcee63af48be5195d0c2cbaaf, type: 2}
+  _turnDuration: 1
+  _fightText: '{targetname} is <b>rooted<b>'

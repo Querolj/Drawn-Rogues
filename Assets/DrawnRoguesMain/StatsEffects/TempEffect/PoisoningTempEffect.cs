@@ -6,26 +6,28 @@ public class PoisoningTempEffect : TempEffect
 {
     [SerializeField]
     private float _poisonDamagePercentage = 0.07f;
-    public override void Apply (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription, Action onAnimeEnded)
+    public override void Apply (Attackable attackable, FightRegistry fightDescription, Action onAnimeEnded)
     {
-        PlayAnimation (ownerTransform.position,
+        Transform attackableTransform = attackable.transform;
+        PlayAnimation (attackableTransform.position,
             () =>
             {
-                int poisonDamage = (int) (ownerStats.Life * _poisonDamagePercentage);
+                int poisonDamage = (int) (attackable.Stats.Life * _poisonDamagePercentage);
                 poisonDamage = Math.Max (poisonDamage, 1);
-                fightDescription.Report (fightDescription.GetColoredAttackableName (ownerName, ownerTransform.tag) + " took <b>" + poisonDamage + "</b> damage from poisoning.");
-                ownerStats.AttackableState.ReceiveDamage (poisonDamage);
-                DecrementTurn (ownerTransform, ownerName, ownerStats, fightDescription);
+                string attackableName = attackable.Description.DisplayName;
+                fightDescription.Report (fightDescription.GetColoredAttackableName (attackableName, attackableTransform.tag) + " took <b>" + poisonDamage + "</b> damage from poisoning.");
+                attackable.Stats.AttackableState.ReceiveDamage (poisonDamage);
+                DecrementTurn (attackable, fightDescription);
                 onAnimeEnded?.Invoke ();
             });
     }
 
-    protected override void OnEffectWearsOff (Transform ownerTransform, string ownerName, AttackableStats ownerStats, FightRegistry fightDescription)
+    protected override void OnEffectWearsOff (Attackable attackable, FightRegistry fightDescription)
     {
-        base.OnEffectWearsOff (ownerTransform, ownerName, ownerStats, fightDescription);
-        if (ownerStats.AttackableState.HasState (State.Poisonned))
-            ownerStats.AttackableState.RemoveState (State.Poisonned);
+        base.OnEffectWearsOff (attackable, fightDescription);
+        if (attackable.Stats.AttackableState.HasState (State.Poisonned))
+            attackable.Stats.AttackableState.RemoveState (State.Poisonned);
 
-        fightDescription.Report (fightDescription.GetColoredAttackableName (ownerName, ownerTransform.tag) + " is no longuer poisonned!");
+        fightDescription.Report (fightDescription.GetColoredAttackableName (attackable.Description.DisplayName, attackable.transform.tag) + " is no longuer poisonned!");
     }
 }
