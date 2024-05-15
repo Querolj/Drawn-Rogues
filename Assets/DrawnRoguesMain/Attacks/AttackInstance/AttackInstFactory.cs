@@ -13,8 +13,8 @@ public class AttackInstFactory : IFactory<Attack, Character, AttackInstance>
     public AttackInstance Create (Attack attack, Character owner)
     {
         AttackInstance attackInstance;
-
-        if(owner == null && attack as AttackSingleTargetNoOwner)
+        bool setAttackAnimation = true;
+        if (owner == null && attack as AttackSingleTargetNoOwner)
             attackInstance = _container.Instantiate<AttackInstSingleTargetNoOwner> ();
         else if (attack as AttackTrajectoryZone)
             attackInstance = _container.Instantiate<AttackInstTrajectoryZone> ();
@@ -23,13 +23,22 @@ public class AttackInstFactory : IFactory<Attack, Character, AttackInstance>
         else if (attack as AttackProjectile)
             attackInstance = _container.Instantiate<AttackInstProjectile> ();
         else if (attack as AttackTrajectory)
+        {
+            setAttackAnimation = false;
             attackInstance = _container.Instantiate<AttackInstTrajectory> ();
+        }
         else if (attack as AttackSingleTarget)
             attackInstance = _container.Instantiate<AttackInstSingleTarget> ();
         else if (attack as AttackJump)
+        {
+            setAttackAnimation = false;
             attackInstance = _container.Instantiate<AttackInstJump> ();
+        }
         else
             throw new ArgumentException ("Attack type " + attack.GetType () + "not supported");
+
+        if (setAttackAnimation)
+            attackInstance.OnAttackStarted += owner.GetComponentInParent<CharacterAnimation> ().PlayAttackAnimation;
 
         attackInstance.Init (attack, owner);
         return attackInstance;

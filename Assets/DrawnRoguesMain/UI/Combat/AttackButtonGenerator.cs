@@ -51,7 +51,6 @@ public class AttackButtonGenerator : MonoBehaviour
                     AttackSelection attackSelection = _attackSelectionManager.SwitchAttackSelection (attack.AttackSelectionType, playerCharacter.transform.position);
                     attackSelection.gameObject.SetActive (true);
                     AttackInstance attackInstance = _attackInstanceFactory.Create (attack, playerCharacter);
-                    attackInstance.OnAttackStarted += playerCharacter.GetComponentInParent<CharacterAnimation> ().PlayAttackAnimation;
                     attackSelection.Activate (attackInstance, playerCharacter, combatZone, onAttackEnded);
                 }
             );
