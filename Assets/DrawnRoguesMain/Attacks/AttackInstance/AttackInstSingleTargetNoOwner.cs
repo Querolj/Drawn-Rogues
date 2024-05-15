@@ -15,6 +15,7 @@ public class AttackInstSingleTargetNoOwner : AttackInstance
         MaxDamage = attack.MaxDamage;
         NoDamage = attack.NoDamage;
         Precision = attack.Precision;
+        CriticalChance = attack.CriticalChance;
         Range = attack.GetRangeInMeter ();
         DamageType = attack.DamageType;
     }
@@ -23,21 +24,12 @@ public class AttackInstSingleTargetNoOwner : AttackInstance
         List<Attackable> targetsInZone = null, List<Vector3> trajectory = null)
     {
         OnAttackStarted?.Invoke (this);
-        _targetToHitCount = 1;
 
         AttackInstSingleTargetNoOwner attackInstCopy = GetCopy () as AttackInstSingleTargetNoOwner;
-        ApplyTargetAttackDefPassive (target, ref attackInstCopy);
-        bool isDodged = DodgeTest (attackInstCopy);
-
-        if (AnimationTemplate != null)
-            PlayAtkTouchedAnimation (attackPos);
-        else if (ParticleTemplate != null)
-            PlayAtkTouchedParticle (attackPos, target.transform);
-
-        InflictDamage (target, attackInstCopy);
+        TryInflictDamage (attackPos, target, attackInstCopy);
     }
 
-    protected override void InflictDamage (Attackable target, AttackInstance attackInstance)
+    protected override void InflictDamage (Attackable target, AttackInstance attackInstance, bool isCritical)
     {
         if (attackInstance == this)
             throw new ArgumentException (nameof (attackInstance) + " must be a copy of this");

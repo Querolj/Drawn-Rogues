@@ -18,7 +18,9 @@ MonoBehaviour:
   MinDamage: 4
   MaxDamage: 6
   NoDamage: 0
-  Precision: 100
+  Precision: 1
+  CriticalChance: 0
+  CriticalMultiplier: 2
   DamageType: 1
   _range: 6
   AttackSelectionType: 1

@@ -53,19 +53,7 @@ public class AttackInstZone : AttackInstance
                 continue;
 
             AttackInstZone attackInstCopy = GetCopy () as AttackInstZone;
-            ApplyTargetAttackDefPassive (attackable, ref attackInstCopy);
-            bool isDodged = DodgeTest (attackInstCopy);
-            if (isDodged)
-            {
-                _fightDescription.ReportAttackDodge (_attacker.Description.DisplayName, attackable.Description, attackInstCopy.Name, _attacker.tag);
-                TryInvokeCallback ();
-                continue;
-            }
-
-            if (AnimationTemplate != null)
-                PlayAtkTouchedAnimation (attackable.transform.position, () => InflictDamage (attackable, attackInstCopy));
-            else if (ParticleTemplate != null)
-                PlayAtkTouchedParticle (attackable.transform.position, () => InflictDamage (attackable, attackInstCopy));
+            TryInflictDamage (attackPos, attackable, attackInstCopy);
         }
     }
 }

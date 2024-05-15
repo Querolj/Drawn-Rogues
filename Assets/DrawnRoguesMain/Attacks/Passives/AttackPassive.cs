@@ -9,6 +9,15 @@ public class AttackPassive : Passive
     [Tooltip ("If empty, will apply to all attack types")]
     public List<AttackType> AttackTypeToAlter;
 
+    public enum AttackStatsType
+    {
+        Damage,
+        Range,
+        Precision,
+        CriticalChance,
+        CriticalMultipliier
+    }
+
     public virtual void AlterAttack (AttackInstance attack)
     {
 
@@ -42,6 +51,50 @@ public class AttackPassive : Passive
                 break;
             case OperationTypeEnum.Substract:
                 attack.Precision -= Value;
+                break;
+        }
+    }
+
+    protected void AlterCriticalChance (AttackInstance attack)
+    {
+        switch (OperationType)
+        {
+            case OperationTypeEnum.Add:
+                attack.CriticalChance += Value;
+                break;
+            case OperationTypeEnum.AddPercentage:
+                attack.CriticalChance += attack.CriticalChance * (Value / 100f);
+                break;
+            case OperationTypeEnum.Set:
+                attack.CriticalChance = Value;
+                break;
+            case OperationTypeEnum.PercentageResistance:
+                attack.CriticalChance = attack.CriticalChance * (1f - (Value / 100f));
+                break;
+            case OperationTypeEnum.Substract:
+                attack.CriticalChance -= Value;
+                break;
+        }
+    }
+
+    protected void AlterCriticalMultiplier (AttackInstance attack)
+    {
+        switch (OperationType)
+        {
+            case OperationTypeEnum.Add:
+                attack.CriticalMultiplier += Value;
+                break;
+            case OperationTypeEnum.AddPercentage:
+                attack.CriticalMultiplier += attack.CriticalMultiplier * (Value / 100f);
+                break;
+            case OperationTypeEnum.Set:
+                attack.CriticalMultiplier = Value;
+                break;
+            case OperationTypeEnum.PercentageResistance:
+                attack.CriticalMultiplier = attack.CriticalMultiplier * (1f - (Value / 100f));
+                break;
+            case OperationTypeEnum.Substract:
+                attack.CriticalMultiplier -= Value;
                 break;
         }
     }

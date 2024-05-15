@@ -14,6 +14,8 @@ public class AttackInstance
     public int MaxDamage { get; set; }
     public bool NoDamage { get; set; } = false;
     public float Precision { get; set; }
+    public float CriticalChance { get; set; }
+    public float CriticalMultiplier { get; set; }
     public float Range { get; set; }
     public DamageType DamageType { get; set; }
     public AttackType AttackType;
@@ -27,7 +29,7 @@ public class AttackInstance
     protected Character _attacker;
     protected Attack _attack;
     private bool _callbackCalled = false;
-    protected int _targetToHitCount;
+    protected int _targetToHitCount = 1;
 
     #region Injected
     [Inject]
@@ -45,6 +47,8 @@ public class AttackInstance
         MaxDamage = attack.MaxDamage;
         NoDamage = attack.NoDamage;
         Precision = attack.Precision;
+        CriticalChance = attack.CriticalChance;
+        CriticalMultiplier = attack.CriticalMultiplier;
         Range = attack.GetRangeInMeter ();
         DamageType = attack.DamageType;
         _owner = owner;
@@ -52,7 +56,7 @@ public class AttackInstance
         MergeEffectsAndPassiveFromOwner (attack);
 
         // apply strenght influence
-        if (attack.DamageType != DamageType.Heal && _owner.Stats.Strenght > 0 && !NoDamage)
+        if (_owner.Stats.Strenght > 0 && !NoDamage)
         {
             MinDamage += MinDamage * (int) (_owner.Stats.Strenght / 100f);
             MaxDamage += MaxDamage * (int) (_owner.Stats.Strenght / 100f);
@@ -151,12 +155,42 @@ public class AttackInstance
         return attackInstance;
     }
 
-    protected bool DodgeTest (AttackInstance attackInstance)
+    private bool DodgeTest (AttackInstance attackInstance)
     {
-        return UnityEngine.Random.Range (0f, 100f) > attackInstance.Precision;
+        return UnityEngine.Random.Range (0f, 1f) > attackInstance.Precision;
     }
 
-    protected virtual void InflictDamage (Attackable target, AttackInstance attackInstance)
+    private bool CriticalChanceRoll (AttackInstance attackInstance)
+    {
+        return UnityEngine.Random.Range (0f, 1f) < attackInstance.CriticalChance;
+    }
+
+    // Return true if damage is inflicted
+    protected virtual bool TryInflictDamage (Vector3 attackPos, Attackable target, AttackInstance attackInstance, bool dodgeTest = true, bool criticalChanceRoll = true)
+    {
+        ApplyTargetAttackDefPassive (target, ref attackInstance);
+
+        bool isDodged = dodgeTest ? DodgeTest (attackInstance) : false;
+        if (isDodged)
+        {
+            _fightDescription.ReportAttackDodge (_attacker.Description.DisplayName, target.Description, attackInstance.Name, _attacker.tag);
+            _onAttackEnded?.Invoke ();
+            return false;
+        }
+
+        bool criticalChanceRollResult = criticalChanceRoll ? CriticalChanceRoll (attackInstance) : false;
+
+        if (AnimationTemplate != null)
+            PlayAtkTouchedAnimation (attackPos, () => InflictDamage (target, attackInstance, criticalChanceRollResult));
+        else if (ParticleTemplate != null)
+            PlayAtkTouchedParticle (attackPos, () => InflictDamage (target, attackInstance, criticalChanceRollResult));
+        else
+            InflictDamage (target, attackInstance, criticalChanceRollResult);
+
+        return true;
+    }
+
+    protected virtual void InflictDamage (Attackable target, AttackInstance attackInstance, bool isCritical)
     {
         if (attackInstance == this)
             throw new ArgumentException (nameof (attackInstance) + " must be a copy of this");
@@ -165,8 +199,21 @@ public class AttackInstance
 
         if (!NoDamage)
         {
+            if (isCritical)
+            {
+                attackInstance.MinDamage = (int) (attackInstance.MinDamage * attackInstance.CriticalMultiplier);
+                attackInstance.MaxDamage = (int) (attackInstance.MaxDamage * attackInstance.CriticalMultiplier);
+            }
             dammageToInflict = UnityEngine.Random.Range (attackInstance.MinDamage, attackInstance.MaxDamage + 1);
-            _fightDescription.ReportAttackDamage (_attacker.Description.DisplayName, target.Description.DisplayName, attackInstance.DamageType, attackInstance.Name, dammageToInflict, _attacker.tag);
+            _fightDescription.ReportAttackDamage (
+                _attacker.Description.DisplayName,
+                target.Description.DisplayName,
+                attackInstance.DamageType,
+                attackInstance.Name,
+                dammageToInflict,
+                _attacker.tag,
+                isCritical);
+                
             target.FadeSprite ();
             target.Stats.AttackableState.ReceiveDamage (dammageToInflict);
             ApplyEffects (target.Stats.EffectByNames, target, Effect.AttackTimeline.ReceiveAttackDamage, _attacker, attackInstance, dammageToInflict);

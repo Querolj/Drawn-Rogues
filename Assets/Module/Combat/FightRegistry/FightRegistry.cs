@@ -103,7 +103,7 @@ public class FightRegistry : MonoBehaviour, IPointerClickHandler, IPointerExitHa
     }
 
     public void ReportAttackDamage (string attackerName, string targetName,
-        DamageType damageType, string attackName, int damage, string attackerTag)
+        DamageType damageType, string attackName, int damage, string attackerTag, bool isCritical)
     {
         bool isAttackerPlayer = _playerTag == attackerTag;
         string coloredAttackerName = isAttackerPlayer ? GetColoredPlayerName (attackerName) : GetColoredEnemyName (attackerName);
@@ -113,6 +113,9 @@ public class FightRegistry : MonoBehaviour, IPointerClickHandler, IPointerExitHa
             text = coloredAttackerName + " use <b>" + attackName + "</b> and heal " + coloredTargetName + " for <color=\"green\"><b>" + (damage * -1) + "</b></color> life.";
         else
             text = coloredAttackerName + " use <b>" + attackName + "</b> and damages " + coloredTargetName + " for <b>" + damage + "</b> damages.";
+        
+        if (isCritical)
+            text += " <color=\"yellow\"><b>Critical!</b></color>";
         AddLine (text);
     }
 

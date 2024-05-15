@@ -37,32 +37,20 @@ public class AttackInstTrajectory : AttackInstance
         if (target == null)
             throw new ArgumentNullException (nameof (target));
 
-        _targetToHitCount = 1;
-
         attacker.CharMovement.ActivateWalk = false;
         attacker.CharMovement.Jump (trajectory, () =>
         {
             AttackInstTrajectory attackInstCopy = GetCopy () as AttackInstTrajectory;
-            ApplyTargetAttackDefPassive (target, ref attackInstCopy);
-            bool isDodged = DodgeTest (attackInstCopy);
-            if (isDodged)
-            {
-                _fightDescription.ReportAttackDodge (_attacker.Description.DisplayName, target.Description, attackInstCopy.Name, _attacker.tag);
-                EndAttack (attacker, trajectory);
-                return;
-            }
+            bool isDamageInflicted = TryInflictDamage (attackPos, target, attackInstCopy);
 
-            target.Squasher?.SquashHorizontally (0.6f, 0.4f, 0.2f);
+            if (isDamageInflicted)
+                target.Squasher?.SquashHorizontally (0.6f, 0.4f, 0.2f);
 
-            if (AnimationTemplate != null)
-                PlayAtkTouchedAnimation (target.transform.position, () => InflictDamage (target, attackInstCopy));
-            else if (ParticleTemplate != null)
-                PlayAtkTouchedParticle (target.transform.position, () => InflictDamage (target, attackInstCopy));
-            EndAttack (attacker, trajectory);
+            JumpBack (attacker, trajectory);
         });
     }
 
-    private void EndAttack (Character attacker, List<Vector3> trajectory)
+    private void JumpBack (Character attacker, List<Vector3> trajectory)
     {
         attacker.Squasher.SquashHorizontally (0.6f, 0.1f, 0.05f, () =>
         {

@@ -68,7 +68,7 @@ public class AttackableStatesUI : MonoBehaviour
             if (updateHealthPerSecondSigned < 0)
                 _sliderHealthBar.value = Mathf.Clamp (newNormalizedHealthBarValue * _attackable.Stats.Life, _attackable.Stats.AttackableState.CurrentLife, _attackable.Stats.Life);
             else
-                _sliderHealthBar.value = Mathf.Clamp (newNormalizedHealthBarValue * _attackable.Stats.Life, 0, _attackable.Stats.AttackableState.CurrentLife + 1);
+                _sliderHealthBar.value = Mathf.Clamp (newNormalizedHealthBarValue * _attackable.Stats.Life, 0, _attackable.Stats.AttackableState.CurrentLife);
 
             if (!IsSliderValueUpdating)
                 _sliderHealthBar.value = _attackable.Stats.AttackableState.CurrentLife;

@@ -65,33 +65,26 @@ public class AttackInstTrajectoryZone : AttackInstance
                     continue;
 
                 AttackInstTrajectoryZone attackInstCopy = GetCopy () as AttackInstTrajectoryZone;
-                ApplyTargetAttackDefPassive (attackable, ref attackInstCopy);
-                bool isDodged = DodgeTest (attackInstCopy);
-                if (isDodged)
-                {
-                    _fightDescription.ReportAttackDodge (_attacker.Description.DisplayName, attackable.Description, attackInstCopy.Name, _attacker.tag);
-                    TryInvokeCallback ();
-                    continue;
-                }
+                bool isDamageInflicted = TryInflictDamage (attackPos, target, attackInstCopy);
 
-                attackable?.Squasher.SquashHorizontally (0.6f, 0.4f, 0.2f);
-
-                if (AnimationTemplate != null)
-                    PlayAtkTouchedAnimation (attackable.transform.position, () => InflictDamage (attackable, attackInstCopy));
-                else if (ParticleTemplate != null)
-                    PlayAtkTouchedParticle (attackable.transform.position, () => InflictDamage (attackable, attackInstCopy));
+                if (isDamageInflicted)
+                    attackable?.Squasher?.SquashHorizontally (0.6f, 0.4f, 0.2f);
             }
 
-            attacker.Squasher.SquashHorizontally (0.6f, 0.1f, 0.05f, () =>
-            {
-                trajectory.Reverse ();
-                attacker.CharMovement.Jump (trajectory, () =>
-                {
-                    attacker.CharMovement.ActivateWalk = true;
-                    TryInvokeCallback ();
-                });
-            });
+            JumpBack (attacker, trajectory);
+        });
+    }
 
+    private void JumpBack (Character attacker, List<Vector3> trajectory)
+    {
+        attacker.Squasher.SquashHorizontally (0.6f, 0.1f, 0.05f, () =>
+        {
+            trajectory.Reverse ();
+            attacker.CharMovement.Jump (trajectory, () =>
+            {
+                attacker.CharMovement.ActivateWalk = true;
+                TryInvokeCallback ();
+            });
         });
     }
 }

@@ -5,11 +5,6 @@ using UnityEngine;
 [CreateAssetMenu (fileName = "AttackDefPassive", menuName = "Passive/AttackDefPassive", order = 1)]
 public class AttackDefPassive : AttackPassive
 {
-    public enum AttackStatsType
-    {
-        Damage,
-        Precision
-    }
     public AttackStatsType AttackStatToAlter;
 
     public override void AlterAttack (AttackInstance attack)
@@ -25,6 +20,12 @@ public class AttackDefPassive : AttackPassive
                 break;
             case AttackStatsType.Precision:
                 AlterPrecision (attack);
+                break;
+            case AttackStatsType.CriticalChance:
+                AlterCriticalChance (attack);
+                break;
+            case AttackStatsType.CriticalMultipliier:
+                AlterCriticalMultiplier (attack);
                 break;
         }
     }

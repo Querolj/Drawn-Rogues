@@ -15,13 +15,7 @@ public class AttackInstSelf : AttackInstance
         List<Attackable> targetsInZone = null, List<Vector3> trajectory = null)
     {
         base.Execute (attacker, target, attackPos, onAttackEnded, targetsInZone, trajectory);
-        _targetToHitCount = 1;
         AttackInstSelf attackInstCopy = GetCopy () as AttackInstSelf;
-        ApplyTargetAttackDefPassive (target, ref attackInstCopy);
-
-        if (AnimationTemplate != null)
-            PlayAtkTouchedAnimation (attackPos, () => InflictDamage (target, attackInstCopy));
-        else if (ParticleTemplate != null)
-            PlayAtkTouchedParticle (attackPos, () => InflictDamage (target, attackInstCopy));
+        TryInflictDamage (attackPos, target, attackInstCopy, false);
     }
 }

@@ -8,8 +8,11 @@ public class Attack : ScriptableObject
     public int MinDamage;
     public int MaxDamage;
     public bool NoDamage = false;
-    [Range (0f, 100f)]
-    public float Precision = 100;
+    [Range (0f, 1f)]
+    public float Precision = 1f;
+    [Range (0f, 1f)]
+    public float CriticalChance = 0f;
+    public float CriticalMultiplier = 2f;
     public DamageType DamageType;
 
     [SerializeField, Range (1, 10)]
