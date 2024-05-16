@@ -12,29 +12,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e731b2b7b229d274fa47871b4478b43b, type: 3}
   m_Name: Spit
   m_EditorClassIdentifier: 
-  Name: Spit
-  AnimationTemplate: {fileID: 8686212205060676263, guid: 37cb070c6bfea3f4db88db807237611a, type: 3}
-  ParticleTemplate: {fileID: 0}
-  MinDamage: 4
-  MaxDamage: 6
-  NoDamage: 0
-  Precision: 1
-  CriticalChance: 0
-  CriticalMultiplier: 2
-  DamageType: 1
+  _displayName: Spit
+  _animationTemplate: {fileID: 8686212205060676263, guid: 37cb070c6bfea3f4db88db807237611a, type: 3}
+  _particleTemplate: {fileID: 0}
+  _noDamage: 0
+  _minDamage: 4
+  _maxDamage: 6
+  _precision: 1
+  _criticalChance: 0
+  _criticalMultiplier: 2
+  _attackElement: 1
   _range: 6
-  AttackSelectionType: 1
-  AttackType: 2
-  EffectsSerialized: []
-  AvailableForPlayer: 1
-  RequiredLevel: 0
-  RequiredWidthAdjectives: 
-  RequiredHeightAdjectives: 
-  RequiredBaseColor: 
-  RequiredNumberOfArmsMin: -1
-  RequiredNumberOfArmsMax: -1
-  RequiredNumberOfLegsMin: -1
-  RequiredNumberOfLegsMax: -1
+  _attackSelectionType: 1
+  _attackType: 2
+  _effectsSerialized: []
+  _isAvailableForPlayer: 1
+  _minimalLevelRequired: 0
+  _requiredWidthAdjectives: 
+  _requiredHeightAdjectives: 
+  _requiredBaseColor: 
+  _requiredNumberOfArmsMin: -1
+  _requiredNumberOfArmsMax: -1
+  _requiredNumberOfLegsMin: -1
+  _requiredNumberOfLegsMax: -1
   TrajectorySpeed: 15
   TrajectoryRadius: 0.05
   ProjectileTemplate: {fileID: 8473946744376720238, guid: 81bcc3b052942ca4baefd573586a9c2c, type: 3}

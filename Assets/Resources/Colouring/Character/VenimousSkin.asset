@@ -13,24 +13,24 @@ MonoBehaviour:
   m_Name: VenimousSkin
   m_EditorClassIdentifier: 
   _id: 5
-  Name: Venimous Skin
-  BaseColorsUsedPerPixel:
+  _displayName: Venimous Skin
+  _description: +0.1% to poison enemy when receiving a melee attack per pixel.
+  _textureUI: {fileID: 2800000, guid: 6d2dc18d9805d0846b4feb451a3fb7d2, type: 3}
+  _texture: {fileID: 2800000, guid: 782d79ec9eb928b479ec190c0a74f0b1, type: 3}
+  _baseColorsUsedPerPixel:
   - BaseColor: 4
     TotalDrops: 1
-  PixelUsages: 01000000020000000300000004000000
-  HasBrushSize: 0
-  UseTextureAsBrush: 0
-  BrushSize: 0
-  Texture: {fileID: 2800000, guid: 782d79ec9eb928b479ec190c0a74f0b1, type: 3}
-  TextureUI: {fileID: 2800000, guid: 6d2dc18d9805d0846b4feb451a3fb7d2, type: 3}
-  Description: +0.1% chance to poison enemy when hitted per pixel
-  BaseBonusToMainStats: 1
-  KilogramPerPixel: 0.001
-  Stats:
+  _pixelUsages: 01000000020000000400000003000000
+  _hasBrushSize: 0
+  _brushSize: 0
+  _useTextureAsBrush: 0
+  _baseBonusToMainStats: 1
+  _kilogramPerPixel: 0.001
+  _stats:
     AttackDefPassiveValues: []
     AttackOffPassiveValues: []
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
     effectValues:
     - Effect: {fileID: 11400000, guid: d8130c2d1d537014aa38628da3c47c1d, type: 2}
-      Value: 0.003
+      Value: 0.001

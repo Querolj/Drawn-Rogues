@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6749a4f33f99994f86875241ae73ced, type: 3}
   m_Name: PoisonningChanceResistance
   m_EditorClassIdentifier: 
-  MaxValue: 3.4028235e+38
-  MinValue: -3.4028235e+38
-  Description: '{sign}{value}% less chance to be poisonned'
-  InverseDisplayedSignInDescription: 0
-  OperationType: 3
+  _maxValue: 3.4028235e+38
+  _minValue: -3.4028235e+38
+  _description: '{sign}{value}% increase poisonning resistance.'
+  _inverseDisplayedSignInDescription: 0
+  _operationType: 2
   EffectsToAlter:
   - {fileID: 11400000, guid: a1171f3f9d7e36b40bd707d209547f29, type: 2}

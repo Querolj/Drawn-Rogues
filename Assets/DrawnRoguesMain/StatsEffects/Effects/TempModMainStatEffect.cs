@@ -6,16 +6,16 @@ using UnityEngine.Localization.SmartFormat;
 [CreateAssetMenu (fileName = "TempModMainStatEffect", menuName = "Effect/AttackEffect/TempModMainStatEffect", order = 1)]
 public class TempModMainStatEffect : Effect
 {
-    [SerializeField]
+    [SerializeField, BoxGroup ("Specifics")]
     private MainStatAlterationTempEffect _tempEffect;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Specifics")]
     private int _turnDuration;
 
-    [SerializeField, InfoBox ("available arguments are :\n{attackerName}\n{value}\n{targetname}\n{stat}")]
+    [SerializeField, InfoBox ("available arguments are :\n{attackerName}\n{value}\n{targetname}\n{stat}"), BoxGroup ("Specifics")]
     private string _applyEffectText;
 
-    [SerializeField, InfoBox ("available arguments are :\n{attackerName}\n{value}\n{targetname}")]
+    [SerializeField, InfoBox ("available arguments are :\n{attackerName}\n{value}\n{targetname}"), BoxGroup ("Specifics")]
     private string _failRollText;
 
     private Character _targetChar;

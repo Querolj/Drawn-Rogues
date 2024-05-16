@@ -12,28 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c6c5b9ec18a12944b2d540f0a5438ba, type: 3}
   m_Name: Heal
   m_EditorClassIdentifier: 
-  Name: Heal
-  AnimationTemplate: {fileID: 0}
-  ParticleTemplate: {fileID: 0}
-  MinDamage: 0
-  MaxDamage: 0
-  NoDamage: 1
-  Precision: 1
-  CriticalChance: 0
-  CriticalMultiplier: 2
-  DamageType: 0
+  _displayName: Heal
+  _animationTemplate: {fileID: 0}
+  _particleTemplate: {fileID: 2360609805107684380, guid: 33f8038a14b9b8a48843abf74902bb73, type: 3}
+  _noDamage: 1
+  _minDamage: 0
+  _maxDamage: 0
+  _precision: 1
+  _criticalChance: 0
+  _criticalMultiplier: 2
+  _attackElement: 6
   _range: 1
-  AttackSelectionType: 5
-  AttackType: 0
-  EffectsSerialized:
+  _attackSelectionType: 5
+  _attackType: 0
+  _effectsSerialized:
   - Effect: {fileID: 11400000, guid: 1c16f96accf3c9b4197405a1bb5cf318, type: 2}
     Value: 0.125
-  AvailableForPlayer: 0
-  RequiredLevel: 0
-  RequiredWidthAdjectives: 
-  RequiredHeightAdjectives: 
-  RequiredBaseColor: 
-  RequiredNumberOfArmsMin: -1
-  RequiredNumberOfArmsMax: -1
-  RequiredNumberOfLegsMin: -1
-  RequiredNumberOfLegsMax: -1
+  _isAvailableForPlayer: 1
+  _minimalLevelRequired: 2
+  _requiredWidthAdjectives: 
+  _requiredHeightAdjectives: 
+  _requiredBaseColor: 
+  _requiredNumberOfArmsMin: -1
+  _requiredNumberOfArmsMax: -1
+  _requiredNumberOfLegsMin: -1
+  _requiredNumberOfLegsMax: -1

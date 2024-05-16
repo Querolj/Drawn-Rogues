@@ -333,7 +333,7 @@ public class Attackable : CombatEntity
         {
             foreach (TempEffect effect in tempEffects)
             {
-                if (effect.Name == tmpEffect.Name)
+                if (effect.DisplayName == tmpEffect.DisplayName)
                     return true;
             }
         }

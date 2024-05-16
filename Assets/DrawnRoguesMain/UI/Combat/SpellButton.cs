@@ -16,7 +16,7 @@ public class SpellButton : MonoBehaviour
 
     public void Display (ColouringSpell spell)
     {
-        _spellName.text = spell.Name;
+        _spellName.text = spell.DisplayName;
         BaseColorDrops colorDrop = spell.BaseColorsUsedPerPixel[0];
         _spellColorCost.text = BaseColorUtils.ColorText (colorDrop.TotalDrops.ToString (), colorDrop.BaseColor);
     }

@@ -22,7 +22,7 @@ public class ModifierInfos
     {
         percentagePos.z = 0f;
         PercentagePosition = percentagePos;
-        SOFileName = modifier.Type + "/" + modifier.Name;
+        SOFileName = modifier.Type + "/" + modifier.DisplayName;
         Modifier = modifier;
         IsFlipped = isFlipped;
     }

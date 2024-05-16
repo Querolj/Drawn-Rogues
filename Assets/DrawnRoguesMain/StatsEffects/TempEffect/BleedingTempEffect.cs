@@ -5,16 +5,18 @@ using UnityEngine;
 [CreateAssetMenu (fileName = "BleedingTempEffect", menuName = "TempEffect/BleedingTempEffect", order = 1)]
 public class BleedingTempEffect : TempEffect
 {
-    const string bleeding = "<color=\"red\"><b>bleeding</b></color>";
+
+    [SerializeField, InfoBox ("percentage of life lost per meter moved"), BoxGroup ("Specifics")]
+    private float _bleedStrenght = 0.1f;
+
+    [SerializeField, BoxGroup ("Specifics")]
+    private float _maxPercentageLifeLost = 0.33f;
+
+    [SerializeField, BoxGroup ("Specifics")]
+    private string bleeding = "<color=\"red\"><b>bleeding</b></color>";
 
     [HideInInspector]
     public Vector3 LastOwnerPosition;
-
-    [SerializeField, InfoBox ("percentage of life lost per meter moved")]
-    private float _bleedStrenght = 0.1f;
-
-    [SerializeField]
-    private float _maxPercentageLifeLost = 0.33f;
 
     public override void Apply (Attackable attackable, FightRegistry fightDescription, Action onAnimeEnded)
     {

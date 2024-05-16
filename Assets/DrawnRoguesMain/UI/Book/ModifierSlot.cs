@@ -35,8 +35,8 @@ public class ModifierSlot : Slot
         _modifier = modifier ??
             throw new System.ArgumentNullException (nameof (modifier));
 
-        _title.text = modifier.Name;
-        _description.text = modifier.Description;
+        _title.text = modifier.DisplayName;
+        _description.text = modifier.GetStatsDescription ();
         _modifierImage.sprite = modifier.Sprite;
         CorrectImageDimension (modifier, ref _modifierImage);
     }

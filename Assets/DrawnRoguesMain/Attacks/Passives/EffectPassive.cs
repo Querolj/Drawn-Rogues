@@ -21,23 +21,8 @@ public class EffectPassive : Passive
         if (!alters)
             return effectValue;
 
-        float value = effectValue;
-        switch (OperationType)
-        {
-            case OperationTypeEnum.Add:
-                value += Value;
-                break;
-            case OperationTypeEnum.AddPercentage:
-                value += value * (Value / 100f);
-                break;
-            case OperationTypeEnum.Set:
-                value = Value;
-                break;
-            case OperationTypeEnum.PercentageResistance:
-                value = value * (1f - (Value / 100f));
-                break;
-        }
+        AlterPropertyValue (ref effectValue);
 
-        return value;
+        return effectValue;
     }
 }

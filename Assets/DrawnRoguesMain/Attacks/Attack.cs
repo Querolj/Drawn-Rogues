@@ -1,38 +1,101 @@
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class Attack : ScriptableObject
 {
-    public string Name;
-    public SpriteAnimation AnimationTemplate;
-    public ParticleSystemCallback ParticleTemplate;
-    public int MinDamage;
-    public int MaxDamage;
-    public bool NoDamage = false;
-    [Range (0f, 1f)]
-    public float Precision = 1f;
-    [Range (0f, 1f)]
-    public float CriticalChance = 0f;
-    public float CriticalMultiplier = 2f;
-    public DamageType DamageType;
+    [SerializeField, BoxGroup ("Display")]
+    private string _displayName;
+    public string Name => _displayName;
 
-    [SerializeField, Range (1, 10)]
+    [SerializeField, BoxGroup ("Display")]
+    private SpriteAnimation _animationTemplate;
+    public SpriteAnimation AnimationTemplate => _animationTemplate;
+
+    [SerializeField, BoxGroup ("Display")]
+    private ParticleSystemCallback _particleTemplate;
+    public ParticleSystemCallback ParticleTemplate => _particleTemplate;
+
+    [SerializeField, BoxGroup ("Stats")]
+    private bool _noDamage = false;
+    public bool NoDamage => _noDamage;
+
+    private bool DoesDamage => !_noDamage;
+    [SerializeField, BoxGroup ("Stats"), ShowIf (nameof (DoesDamage))]
+    private int _minDamage;
+    public int MinDamage => _minDamage;
+
+    [SerializeField, BoxGroup ("Stats"), ShowIf (nameof (DoesDamage))]
+    private int _maxDamage;
+    public int MaxDamage => _maxDamage;
+
+    [SerializeField, Range (0f, 1f), BoxGroup ("Stats")]
+    private float _precision = 1f;
+    public float Precision => _precision;
+
+    [SerializeField, Range (0f, 1f), BoxGroup ("Stats")]
+    private float _criticalChance = 0f;
+    public float CriticalChance => _criticalChance;
+
+    [SerializeField, BoxGroup ("Stats")]
+    private float _criticalMultiplier = 2f;
+    public float CriticalMultiplier => _criticalMultiplier;
+
+    [SerializeField, BoxGroup ("Stats")]
+    private AttackElement _attackElement;
+    public AttackElement AttackElement => _attackElement;
+
+    [SerializeField, Range (1, 10), BoxGroup ("Stats")]
     private int _range = 1;
     private const float RANGE_TO_METER = 0.4f;
 
-    public AttackSelectionType AttackSelectionType;
-    public AttackType AttackType;
-    public EffectSerialized[] EffectsSerialized;
+    [SerializeField, BoxGroup ("Stats")]
+    private AttackSelectionType _attackSelectionType;
+    public AttackSelectionType AttackSelectionType => _attackSelectionType;
+
+    [SerializeField, BoxGroup ("Stats")]
+    private AttackType _attackType;
+    public AttackType AttackType => _attackType;
+
+    [SerializeField, BoxGroup ("Stats")]
+    private EffectSerialized[] _effectsSerialized;
+    public EffectSerialized[] EffectsSerialized => _effectsSerialized;
 
     #region Required conditions
-    public bool AvailableForPlayer = true;
-    public int RequiredLevel = 0;
-    public WidthAdjective[] RequiredWidthAdjectives;
-    public HeightAdjective[] RequiredHeightAdjectives;
-    public BaseColor[] RequiredBaseColor;
-    public int RequiredNumberOfArmsMin = -1;
-    public int RequiredNumberOfArmsMax = -1;
-    public int RequiredNumberOfLegsMin = -1;
-    public int RequiredNumberOfLegsMax = -1;
+    [SerializeField, BoxGroup ("Required conditions")]
+    private bool _isAvailableForPlayer = true;
+    public bool IsAvailableForPlayer => _isAvailableForPlayer;
+
+    [SerializeField, BoxGroup ("Required conditions")]
+    private int _minimalLevelRequired = 0;
+    public int MinimalLevelRequired => _minimalLevelRequired;
+
+    [SerializeField, BoxGroup ("Required conditions")]
+    private WidthAdjective[] _requiredWidthAdjectives;
+    public WidthAdjective[] RequiredWidthAdjectives => _requiredWidthAdjectives;
+
+    [SerializeField, BoxGroup ("Required conditions")]
+    private HeightAdjective[] _requiredHeightAdjectives;
+    public HeightAdjective[] RequiredHeightAdjectives => _requiredHeightAdjectives;
+
+    [SerializeField, BoxGroup ("Required conditions")]
+    private BaseColor[] _requiredBaseColor;
+    public BaseColor[] RequiredBaseColor => _requiredBaseColor;
+
+    [SerializeField, BoxGroup ("Required conditions")]
+    private int _requiredNumberOfArmsMin = -1;
+    public int RequiredNumberOfArmsMin => _requiredNumberOfArmsMin;
+
+    [SerializeField, BoxGroup ("Required conditions")]
+    private int _requiredNumberOfArmsMax = -1;
+    public int RequiredNumberOfArmsMax => _requiredNumberOfArmsMax;
+
+    [SerializeField, BoxGroup ("Required conditions")]
+    private int _requiredNumberOfLegsMin = -1;
+    public int RequiredNumberOfLegsMin => _requiredNumberOfLegsMin;
+
+    [SerializeField, BoxGroup ("Required conditions")]
+    private int _requiredNumberOfLegsMax = -1;
+    public int RequiredNumberOfLegsMax => _requiredNumberOfLegsMax;
     #endregion
 
     public float GetRangeInMeter ()

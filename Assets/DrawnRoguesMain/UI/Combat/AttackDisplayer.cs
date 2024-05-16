@@ -32,7 +32,7 @@ public class AttackDisplayer : MonoBehaviour
     public void Display (Attack attack)
     {
         _name.text = attack.Name;
-        _damage.text = attack.MinDamage + "-" + attack.MaxDamage + " " + attack.DamageType.ToString ();
+        _damage.text = attack.MinDamage + "-" + attack.MaxDamage + " " + attack.AttackElement.ToString ();
         _targettingType.text = GetTargettingType (attack.AttackSelectionType);
         _range.text = attack.GetRangeInMeter ().ToString () + " meters";
         _effects.text = attack.GetEffectsString ();

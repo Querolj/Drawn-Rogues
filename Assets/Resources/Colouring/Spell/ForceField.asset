@@ -13,16 +13,15 @@ MonoBehaviour:
   m_Name: ForceField
   m_EditorClassIdentifier: 
   _id: 2
-  Name: ForceField
-  BaseColorsUsedPerPixel:
+  _displayName: ForceField
+  _description: Block projectile.
+  _textureUI: {fileID: 2800000, guid: 4978ed16ffbdc9f4fb618ab58964143b, type: 3}
+  _texture: {fileID: 2800000, guid: b834cb631b2245b4a81f49fe487e52e7, type: 3}
+  _baseColorsUsedPerPixel:
   - BaseColor: 2
     TotalDrops: 1
-  PixelUsages: 06000000
-  HasBrushSize: 1
-  UseTextureAsBrush: 0
-  BrushSize: 5
-  Texture: {fileID: 2800000, guid: b25f4cb662b7912428bcd4c13ea010e2, type: 3}
-  TextureUI: {fileID: 2800000, guid: 10d435fdd7b56ff498afa8892bf847d0, type: 3}
-  Description: 
+  _pixelUsages: 0600000005000000
+  _hasBrushSize: 1
+  _brushSize: 4
+  _useTextureAsBrush: 0
   BehaviourPrefab: {fileID: 3076634171962712240, guid: b2d6dbbafe50dad4681f2e746bdfa2e3, type: 3}
-  ClearMetadataOnFrame: 1

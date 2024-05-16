@@ -1,4 +1,5 @@
 using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 /*
  /!\ No passive alter any temp effect yet (not needed for now)
@@ -17,11 +18,25 @@ public class TempEffect : ScriptableObject
         EndTurn
     }
 
-    public string Name;
-    public SpriteAnimation AnimationOnApplyTemplate;
-    public ParticleSystemCallback ParticleOnApplyTemplate;
-    public Timeline EffectApplicationTimeline;
-    public Sprite Icon;
+    [SerializeField, BoxGroup ("Display")]
+    private string _displayName;
+    public string DisplayName => _displayName;
+
+    [SerializeField, BoxGroup ("Display")]
+    private SpriteAnimation _animationOnApplyTemplate;
+    public SpriteAnimation AnimationOnApplyTemplate => _animationOnApplyTemplate;
+
+    [SerializeField, BoxGroup ("Display")]
+    private ParticleSystemCallback _particleOnApplyTemplate;
+    public ParticleSystemCallback ParticleOnApplyTemplate => _particleOnApplyTemplate;
+
+    [SerializeField, BoxGroup ("Display")]
+    private Sprite _icon;
+    public Sprite Icon => _icon;
+
+    [SerializeField, BoxGroup ("Application context")]
+    private Timeline _effectApplicationTimeline;
+    public Timeline EffectApplicationTimeline => _effectApplicationTimeline;
 
     protected int _turnDuration = 1;
     public int TurnDuration { get { return _turnDuration; } }
@@ -36,8 +51,8 @@ public class TempEffect : ScriptableObject
     {
         _onEffectWoreOff = onEffectWoreOff;
         _turnDuration = duration;
-        EffectApplicationTimeline = effectApplicationTimeline;
-        Icon = icon;
+        _effectApplicationTimeline = effectApplicationTimeline;
+        _icon = icon;
     }
 
     public virtual void Apply (Attackable attackable, FightRegistry fightDescription, Action onAnimeEnded)

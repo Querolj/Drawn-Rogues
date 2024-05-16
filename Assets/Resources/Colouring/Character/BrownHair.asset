@@ -13,20 +13,20 @@ MonoBehaviour:
   m_Name: BrownHair
   m_EditorClassIdentifier: 
   _id: 7
-  Name: Brown Hair
-  BaseColorsUsedPerPixel:
+  _displayName: Brown Hair
+  _description: +0.05% physical damage per pixel.
+  _textureUI: {fileID: 2800000, guid: 9c833b406abffec4785c967a4b811c04, type: 3}
+  _texture: {fileID: 2800000, guid: e016306279978df46bdd1b12f6e5d882, type: 3}
+  _baseColorsUsedPerPixel:
   - BaseColor: 5
     TotalDrops: 1
-  PixelUsages: 01000000020000000300000004000000
-  HasBrushSize: 0
-  UseTextureAsBrush: 0
-  BrushSize: 0
-  Texture: {fileID: 2800000, guid: e016306279978df46bdd1b12f6e5d882, type: 3}
-  TextureUI: {fileID: 2800000, guid: 9c833b406abffec4785c967a4b811c04, type: 3}
-  Description: +0.05% physical damage per pixel
-  BaseBonusToMainStats: 1
-  KilogramPerPixel: 0.001
-  Stats:
+  _pixelUsages: 01000000020000000300000004000000
+  _hasBrushSize: 0
+  _brushSize: 0
+  _useTextureAsBrush: 0
+  _baseBonusToMainStats: 1
+  _kilogramPerPixel: 0.001
+  _stats:
     AttackDefPassiveValues: []
     AttackOffPassiveValues:
     - Passive: {fileID: 11400000, guid: 68004b985d452544daad02d6245ea714, type: 2}

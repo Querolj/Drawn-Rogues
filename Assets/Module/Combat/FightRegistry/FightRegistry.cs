@@ -103,13 +103,13 @@ public class FightRegistry : MonoBehaviour, IPointerClickHandler, IPointerExitHa
     }
 
     public void ReportAttackDamage (string attackerName, string targetName,
-        DamageType damageType, string attackName, int damage, string attackerTag, bool isCritical)
+        AttackElement damageType, string attackName, int damage, string attackerTag, bool isCritical)
     {
         bool isAttackerPlayer = _playerTag == attackerTag;
         string coloredAttackerName = isAttackerPlayer ? GetColoredPlayerName (attackerName) : GetColoredEnemyName (attackerName);
         string coloredTargetName = isAttackerPlayer ? GetColoredEnemyName (targetName) : GetColoredPlayerName (targetName);
         string text;
-        if (damageType == DamageType.Heal)
+        if (damageType == AttackElement.Heal)
             text = coloredAttackerName + " use <b>" + attackName + "</b> and heal " + coloredTargetName + " for <color=\"green\"><b>" + (damage * -1) + "</b></color> life.";
         else
             text = coloredAttackerName + " use <b>" + attackName + "</b> and damages " + coloredTargetName + " for <b>" + damage + "</b> damages.";
@@ -120,12 +120,12 @@ public class FightRegistry : MonoBehaviour, IPointerClickHandler, IPointerExitHa
     }
 
     public void ReportAttackDamage (string targetName,
-        DamageType damageType, string attackName, int damage, string attackerTag)
+        AttackElement damageType, string attackName, int damage, string attackerTag)
     {
         bool isAttackerPlayer = _playerTag == attackerTag;
         string coloredTargetName = isAttackerPlayer ? GetColoredEnemyName (targetName) : GetColoredPlayerName (targetName);
         string text;
-        if (damageType == DamageType.Heal)
+        if (damageType == AttackElement.Heal)
             text = attackName + "</b> is healing " + coloredTargetName + " for <color=\"green\"><b>" + (damage * -1) + "</b></color> life.";
         else
             text = attackName + "</b> is damaging " + coloredTargetName + " for <b>" + damage + "</b> damages.";

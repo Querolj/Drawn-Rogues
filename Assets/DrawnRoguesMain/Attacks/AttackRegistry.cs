@@ -43,13 +43,13 @@ public class AttackRegistry : MonoBehaviour
 
     private bool AttackCanBeChosen (DrawedCharacter dc, Attack attack)
     {
-        if (!attack.AvailableForPlayer)
+        if (!attack.IsAvailableForPlayer)
             return false;
 
         if (dc.Attacks.Any (a => a.Name == attack.Name))
             return false;
 
-        if (attack.RequiredLevel > dc.Level)
+        if (attack.MinimalLevelRequired > dc.Level)
             return false;
 
         if (attack.RequiredHeightAdjectives != null && attack.RequiredHeightAdjectives.Length > 0 && !attack.RequiredHeightAdjectives.Contains (dc.DrawedCharacterFormDescription.HeightAdjective))

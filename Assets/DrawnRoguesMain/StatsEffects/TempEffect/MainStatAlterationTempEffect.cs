@@ -1,21 +1,22 @@
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Localization.SmartFormat;
 
 [CreateAssetMenu (fileName = "MainStatTempEffect", menuName = "TempEffect/MainStatTempEffect", order = 1)]
 public class MainStatAlterationTempEffect : TempEffect
 {
-    [SerializeField]
+    [SerializeField, BoxGroup ("Specifics")]
     private MainStatType _mainStat;
     public MainStatType MainStat => _mainStat;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Specifics")]
     private OperationTypeEnum _operationType;
     public OperationTypeEnum OperationType => _operationType;
 
-    [SerializeField]
-    private float _value;
+    [SerializeField, BoxGroup ("Specifics")]
+    private float _operationValue;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Specifics")]
     private string _wearOffText;
 
     private int _id;

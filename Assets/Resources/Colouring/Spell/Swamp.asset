@@ -13,15 +13,17 @@ MonoBehaviour:
   m_Name: Swamp
   m_EditorClassIdentifier: 
   _id: 5
-  Name: Swamp
-  BaseColorsUsedPerPixel:
+  _displayName: Swamp
+  _description: Swamp dsc
+  _textureUI: {fileID: 2800000, guid: 84a4a22faa2508e47adb7be2cabf08b6, type: 3}
+  _texture: {fileID: 2800000, guid: 15c1beaa5fe51a041a8bb3f43507881d, type: 3}
+  _baseColorsUsedPerPixel:
+  - BaseColor: 4
+    TotalDrops: 1
   - BaseColor: 5
     TotalDrops: 1
-  PixelUsages: 06000000
-  HasBrushSize: 1
-  UseTextureAsBrush: 0
-  BrushSize: 7
-  Texture: {fileID: 2800000, guid: 15c1beaa5fe51a041a8bb3f43507881d, type: 3}
-  TextureUI: {fileID: 2800000, guid: 84a4a22faa2508e47adb7be2cabf08b6, type: 3}
-  Description: 
+  _pixelUsages: 0600000005000000
+  _hasBrushSize: 1
+  _brushSize: 6
+  _useTextureAsBrush: 0
   BehaviourPrefab: {fileID: 8278419785385742396, guid: b7220abed6eacf047835889710d3f756, type: 3}

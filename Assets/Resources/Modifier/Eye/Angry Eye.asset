@@ -10,18 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c5a2250f1451f447a49344f3247c160, type: 3}
-  m_Name: Predator Eye
+  m_Name: Angry Eye
   m_EditorClassIdentifier: 
-  OrderInUI: 0
-  Name: Predator Eye
-  Type: 1
-  Stats:
+  _orderInUI: 0
+  _displayName: Angry Eye
+  _type: 1
+  _stats:
     AttackDefPassiveValues: []
     AttackOffPassiveValues:
-    - Passive: {fileID: 11400000, guid: 2a8b4190852b69a4da87517232aeda5c, type: 2}
-      Value: 0.025
+    - Passive: {fileID: 11400000, guid: 7b6d870f008ae74498f37e71b3a85c36, type: 2}
+      Value: -0.025
+    - Passive: {fileID: 11400000, guid: b9434d1ecc92a0f40b195c3b54f27596, type: 2}
+      Value: 0.25
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
     effectValues: []
-  Sprite: {fileID: 1369188593, guid: 05c616df538d0d146ae9efc246706ca1, type: 3}
-  Description: Predator eye
+  _sprite: {fileID: 1369188593, guid: 05c616df538d0d146ae9efc246706ca1, type: 3}
+  _description: 

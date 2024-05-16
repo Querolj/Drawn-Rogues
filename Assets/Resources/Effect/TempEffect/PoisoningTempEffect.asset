@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 871dcf46311d54444aebfc69453f202a, type: 3}
   m_Name: PoisoningTempEffect
   m_EditorClassIdentifier: 
-  Name: Poisonned
-  AnimationOnApplyTemplate: {fileID: 0}
-  ParticleOnApplyTemplate: {fileID: 4090044477372362082, guid: 2438e8b89b555344098f50828c0b1898, type: 3}
-  EffectApplicationTimeline: 1
-  Icon: {fileID: 21300000, guid: 80fb328b7bd761445a13e5fe55fbcc8f, type: 3}
+  _displayName: Poisoned
+  _animationOnApplyTemplate: {fileID: 0}
+  _particleOnApplyTemplate: {fileID: 4090044477372362082, guid: 2438e8b89b555344098f50828c0b1898, type: 3}
+  _icon: {fileID: 21300000, guid: 80fb328b7bd761445a13e5fe55fbcc8f, type: 3}
+  _effectApplicationTimeline: 1
+  _poisonDamagePercentage: 0.05

@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b6a961b7536b9f408ffd65eaf6753f1, type: 3}
   m_Name: RootTempEffect
   m_EditorClassIdentifier: 
-  Name: Root
-  AnimationOnApplyTemplate: {fileID: 0}
-  ParticleOnApplyTemplate: {fileID: 0}
-  EffectApplicationTimeline: 0
-  Icon: {fileID: 21300000, guid: 8434f9a276c720f4f91a645d63892247, type: 3}
+  _displayName: Root
+  _animationOnApplyTemplate: {fileID: 0}
+  _particleOnApplyTemplate: {fileID: 0}
+  _icon: {fileID: 21300000, guid: 8434f9a276c720f4f91a645d63892247, type: 3}
+  _effectApplicationTimeline: 0
   _mainStat: 3
-  _operationType: 4
-  _value: 0
+  _operationType: 3
+  _operationValue: 0
   _wearOffText: '{targetName} is no longer <b>rooted</b>.'

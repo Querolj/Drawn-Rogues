@@ -12,24 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f846d8a05d1f0a478cd834d04c28c91, type: 3}
   m_Name: ToxicVapor
   m_EditorClassIdentifier: 
-  Name: Toxic Vapor
-  AnimationTemplate: {fileID: 0}
-  ParticleTemplate: {fileID: 4090044477372362082, guid: 2438e8b89b555344098f50828c0b1898, type: 3}
-  MinDamage: 5
-  MaxDamage: 5
-  NoDamage: 0
-  Precision: 100
-  DamageType: 4
+  _displayName: Toxic Vapor
+  _animationTemplate: {fileID: 0}
+  _particleTemplate: {fileID: 4090044477372362082, guid: 2438e8b89b555344098f50828c0b1898, type: 3}
+  _minDamage: 2
+  _maxDamage: 2
+  _noDamage: 0
+  _precision: 1
+  _criticalChance: 0
+  _criticalMultiplier: 2
+  _damageType: 4
   _range: 1
-  AttackSelectionType: 0
-  AttackType: 0
-  EffectsSerialized: []
-  AvailableForPlayer: 0
-  RequiredLevel: 0
-  RequiredWidthAdjectives: 
-  RequiredHeightAdjectives: 
-  RequiredBaseColor: 
-  RequiredNumberOfArmsMin: -1
-  RequiredNumberOfArmsMax: -1
-  RequiredNumberOfLegsMin: -1
-  RequiredNumberOfLegsMax: -1
+  _attackSelectionType: 0
+  _attackType: 0
+  _effectsSerialized: []
+  _isAvailableForPlayer: 0
+  _requiredLevel: 0
+  _requiredWidthAdjectives: 
+  _requiredHeightAdjectives: 
+  _requiredBaseColor: 
+  _requiredNumberOfArmsMin: -1
+  _requiredNumberOfArmsMax: -1
+  _requiredNumberOfLegsMin: -1
+  _requiredNumberOfLegsMax: -1

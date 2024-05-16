@@ -18,7 +18,7 @@ public class AttackInstance
     public float CriticalChance { get; set; }
     public float CriticalMultiplier { get; set; }
     public float Range { get; set; }
-    public DamageType DamageType { get; set; }
+    public AttackElement AttackElement { get; set; }
     public AttackType AttackType;
 
     protected Character _owner;
@@ -51,7 +51,7 @@ public class AttackInstance
         CriticalChance = attack.CriticalChance;
         CriticalMultiplier = attack.CriticalMultiplier;
         Range = attack.GetRangeInMeter ();
-        DamageType = attack.DamageType;
+        AttackElement = attack.AttackElement;
         _owner = owner;
 
         MergeEffectsAndPassiveFromOwner (attack);
@@ -212,7 +212,7 @@ public class AttackInstance
             _fightDescription.ReportAttackDamage (
                 _attacker.Description.DisplayName,
                 target.Description.DisplayName,
-                attackInstance.DamageType,
+                attackInstance.AttackElement,
                 attackInstance.Name,
                 dammageToInflict,
                 _attacker.tag,

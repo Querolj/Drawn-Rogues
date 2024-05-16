@@ -13,15 +13,16 @@ MonoBehaviour:
   m_Name: Branch
   m_EditorClassIdentifier: 
   _id: 4
-  Name: Healing Branch
-  BaseColorsUsedPerPixel:
+  _displayName: Healing branch
+  _description: Heal creatures in branch radius. Heal strenght depend on the number
+    of flowers.
+  _textureUI: {fileID: 2800000, guid: ffbf0a350301a3f4d817ed866368f8e6, type: 3}
+  _texture: {fileID: 2800000, guid: 8723b6122e2120342aa6bcbf651f65e7, type: 3}
+  _baseColorsUsedPerPixel:
   - BaseColor: 5
     TotalDrops: 1
-  PixelUsages: 06000000
-  HasBrushSize: 1
-  UseTextureAsBrush: 0
-  BrushSize: 1
-  Texture: {fileID: 2800000, guid: af364dbdebdf8264b9b9d7ccf36f9059, type: 3}
-  TextureUI: {fileID: 2800000, guid: af364dbdebdf8264b9b9d7ccf36f9059, type: 3}
-  Description: 
+  _pixelUsages: 0600000005000000
+  _hasBrushSize: 1
+  _brushSize: 1
+  _useTextureAsBrush: 0
   BehaviourPrefab: {fileID: 5844198395475296544, guid: aa2afc727faa3cf499f8f8276c89d2ec, type: 3}

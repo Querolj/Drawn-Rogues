@@ -1,10 +1,11 @@
 using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 [CreateAssetMenu (fileName = "PoisoningTempEffect", menuName = "TempEffect/PoisoningTempEffect", order = 1)]
 public class PoisoningTempEffect : TempEffect
 {
-    [SerializeField]
+    [SerializeField, BoxGroup ("Specifics")]
     private float _poisonDamagePercentage = 0.07f;
     public override void Apply (Attackable attackable, FightRegistry fightDescription, Action onAnimeEnded)
     {

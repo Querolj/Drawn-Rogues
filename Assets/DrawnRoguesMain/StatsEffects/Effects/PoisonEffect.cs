@@ -1,4 +1,5 @@
 using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 // value = chance to inflict poison, for 0% to 100%
@@ -6,17 +7,18 @@ using UnityEngine;
 [CreateAssetMenu (fileName = "PoisonEffect", menuName = "Effect/AttackEffect/PoisonEffect", order = 1)]
 public class PoisonEffect : Effect
 {
-    [SerializeField]
+    [SerializeField, BoxGroup ("Specifics")]
     private int _poisonDuration = 3;
 
-    public TempEffect TempEffect;
+    [SerializeField, BoxGroup ("Specifics")]
+    public PoisoningTempEffect _tempEffect;
 
     protected override void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightDescription, Action onAnimeEnded)
     {
         string coloredUserName = fightDescription.GetColoredAttackableName (user.Description.DisplayName, user.tag);
         string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description.DisplayName, target.tag);
 
-        if (target.HasTempEffect (TempEffect))
+        if (target.HasTempEffect (_tempEffect))
         {
             fightDescription.Report (coloredUserName + " can't poison " + coloredTargetName + " as he is already poisoned.");
             onAnimeEnded?.Invoke ();
@@ -30,7 +32,7 @@ public class PoisonEffect : Effect
 
             fightDescription.Report (coloredUserName + " <b>poisoned</b> " + coloredTargetName + " for <b>" + _poisonDuration + "</b> turns!");
 
-            PoisoningTempEffect tmpEffect = ScriptableObject.Instantiate (TempEffect) as PoisoningTempEffect;
+            PoisoningTempEffect tmpEffect = ScriptableObject.Instantiate (_tempEffect);
             tmpEffect.Init (_poisonDuration);
             target.AddTempEffect (tmpEffect);
             PlayAnimation (target.GetSpriteBounds ().center, onAnimeEnded);

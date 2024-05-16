@@ -32,7 +32,7 @@ public class ColouringSlot : Slot
         _colouring = colouring ??
             throw new System.ArgumentNullException (nameof (colouring));
 
-        _title.text = colouring.Name;
+        _title.text = colouring.DisplayName;
         _colorTexImage.sprite = colouring.SpriteUI;
 
         _dropNumText1.text = BaseColorUtils.ColorText (colouring.BaseColorsUsedPerPixel[0].TotalDrops.ToString (), colouring.BaseColorsUsedPerPixel[0].BaseColor);

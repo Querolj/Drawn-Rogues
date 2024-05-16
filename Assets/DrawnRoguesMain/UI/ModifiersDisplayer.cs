@@ -36,7 +36,7 @@ public class ModifiersDisplayer : MonoBehaviour
         _modifierInstances.Sort ((x, y) => x.OrderInUI.CompareTo (y.OrderInUI));
         foreach (Modifier modifier in _modifierInstances)
         {
-            GameObject go = new GameObject ("Modifier_" + modifier.Name);
+            GameObject go = new GameObject ("Modifier_" + modifier.DisplayName);
             Image image = go.AddComponent<Image> ();
             image.sprite = modifier.Sprite;
             image.preserveAspect = true;

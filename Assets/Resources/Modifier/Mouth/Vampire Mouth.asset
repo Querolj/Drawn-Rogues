@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c5a2250f1451f447a49344f3247c160, type: 3}
   m_Name: Vampire Mouth
   m_EditorClassIdentifier: 
-  OrderInUI: 0
-  Name: Vampire Mouth
-  Type: 0
-  Stats:
+  _orderInUI: 0
+  _displayName: Vampire Mouth
+  _type: 0
+  _stats:
     AttackDefPassiveValues: []
     AttackOffPassiveValues: []
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
-  Sprite: {fileID: 21300000, guid: 38094b2cacd180145a207c2fe7c12e14, type: 3}
-  Description: 
+    effectValues: []
+  _sprite: {fileID: 21300000, guid: 38094b2cacd180145a207c2fe7c12e14, type: 3}
+  _description: 

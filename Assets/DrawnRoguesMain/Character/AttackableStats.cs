@@ -105,9 +105,6 @@ public class AttackableStats
                 case OperationTypeEnum.AddPercentage:
                     valueToAlter += (int) (valueToAlter * (mainStatModifier.Item2 / 100f));
                     break;
-                case OperationTypeEnum.Substract:
-                    valueToAlter -= (int) mainStatModifier.Item2;
-                    break;
                 case OperationTypeEnum.Set:
                     valueToAlter = (int) mainStatModifier.Item2;
                     break;
@@ -277,7 +274,7 @@ public class AttackableStats
                         _kilogram += pixCount * characterColouring.KilogramPerPixel;
                     }
                     else
-                        throw new Exception ("Colouring" + CharColouringRegistry.Instance.ColouringsSourceById[id].Name + " is not a CharacterColouring");
+                        throw new Exception ("Colouring" + CharColouringRegistry.Instance.ColouringsSourceById[id].DisplayName + " is not a CharacterColouring");
                 }
             }
             catch (Exception e)

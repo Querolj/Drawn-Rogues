@@ -56,7 +56,7 @@ public class FrameDecor : Frame
         advancedPolyCol.RecalculatePolygon ();
 
         if (colouringSpell.BehaviourPrefab == null)
-            throw new Exception ("could not load prefab for colouring spell " + colouringSpell.Name + ", can't generate collider for lc " + colouringSpell.Name);
+            throw new Exception ("could not load prefab for colouring spell " + colouringSpell.DisplayName + ", can't generate collider for lc " + colouringSpell.DisplayName);
 
         GameObject goBehaviour = _combatEntityFactory.Create (colouringSpell.BehaviourPrefab).gameObject;
 

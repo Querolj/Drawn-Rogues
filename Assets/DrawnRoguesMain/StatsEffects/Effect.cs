@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class Effect : ScriptableObject
@@ -16,13 +18,33 @@ public class Effect : ScriptableObject
         AttackIsProjectile,
     }
 
-    public string Description;
-    public SpriteAnimation AnimationOnApplyTemplate;
-    public ParticleSystemCallback ParticleOnApplyTemplate;
-    public AttackTimeline EffectApplicationTimeline;
-    public List<ApplyCondition> ApplyConditionsOnUser;
-    public List<ApplyCondition> ApplyConditionsOnTarget;
-    public bool InverseDisplayedSignInDescription;
+    [SerializeField, BoxGroup ("Display")]
+    private string _description;
+    public string Description => _description;
+
+    [SerializeField, BoxGroup ("Display")]
+    private SpriteAnimation _animationOnApplyTemplate;
+    public SpriteAnimation AnimationOnApplyTemplate => _animationOnApplyTemplate;
+
+    [SerializeField, BoxGroup ("Display")]
+    private ParticleSystemCallback _particleOnApplyTemplate;
+    public ParticleSystemCallback ParticleOnApplyTemplate => _particleOnApplyTemplate;
+
+    [SerializeField, BoxGroup ("Display")]
+    private bool _inverseDisplayedSignInDescription;
+    public bool InverseDisplayedSignInDescription => _inverseDisplayedSignInDescription;
+
+    [SerializeField, BoxGroup ("Application context")]
+    private AttackTimeline _effectApplicationTimeline;
+    public AttackTimeline EffectApplicationTimeline => _effectApplicationTimeline;
+
+    [SerializeField, BoxGroup ("Application context")]
+    private List<ApplyCondition> _applyConditionsOnUser;
+    public List<ApplyCondition> ApplyConditionsOnUser => _applyConditionsOnUser;
+
+    [SerializeField, BoxGroup ("Application context")]
+    private List<ApplyCondition> _applyConditionsOnTarget;
+    public List<ApplyCondition> ApplyConditionsOnTarget => _applyConditionsOnTarget;
 
     protected float _initialValue;
     public float InitialValue
@@ -102,12 +124,16 @@ public class Effect : ScriptableObject
     protected float GetAlteredValue (AttackableStats ownerStats, AttackableStats targetStats)
     {
         float moddedValue = _initialValue;
-        foreach (EffectOffPassive offPassive in ownerStats.EffectOffPassiveByNames.Values)
+
+        // order passives by operation type to ensure correct order of operations
+        List<EffectOffPassive> offPassives = new List<EffectOffPassive> (ownerStats.EffectOffPassiveByNames.Values).OrderBy (x => x.OperationType).ToList ();
+        foreach (EffectOffPassive offPassive in offPassives)
         {
             moddedValue = offPassive.GetAlterEffectValue (this, moddedValue);
         }
 
-        foreach (EffectDefPassive defPassive in targetStats.EffectDefPassiveByNames.Values)
+        List<EffectDefPassive> defPassives = new List<EffectDefPassive> (targetStats.EffectDefPassiveByNames.Values).OrderBy (x => x.OperationType).ToList ();
+        foreach (EffectDefPassive defPassive in defPassives)
         {
             moddedValue = defPassive.GetAlterEffectValue (this, moddedValue);
         }
@@ -148,7 +174,7 @@ public class Effect : ScriptableObject
 
     public override string ToString ()
     {
-        string descriptionWithValue = Description.Replace ("{value}", Mathf.Abs (InitialValue).ToString ());
+        string descriptionWithValue = Description.Replace ("{value}", Mathf.Abs (InitialValue * 100f).ToString ());
         if (InverseDisplayedSignInDescription)
             descriptionWithValue = descriptionWithValue.Replace ("{sign}", InitialValue < 0 ? "+" : "-");
         else
@@ -179,6 +205,11 @@ public class EffectSerialized
 
     public override string ToString ()
     {
-        return Effect.Description + " " + Value;
+        return Effect.Description + " " + (Value * 100f);
+    }
+
+    public string ToString (float value)
+    {
+        return Effect.Description + " " + (value * 100f);
     }
 }

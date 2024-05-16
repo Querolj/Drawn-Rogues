@@ -1,19 +1,22 @@
 using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 [CreateAssetMenu (fileName = "BleedEffect", menuName = "Effect/AttackEffect/BleedEffect", order = 1)]
 public class BleedEffect : Effect
 {
-    private const int BLEED_DURATION = 3;
+    [SerializeField, BoxGroup ("Specifics")]
+    private int _bleedTurnDuration = 3;
 
-    public BleedingTempEffect BleedingEffect;
+    [SerializeField, BoxGroup ("Specifics")]
+    private BleedingTempEffect _bleedingEffect;
 
     protected override void ApplyOnTargetInternal (Character user, AttackInstance attack, Attackable target, int inflictedDamage, FightRegistry fightDescription, Action onAnimeEnded)
     {
         string coloredUserName = fightDescription.GetColoredAttackableName (user.Description.DisplayName, user.tag);
         string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description.DisplayName, target.tag);
 
-        if (target.HasTempEffect (BleedingEffect))
+        if (target.HasTempEffect (_bleedingEffect))
         {
             fightDescription.Report (coloredUserName + " can't make " + coloredTargetName + " bleed as he is already bleeding.");
             onAnimeEnded?.Invoke ();
@@ -26,11 +29,11 @@ public class BleedEffect : Effect
             if (!target.Stats.AttackableState.HasState (State.Bleed))
                 target.Stats.AttackableState.AddState (State.Bleed);
 
-            fightDescription.Report (coloredUserName + " make " + coloredTargetName + " " + bleed + " for <b>" + BLEED_DURATION + "</b> turns!");
+            fightDescription.Report (coloredUserName + " make " + coloredTargetName + " " + bleed + " for <b>" + _bleedTurnDuration + "</b> turns!");
 
-            BleedingTempEffect tmpEffect = ScriptableObject.Instantiate (BleedingEffect) as BleedingTempEffect;
+            BleedingTempEffect tmpEffect = ScriptableObject.Instantiate (_bleedingEffect);
             tmpEffect.LastOwnerPosition = target.GetSpriteBounds ().center;
-            tmpEffect.Init (BLEED_DURATION);
+            tmpEffect.Init (_bleedTurnDuration);
             target.AddTempEffect (tmpEffect);
             PlayAnimation (target.GetSpriteBounds ().center, onAnimeEnded);
         }

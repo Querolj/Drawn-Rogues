@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 753b77113fd5352438f5f53211a6b88a, type: 3}
   m_Name: RootOnHitEffect
   m_EditorClassIdentifier: 
-  Description: '{sign}{value}% chance to root on hit'
-  AnimationOnApplyTemplate: {fileID: 0}
-  ParticleOnApplyTemplate: {fileID: 0}
-  EffectApplicationTimeline: 0
-  ApplyConditionsOnUser: 
-  ApplyConditionsOnTarget: 
-  InverseDisplayedSignInDescription: 0
+  _description: '{sign}{value}% chance to root on hit.'
+  _animationOnApplyTemplate: {fileID: 0}
+  _particleOnApplyTemplate: {fileID: 0}
+  _inverseDisplayedSignInDescription: 0
+  _effectApplicationTimeline: 0
+  _applyConditionsOnUser: 
+  _applyConditionsOnTarget: 
   _tempEffect: {fileID: 11400000, guid: 33737acdcee63af48be5195d0c2cbaaf, type: 2}
   _turnDuration: 1
   _applyEffectText: '{targetname} is <b>rooted<b>'

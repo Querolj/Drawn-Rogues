@@ -23,7 +23,7 @@ public class ModifierGoInstanceFactory : MonoBehaviour
 
     public GameObject Create (Bounds renderBounds, Transform modifierLayer, Modifier modifier, Vector3 localPos, bool isFlipped, float delayLimitCalculInSec = 0f, Action<Modifier> onModifierDeleted = null)
     {
-        GameObject go = new GameObject ("Modifier_" + modifier.Name);
+        GameObject go = new GameObject ("Modifier_" + modifier.DisplayName);
         SpriteRenderer sr = go.AddComponent<SpriteRenderer> ();
         MoveModifier moveModifier = go.AddComponent<MoveModifier> ();
 

@@ -17,7 +17,7 @@ public class AttackInstSingleTargetNoOwner : AttackInstance
         Precision = attack.Precision;
         CriticalChance = attack.CriticalChance;
         Range = attack.GetRangeInMeter ();
-        DamageType = attack.DamageType;
+        AttackElement = attack.AttackElement;
     }
 
     public override void Execute (Character attacker, Attackable target, Vector3 attackPos, Action onAttackEnded,

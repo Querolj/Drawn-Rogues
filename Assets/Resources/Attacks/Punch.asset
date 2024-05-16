@@ -12,26 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c6c5b9ec18a12944b2d540f0a5438ba, type: 3}
   m_Name: Punch
   m_EditorClassIdentifier: 
-  Name: Punch
-  AnimationTemplate: {fileID: 8686212205060676263, guid: 37cb070c6bfea3f4db88db807237611a, type: 3}
-  ParticleTemplate: {fileID: 0}
-  MinDamage: 5
-  MaxDamage: 8
-  NoDamage: 0
-  Precision: 1
-  CriticalChance: 0
-  CriticalMultiplier: 2
-  DamageType: 1
+  _displayName: Punch
+  _animationTemplate: {fileID: 8686212205060676263, guid: 37cb070c6bfea3f4db88db807237611a, type: 3}
+  _particleTemplate: {fileID: 0}
+  _noDamage: 0
+  _minDamage: 6
+  _maxDamage: 8
+  _precision: 1
+  _criticalChance: 0
+  _criticalMultiplier: 2
+  _attackElement: 1
   _range: 1
-  AttackSelectionType: 0
-  AttackType: 1
-  EffectsSerialized: []
-  AvailableForPlayer: 1
-  RequiredLevel: 0
-  RequiredWidthAdjectives: 
-  RequiredHeightAdjectives: 
-  RequiredBaseColor: 
-  RequiredNumberOfArmsMin: -1
-  RequiredNumberOfArmsMax: -1
-  RequiredNumberOfLegsMin: -1
-  RequiredNumberOfLegsMax: -1
+  _attackSelectionType: 0
+  _attackType: 1
+  _effectsSerialized: []
+  _isAvailableForPlayer: 1
+  _minimalLevelRequired: 0
+  _requiredWidthAdjectives: 
+  _requiredHeightAdjectives: 
+  _requiredBaseColor: 
+  _requiredNumberOfArmsMin: -1
+  _requiredNumberOfArmsMax: -1
+  _requiredNumberOfLegsMin: -1
+  _requiredNumberOfLegsMax: -1

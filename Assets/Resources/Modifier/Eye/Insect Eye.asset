@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c5a2250f1451f447a49344f3247c160, type: 3}
+  m_Name: Insect Eye
+  m_EditorClassIdentifier: 
+  _orderInUI: 0
+  _displayName: Insect Eye
+  _type: 1
+  _stats:
+    AttackDefPassiveValues: []
+    AttackOffPassiveValues:
+    - Passive: {fileID: 11400000, guid: 7b6d870f008ae74498f37e71b3a85c36, type: 2}
+      Value: 0.075
+    EffectDefPassiveValues: []
+    EffectOffPassiveValues: []
+    effectValues: []
+  _sprite: {fileID: 21300000, guid: dc92052bf7eba3b4c956492e8b9a775a, type: 3}
+  _description: 

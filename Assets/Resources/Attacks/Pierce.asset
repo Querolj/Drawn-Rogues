@@ -12,28 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcaa079d588eff24290fd4db225bb4f3, type: 3}
   m_Name: Pierce
   m_EditorClassIdentifier: 
-  Name: Pierce
-  AnimationTemplate: {fileID: 8686212205060676263, guid: 7219c051394705749954ed51ae0eb723, type: 3}
-  ParticleTemplate: {fileID: 0}
-  MinDamage: 4
-  MaxDamage: 8
-  NoDamage: 0
-  Precision: 1
-  CriticalChance: 0
-  CriticalMultiplier: 2
-  DamageType: 1
+  _displayName: Pierce
+  _animationTemplate: {fileID: 8686212205060676263, guid: 7219c051394705749954ed51ae0eb723, type: 3}
+  _particleTemplate: {fileID: 0}
+  _noDamage: 0
+  _minDamage: 4
+  _maxDamage: 6
+  _precision: 1
+  _criticalChance: 0
+  _criticalMultiplier: 2
+  _attackElement: 1
   _range: 2
-  AttackSelectionType: 4
-  AttackType: 1
-  EffectsSerialized: []
-  AvailableForPlayer: 1
-  RequiredLevel: 0
-  RequiredWidthAdjectives: 
-  RequiredHeightAdjectives: 
-  RequiredBaseColor: 
-  RequiredNumberOfArmsMin: -1
-  RequiredNumberOfArmsMax: -1
-  RequiredNumberOfLegsMin: -1
-  RequiredNumberOfLegsMax: -1
+  _attackSelectionType: 4
+  _attackType: 1
+  _effectsSerialized: []
+  _isAvailableForPlayer: 1
+  _minimalLevelRequired: 0
+  _requiredWidthAdjectives: 
+  _requiredHeightAdjectives: 
+  _requiredBaseColor: 
+  _requiredNumberOfArmsMin: -1
+  _requiredNumberOfArmsMax: -1
+  _requiredNumberOfLegsMin: -1
+  _requiredNumberOfLegsMax: -1
   ZoneSize: {x: 0.04, y: 0.001}
   AttackableDetectorTemplate: {fileID: 3839747209023910754, guid: d9a7c7e467d5dff40acd58fc6408d8eb, type: 3}

@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: WoodObstacle
   m_EditorClassIdentifier: 
   _id: 1
-  Name: Wood obstacle
-  BaseColorsUsedPerPixel:
+  _displayName: Wood obstacle
+  _description: Create an obstacle in the world.
+  _textureUI: {fileID: 2800000, guid: 659fcf6ab1dfb6b419d03e35cd4ff372, type: 3}
+  _texture: {fileID: 2800000, guid: 659fcf6ab1dfb6b419d03e35cd4ff372, type: 3}
+  _baseColorsUsedPerPixel:
   - BaseColor: 5
     TotalDrops: 1
-  PixelUsages: 06000000
-  HasBrushSize: 1
-  UseTextureAsBrush: 0
-  BrushSize: 7
-  Texture: {fileID: 2800000, guid: 659fcf6ab1dfb6b419d03e35cd4ff372, type: 3}
-  TextureUI: {fileID: 2800000, guid: 659fcf6ab1dfb6b419d03e35cd4ff372, type: 3}
-  Description: 
+  _pixelUsages: 0600000005000000
+  _hasBrushSize: 1
+  _brushSize: 6
+  _useTextureAsBrush: 0
   BehaviourPrefab: {fileID: 7487989168559669234, guid: 95b1f23e5e9f320438902f784bcf4c71, type: 3}

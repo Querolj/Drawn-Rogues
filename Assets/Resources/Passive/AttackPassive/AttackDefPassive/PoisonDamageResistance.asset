@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9c79dfb896d66641b7e3244d3b27f40, type: 3}
   m_Name: PoisonDamageResistance
   m_EditorClassIdentifier: 
-  MaxValue: 3.4028235e+38
-  MinValue: -3.4028235e+38
-  Description: '{sign}{value}% poison damage resistance'
-  InverseDisplayedSignInDescription: 0
-  OperationType: 3
+  _maxValue: 3.4028235e+38
+  _minValue: -3.4028235e+38
+  _description: '{sign}{value}% poison damage resistance.'
+  _inverseDisplayedSignInDescription: 0
+  _operationType: 2
   DamageTypeToAlter: 04000000
   AttackTypeToAlter: 
   AttackStatToAlter: 0
