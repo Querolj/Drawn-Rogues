@@ -25,7 +25,7 @@ MonoBehaviour:
   TextureUI: {fileID: 2800000, guid: 6d2dc18d9805d0846b4feb451a3fb7d2, type: 3}
   Description: +0.1% chance to poison enemy when hitted per pixel
   BaseBonusToMainStats: 1
-  KilogramPerPixel: 0.1
+  KilogramPerPixel: 0.001
   Stats:
     AttackDefPassiveValues: []
     AttackOffPassiveValues: []
@@ -33,4 +33,4 @@ MonoBehaviour:
     EffectOffPassiveValues: []
     effectValues:
     - Effect: {fileID: 11400000, guid: d8130c2d1d537014aa38628da3c47c1d, type: 2}
-      Value: 0.3
+      Value: 0.003

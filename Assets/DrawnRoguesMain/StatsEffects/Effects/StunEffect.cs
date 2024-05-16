@@ -22,7 +22,7 @@ public class StunEffect : Effect
             return;
         }
 
-        if (UnityEngine.Random.Range (0, 100f) < _alteredValue)
+        if (UnityEngine.Random.Range (0, 1f) < _alteredValue)
         {
             if (!target.Stats.AttackableState.HasState (State.Stunned))
                 target.Stats.AttackableState.AddState (State.Stunned);

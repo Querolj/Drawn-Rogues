@@ -34,7 +34,7 @@ public class Passive : ScriptableObject
 
     public override string ToString ()
     {
-        string descriptionWithValue = Description.Replace ("{value}", Mathf.Abs (Value).ToString ());
+        string descriptionWithValue = Description.Replace ("{value}", Mathf.Abs (Value * 100f).ToString ());
         if (InverseDisplayedSignInDescription)
             descriptionWithValue = descriptionWithValue.Replace ("{sign}", Value < 0 ? "+" : "-");
         else

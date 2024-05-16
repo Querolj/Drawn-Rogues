@@ -27,7 +27,7 @@ MonoBehaviour:
   AttackType: 1
   EffectsSerialized:
   - Effect: {fileID: 11400000, guid: a1171f3f9d7e36b40bd707d209547f29, type: 2}
-    Value: 60
+    Value: 0.6
   AvailableForPlayer: 1
   RequiredLevel: 0
   RequiredWidthAdjectives: 

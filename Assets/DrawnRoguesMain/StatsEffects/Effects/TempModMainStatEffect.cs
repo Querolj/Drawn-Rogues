@@ -12,8 +12,11 @@ public class TempModMainStatEffect : Effect
     [SerializeField]
     private int _turnDuration;
 
-    [SerializeField, InfoBox ("available arguments are :\n{username}\n{value}\n{targetname}\n{stat}")]
-    private string _fightText;
+    [SerializeField, InfoBox ("available arguments are :\n{attackerName}\n{value}\n{targetname}\n{stat}")]
+    private string _applyEffectText;
+
+    [SerializeField, InfoBox ("available arguments are :\n{attackerName}\n{value}\n{targetname}")]
+    private string _failRollText;
 
     private Character _targetChar;
 
@@ -37,15 +40,24 @@ public class TempModMainStatEffect : Effect
             return;
         }
 
-        MainStatAlterationTempEffect tmpEffect = ScriptableObject.Instantiate (_tempEffect);
-        int id = GetInstanceID ();
-        _targetChar.Stats.AddMainStatModifier (id, tmpEffect.MainStat, tmpEffect.OperationType, _alteredValue);
-        tmpEffect.Id = id;
-        tmpEffect.Init (_turnDuration);
-        target.AddTempEffect (tmpEffect);
+        if (UnityEngine.Random.Range (0, 1f) < _alteredValue)
+        {
+            MainStatAlterationTempEffect tmpEffect = ScriptableObject.Instantiate (_tempEffect);
+            int id = GetInstanceID ();
+            _targetChar.Stats.AddMainStatModifier (id, tmpEffect.MainStat, tmpEffect.OperationType, _alteredValue);
+            tmpEffect.Id = id;
+            tmpEffect.Init (_turnDuration);
+            target.AddTempEffect (tmpEffect);
 
-        string text = Smart.Format (_fightText, new { attackerName = coloredUserName, value = _alteredValue, targetname = coloredTargetName, stat = tmpEffect.MainStat });
-        fightDescription.Report (text);
-        PlayAnimation (target.transform.position, onAnimeEnded);
+            string text = Smart.Format (_applyEffectText, new { attackerName = coloredUserName, value = _alteredValue, targetname = coloredTargetName, stat = tmpEffect.MainStat });
+            fightDescription.Report (text);
+            PlayAnimation (target.transform.position, onAnimeEnded);
+        }
+        else
+        {
+            string text = Smart.Format (_failRollText, new { attackerName = coloredUserName, value = _alteredValue, targetname = coloredTargetName });
+            fightDescription.Report (text);
+            onAnimeEnded?.Invoke ();
+        }
     }
 }

@@ -21,4 +21,5 @@ MonoBehaviour:
   InverseDisplayedSignInDescription: 0
   _tempEffect: {fileID: 11400000, guid: 33737acdcee63af48be5195d0c2cbaaf, type: 2}
   _turnDuration: 1
-  _fightText: '{targetname} is <b>rooted<b>'
+  _applyEffectText: '{targetname} is <b>rooted<b>'
+  _failRollText: Failed to apply root to {targetName}

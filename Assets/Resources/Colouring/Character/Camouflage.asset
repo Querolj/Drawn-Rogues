@@ -25,12 +25,12 @@ MonoBehaviour:
   TextureUI: {fileID: 2800000, guid: 6ebda6016e43b5049ade586c40141b1f, type: 3}
   Description: +0.1% dodge chance per pixels
   BaseBonusToMainStats: 1
-  KilogramPerPixel: 0.1
+  KilogramPerPixel: 0.001
   Stats:
     AttackDefPassiveValues:
     - Passive: {fileID: 11400000, guid: af93948944c0cd944bf1e4d36719cf8d, type: 2}
-      Value: -0.1
+      Value: -0.001
     AttackOffPassiveValues: []
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
-  EffectsSerialized: []
+    effectValues: []

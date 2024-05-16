@@ -28,14 +28,14 @@ MonoBehaviour:
     +0.1% poison damage
     resistance per pixels'
   BaseBonusToMainStats: 1
-  KilogramPerPixel: 0.1
+  KilogramPerPixel: 0.001
   Stats:
     AttackDefPassiveValues:
     - Passive: {fileID: 11400000, guid: ccd88b20ee856fe43ac6d08362b8dbb7, type: 2}
-      Value: 0.1
+      Value: 0.001
     AttackOffPassiveValues: []
     EffectDefPassiveValues:
     - Passive: {fileID: 11400000, guid: 14955857c77b8474d9c316e9af334678, type: 2}
-      Value: 0.1
+      Value: 0.001
     EffectOffPassiveValues: []
-  EffectsSerialized: []
+    effectValues: []

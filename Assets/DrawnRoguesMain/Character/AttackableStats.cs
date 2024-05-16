@@ -242,20 +242,6 @@ public class AttackableStats
         get { return _effectByNames; }
     }
 
-    // public Dictionary<string, Effect> EffectByNamesCopy
-    // {
-    //     get
-    //     {
-    //         Dictionary<string, Effect> effectsInstByNames = new Dictionary<string, Effect> ();
-    //         foreach (KeyValuePair<string, Effect> effectByName in _effectByNames)
-    //         {
-    //             effectsInstByNames.Add (effectByName.Key, effectByName.Value.GetCopy ());
-    //         }
-
-    //         return effectsInstByNames;
-    //     }
-    // }
-
     private float _kilogram = 0f;
     public float Kilogram
     {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Zenject;
 
@@ -98,9 +99,11 @@ public class AttackInstance
         }
 
         // alter attack with owner offensive passives
-        foreach (AttackOffPassive attackOffPassive in _owner.Stats.AttackOffPassiveByNames.Values)
+        // but first, sort passives by operation type to do the Set operation after Mutliplications for example
+        List<AttackOffPassive> attackOffPassives = new List<AttackOffPassive> (_owner.Stats.AttackOffPassiveByNames.Values).OrderBy (x => x.OperationType).ToList ();
+        foreach (AttackOffPassive attackOffPassive in attackOffPassives)
         {
-            attackOffPassive.AlterAttack (this);
+            attackOffPassive.AlterAttack (this); // sort par OperationEnum
         }
     }
 
@@ -147,7 +150,8 @@ public class AttackInstance
         if (target.Stats.AttackDefPassiveByNames.Count == 0)
             return attackInstance;
 
-        foreach (AttackDefPassive attackDefPassive in target.Stats.AttackDefPassiveByNames.Values)
+        List<AttackDefPassive> attackDefPassives = new List<AttackDefPassive> (target.Stats.AttackDefPassiveByNames.Values).OrderBy (x => x.OperationType).ToList ();
+        foreach (AttackDefPassive attackDefPassive in attackDefPassives)
         {
             attackDefPassive.AlterAttack (attackInstance);
         }
@@ -213,7 +217,7 @@ public class AttackInstance
                 dammageToInflict,
                 _attacker.tag,
                 isCritical);
-                
+
             target.FadeSprite ();
             target.Stats.AttackableState.ReceiveDamage (dammageToInflict);
             ApplyEffects (target.Stats.EffectByNames, target, Effect.AttackTimeline.ReceiveAttackDamage, _attacker, attackInstance, dammageToInflict);

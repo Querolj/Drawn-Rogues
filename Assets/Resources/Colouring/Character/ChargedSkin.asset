@@ -25,12 +25,12 @@ MonoBehaviour:
   TextureUI: {fileID: 2800000, guid: c4c52af97f5112c4290eeb3cd67af7a6, type: 3}
   Description: +0.2% poison damage resistance per pixels
   BaseBonusToMainStats: 1
-  KilogramPerPixel: 0.1
+  KilogramPerPixel: 0.001
   Stats:
     AttackDefPassiveValues:
     - Passive: {fileID: 11400000, guid: eff33427075768d47b96181d9f422037, type: 2}
-      Value: 0.2
+      Value: 0.002
     AttackOffPassiveValues: []
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
-  EffectsSerialized: []
+    effectValues: []
