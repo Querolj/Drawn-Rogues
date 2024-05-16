@@ -8,7 +8,12 @@ public class LifeStealEffect : Effect
     {
         string coloredUserName = fightDescription.GetColoredAttackableName (user.Description.DisplayName, user.tag);
         string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description.DisplayName, target.tag);
-        int healAmount = (int) (_alteredValue * inflictedDamage);
+        int healAmount = 0;
+        if (inflictedDamage > 0)
+        {
+            healAmount = (int) (_alteredValue * inflictedDamage);
+            healAmount = Math.Max (healAmount, 1);
+        }
 
         user.Stats.AttackableState.Heal (healAmount);
         string text = coloredUserName + " devore " + coloredTargetName + " and gain for <color=\"green\"><b>" + healAmount + "</b></color> life.";

@@ -20,6 +20,7 @@ MonoBehaviour:
     AttackOffPassiveValues: []
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
-    effectValues: []
+    effectValues:
+    - Effect: {fileID: 11400000, guid: 5495c1c8d78e296499a0190a63536722, type: 2}
+      Value: 0.1
   _sprite: {fileID: 21300000, guid: 38094b2cacd180145a207c2fe7c12e14, type: 3}
-  _description: 
