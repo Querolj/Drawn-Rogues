@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class DrawedCharacter : Character
@@ -15,6 +16,7 @@ public class DrawedCharacter : Character
     }
 
     private FrameReader _frameReader;
+    private Dictionary < (int, PixelUsage), int > _pixelUsageByIds = null;
 
     private int _level = 1;
     public int Level
@@ -33,10 +35,10 @@ public class DrawedCharacter : Character
         get { return _drawedCharacterFormDescription; }
     }
 
-    private List<ModifierInfos> _modifierAdded = new List<ModifierInfos> ();
-    public List<ModifierInfos> ModifiersAdded
+    private List<Modifier> _modifiersAdded = new List<Modifier> ();
+    public List<Modifier> ModifiersAdded
     {
-        get { return _modifierAdded; }
+        get { return _modifiersAdded; }
     }
 
     public event Action OnStatsChanged;
@@ -94,18 +96,15 @@ public class DrawedCharacter : Character
         }
     }
 
+    private void UpdateStats ()
+    {
+        UpdateStats (_pixelUsageByIds, false);
+    }
+
     private void UpdateStats (Dictionary < (int, PixelUsage), int > pixelUsageByIds, bool resetCurrentLife = true)
     {
-        Stats = new AttackableStats (pixelUsageByIds);
-
-        foreach (ModifierInfos modifierInfos in _modifierAdded)
-        {
-            Modifier modifier = Resources.Load<Modifier> ("Modifier/" + modifierInfos.SOFileName);
-            if (modifier == null)
-                throw new Exception ("Modifier " + modifierInfos.SOFileName + " not found");
-            Stats.AddStats (modifier.Stats);
-        }
-
+        _pixelUsageByIds = pixelUsageByIds;
+        Stats = new AttackableStats (pixelUsageByIds, _modifiersAdded);
         OnStatsChanged?.Invoke ();
         // Debug.Log (Stats.ToString ());
     }
@@ -149,18 +148,12 @@ public class DrawedCharacter : Character
         return shadowSprite;
     }
 
-    private void AddModifier (Modifier modifier, ModifierInfos modifierInfos)
+    private void AddModifier (ModifierInfos modifierInfos)
     {
-        _modifierAdded.Add (modifierInfos);
+        _modifiersAdded.Add (modifierInfos.Modifier);
 
-        GameObject modifierGoInstance = _modifierGoInstanceFactory.Create (Renderer.bounds, _modifierLayer.transform, modifier,
+        _modifierGoInstanceFactory.Create (Renderer.bounds, _modifierLayer.transform, modifierInfos.Modifier,
             modifierInfos.GetLocalPosition (Renderer.bounds, new Vector3 (0.5f, 0.5f, 0f)), modifierInfos.IsFlipped, 0.1f);
-
-        if (modifier.Stats?.HasAnyStats () == true)
-        {
-            Stats.AddStats (modifier.Stats);
-            OnStatsChanged?.Invoke ();
-        }
     }
 
     private void RemoveAllModifiersGo ()
@@ -171,18 +164,18 @@ public class DrawedCharacter : Character
         }
     }
 
-    public void Init (DrawedCharacterFormDescription drawedCharacterFormDescription, Frame frame, List<ModifierInfos> modifiersAdded, bool resetCurrentLife = true)
+    public void Init (DrawedCharacterFormDescription drawedCharacterFormDescription, Frame frame, List<ModifierInfos> modifiersInfos, bool resetCurrentLife = true)
     {
         _drawedCharacterFormDescription = drawedCharacterFormDescription;
 
         RemoveAllModifiersGo ();
-        _modifierAdded = new List<ModifierInfos> ();
-        foreach (ModifierInfos modifierInfos in modifiersAdded)
+        _modifiersAdded = new List<Modifier> ();
+        foreach (ModifierInfos modifierInfos in modifiersInfos)
         {
             Modifier modifier = Resources.Load<Modifier> ("Modifier/" + modifierInfos.SOFileName);
             if (modifier == null)
                 throw new Exception ("Modifier " + modifierInfos.SOFileName + " not found");
-            AddModifier (modifier, modifierInfos);
+            AddModifier (modifierInfos);
         }
 
         GenerateColliders ();
@@ -199,7 +192,7 @@ public class DrawedCharacter : Character
     {
         _description.DisplayName = drawedCharacterInfos.Name;
         _drawedCharacterFormDescription = drawedCharacterInfos.DrawedCharacterFormDescription;
-        _modifierAdded = new List<ModifierInfos> ();
+        _modifiersAdded = new List<Modifier> ();
         foreach (ModifierInfos modifierInfos in drawedCharacterInfos.ModifierInfos)
         {
             Modifier modifier = Resources.Load<Modifier> ("Modifier/" + modifierInfos.SOFileName);
@@ -208,14 +201,13 @@ public class DrawedCharacter : Character
                 Debug.LogError ("Modifier " + modifierInfos.SOFileName + " not found");
                 continue;
             }
-            AddModifier (modifier, modifierInfos);
+            AddModifier (modifierInfos);
         }
 
         LoadFrameInfos (drawedCharacterInfos.FrameInfos);
         GenerateColliders ();
         OnDrawedCharacterUpdate?.Invoke ();
         _outline.SetRenderer (_renderer);
-        // UpdateStats ();
     }
 
     private void LoadFrameInfos (FrameInfos frameInfos)

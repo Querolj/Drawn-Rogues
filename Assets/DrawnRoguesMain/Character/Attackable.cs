@@ -108,7 +108,7 @@ public class Attackable : CombatEntity
         _renderer = GetComponent<SpriteRenderer> ();
         if (_statsSerialized.HasAnyStats ())
         {
-            Stats.AddStats (_statsSerialized);
+            Stats = new AttackableStats (_statsSerialized);
         }
 
         Stats.AttackableState.OnLifeReachZero += () =>

@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public enum MainStatType
 {
     Life,
-    Strength,
+    Strenght,
     Intelligence,
     Mobility
 }
@@ -14,7 +15,9 @@ public enum MainStatType
 public class AttackableStats
 {
     #region Main stats
+    private int _initialLife;
     private int _baseLife;
+    public int BaseLife { get { return _baseLife; } set { _baseLife = value; } }
     private int _alteredLife;
     public int Life
     {
@@ -43,6 +46,7 @@ public class AttackableStats
     }
 
     private int _baseIntelligence;
+    public int BaseIntelligence { get { return _baseIntelligence; } set { _baseIntelligence = value; } }
     private int _alteredIntelligence;
     public int Intelligence
     {
@@ -60,6 +64,7 @@ public class AttackableStats
     private Dictionary < int, (OperationTypeEnum, float) > _intelligenceModifiersById = new Dictionary < int, (OperationTypeEnum, float) > ();
 
     private int _baseStrenght;
+    public int BaseStrenght { get { return _baseStrenght; } set { _baseStrenght = value; } }
     private int _alteredStrenght;
     public int Strenght
     {
@@ -77,6 +82,7 @@ public class AttackableStats
     private Dictionary < int, (OperationTypeEnum, float) > _strenghtModifiersById = new Dictionary < int, (OperationTypeEnum, float) > ();
 
     private int _baseMobility;
+    public int BaseMobility { get { return _baseMobility; } set { _baseMobility = value; } }
     private int _alteredMobility;
     public int Mobility
     {
@@ -97,19 +103,21 @@ public class AttackableStats
     {
         foreach ((OperationTypeEnum, float) mainStatModifier in GetSortedListOfModifiers (modifiersById))
         {
-            switch (mainStatModifier.Item1)
+            OperationTypeEnum operationType = mainStatModifier.Item1;
+            float value = mainStatModifier.Item2;
+            switch (operationType)
             {
                 case OperationTypeEnum.Add:
-                    valueToAlter += (int) mainStatModifier.Item2;
+                    valueToAlter += (int) value;
                     break;
                 case OperationTypeEnum.AddPercentage:
-                    valueToAlter += (int) (valueToAlter * (mainStatModifier.Item2 / 100f));
+                    valueToAlter += (int) (valueToAlter * value);
                     break;
                 case OperationTypeEnum.Set:
                     valueToAlter = (int) mainStatModifier.Item2;
                     break;
                 case OperationTypeEnum.PercentageResistance:
-                    valueToAlter = (int) (valueToAlter * (1f - (mainStatModifier.Item2 / 100f)));
+                    valueToAlter = (int) (valueToAlter * (1f - value));
                     break;
             }
         }
@@ -136,30 +144,12 @@ public class AttackableStats
             case MainStatType.Intelligence:
                 AddMainStatModifierInternal (id, operationType, value, ref _intelligenceModifiersById);
                 break;
-            case MainStatType.Strength:
+            case MainStatType.Strenght:
                 AddMainStatModifierInternal (id, operationType, value, ref _strenghtModifiersById);
                 break;
             case MainStatType.Mobility:
                 AddMainStatModifierInternal (id, operationType, value, ref _mobilityModifiersById);
                 break;
-        }
-    }
-
-    public float GetMainStatValue (MainStatType mainStatType)
-    {
-        switch (mainStatType)
-        {
-            case MainStatType.Life:
-                return Life;
-            case MainStatType.Intelligence:
-                return Intelligence;
-            case MainStatType.Strength:
-                return Strenght;
-            case MainStatType.Mobility:
-                return Mobility;
-            default:
-                Debug.LogError ("MainStatType " + mainStatType + "not supported");
-                return 0;
         }
     }
 
@@ -186,7 +176,7 @@ public class AttackableStats
             case MainStatType.Intelligence:
                 RemoveMainStatModifierInternal (id, _intelligenceModifiersById);
                 break;
-            case MainStatType.Strength:
+            case MainStatType.Strenght:
                 RemoveMainStatModifierInternal (id, _strenghtModifiersById);
                 break;
             case MainStatType.Mobility:
@@ -208,6 +198,12 @@ public class AttackableStats
     }
 
     #endregion
+
+    private Dictionary<string, MainStatsPassive> _mainStatsPassiveByNames = new Dictionary<string, MainStatsPassive> ();
+    public Dictionary<string, MainStatsPassive> MainStatsPassiveByNames
+    {
+        get { return _mainStatsPassiveByNames; }
+    }
 
     private Dictionary<string, AttackDefPassive> _attackDefPassiveByNames = new Dictionary<string, AttackDefPassive> ();
     public Dictionary<string, AttackDefPassive> AttackDefPassiveByNames
@@ -248,6 +244,11 @@ public class AttackableStats
 
     public AttackableStats () { }
 
+    public AttackableStats (StatsSerialized statsSerialized)
+    {
+        AddStats (statsSerialized);
+    }
+
     public AttackableStats (int life, int intelligence, int strenght, int mobility, float kilogram)
     {
         _baseLife = life;
@@ -257,7 +258,7 @@ public class AttackableStats
         _kilogram = kilogram;
     }
 
-    public AttackableStats (Dictionary < (int, PixelUsage), int > pixelUsageByIds)
+    public AttackableStats (Dictionary < (int, PixelUsage), int > pixelUsageByIds, List<Modifier> modifiers)
     {
         foreach ((int id, PixelUsage colorUsage) in pixelUsageByIds.Keys)
         {
@@ -281,6 +282,18 @@ public class AttackableStats
             {
                 throw new Exception (pixCount + " : " + e);
             }
+        }
+
+        foreach (Modifier modifier in modifiers)
+        {
+            AddStats (modifier.Stats);
+        }
+
+        List<MainStatsPassive> ordererMainStatsPassives = _mainStatsPassiveByNames.Values.ToList ();
+        ordererMainStatsPassives.OrderBy (x => x.OperationType);
+        foreach (MainStatsPassive passive in ordererMainStatsPassives)
+        {
+            passive.AlterStats (this);
         }
     }
 
@@ -365,8 +378,13 @@ public class AttackableStats
         }
     }
 
-    public void AddStats (StatsSerialized statsSerialized, int multiplicator = 1)
+    private void AddStats (StatsSerialized statsSerialized, int multiplicator = 1)
     {
+        foreach (MainStatsPassiveSerialized mainStatsPassiveSerialized in statsSerialized?.MainStatsPassiveValues)
+        {
+            AddToPassiveDict (_mainStatsPassiveByNames, mainStatsPassiveSerialized, multiplicator);
+        }
+
         foreach (AttackDefPassiveSerialized attackdefPassiveSerialized in statsSerialized?.AttackDefPassiveValues)
         {
             AddToPassiveDict (_attackDefPassiveByNames, attackdefPassiveSerialized, multiplicator);
@@ -477,14 +495,27 @@ public class AttackableStats
 [Serializable]
 public class StatsSerialized
 {
+    [BoxGroup ("Passives")]
+    public List<MainStatsPassiveSerialized> MainStatsPassiveValues = new List<MainStatsPassiveSerialized> ();
+
+    [BoxGroup ("Passives")]
     public List<AttackDefPassiveSerialized> AttackDefPassiveValues = new List<AttackDefPassiveSerialized> ();
+
+    [BoxGroup ("Passives")]
     public List<AttackOffPassiveSerialized> AttackOffPassiveValues = new List<AttackOffPassiveSerialized> ();
+
+    [BoxGroup ("Passives")]
     public List<EffectDefPassiveSerialized> EffectDefPassiveValues = new List<EffectDefPassiveSerialized> ();
+
+    [BoxGroup ("Passives")]
     public List<EffectOffPassiveSerialized> EffectOffPassiveValues = new List<EffectOffPassiveSerialized> ();
+
+    [BoxGroup ("Effects")]
     public List<EffectSerialized> effectValues = new List<EffectSerialized> ();
 
     public bool HasAnyStats ()
     {
-        return AttackDefPassiveValues?.Count > 0 || AttackOffPassiveValues?.Count > 0 || EffectDefPassiveValues?.Count > 0 || EffectOffPassiveValues?.Count > 0 || effectValues?.Count > 0;
+        return AttackDefPassiveValues?.Count > 0 || AttackOffPassiveValues?.Count > 0 || EffectDefPassiveValues?.Count > 0 ||
+            EffectOffPassiveValues?.Count > 0 || effectValues?.Count > 0 || MainStatsPassiveValues?.Count > 0;
     }
 }

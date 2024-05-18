@@ -1,5 +1,7 @@
+using System;
 using Newtonsoft.Json;
 using UnityEngine;
+
 public class ModifierInfos
 {
     public Vector2 PercentagePosition { get; set; }
@@ -16,6 +18,9 @@ public class ModifierInfos
         PercentagePosition = percentagePos;
         SOFileName = soFileName;
         IsFlipped = isFlipped;
+        Modifier = Resources.Load<Modifier> ("Modifier/" + SOFileName);
+        if (Modifier == null)
+            throw new Exception ("Modifier " + SOFileName + " not found");
     }
 
     public ModifierInfos (Vector3 percentagePos, Modifier modifier, bool isFlipped)

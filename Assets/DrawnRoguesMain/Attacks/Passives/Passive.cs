@@ -20,6 +20,9 @@ public class Passive : ScriptableObject
     private float _minValue = float.MinValue;
     public float MinValue => _minValue;
 
+    [SerializeField, InfoBox ("If true, the value will be displayed as a percentage. If false, it will be displayed as a number.")]
+    private bool _isPercentage = true;
+
     [SerializeField, TextArea (3, 10), InfoBox ("Can contain {value} to display the value, and {sign} to display + or - depending on the value.")]
     private string _description;
     public string Description => _description;
@@ -65,7 +68,8 @@ public class Passive : ScriptableObject
 
     public override string ToString ()
     {
-        string descriptionWithValue = Description.Replace ("{value}", Mathf.Abs (_value * 100f).ToString ());
+        float mult = _isPercentage ? 100f : 1f;
+        string descriptionWithValue = Description.Replace ("{value}", Mathf.Abs (_value * mult).ToString ());
         if (InverseDisplayedSignInDescription)
             descriptionWithValue = descriptionWithValue.Replace ("{sign}", _value < 0 ? "+" : "-");
         else

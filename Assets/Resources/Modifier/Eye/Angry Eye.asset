@@ -16,14 +16,13 @@ MonoBehaviour:
   _displayName: Angry Eye
   _type: 1
   _stats:
-    AttackDefPassiveValues: []
-    AttackOffPassiveValues:
-    - Passive: {fileID: 11400000, guid: 7b6d870f008ae74498f37e71b3a85c36, type: 2}
+    AttackDefPassiveValues:
+    - Passive: {fileID: 11400000, guid: af93948944c0cd944bf1e4d36719cf8d, type: 2}
       Value: -0.025
-    - Passive: {fileID: 11400000, guid: b9434d1ecc92a0f40b195c3b54f27596, type: 2}
-      Value: 0.25
+    AttackOffPassiveValues:
+    - Passive: {fileID: 11400000, guid: 4ccb77ab3fa57ec48bac7ba8f24904e0, type: 2}
+      Value: 1
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
     effectValues: []
   _sprite: {fileID: 1369188593, guid: 05c616df538d0d146ae9efc246706ca1, type: 3}
-  _description: 

@@ -208,15 +208,15 @@ public class CharacterCanvas : MonoBehaviour
             };
 
             _maxModifieurAllowed = dc.GetMaxModifierAllowed ();
-            foreach (ModifierInfos modifierInfos in dc.ModifiersAdded)
-            {
-                Modifier modifier = Resources.Load<Modifier> ("Modifier/" + modifierInfos.SOFileName);
-                if (modifier == null)
-                    throw new Exception ("Modifier " + modifierInfos.SOFileName + " not found");
-                AddModifier (modifier, modifierInfos);
-                _stats.AddStats (modifier.Stats);
-            }
-            UpdateStats ();
+            // foreach (ModifierInfos modifierInfos in dc.ModifiersAdded)
+            // {
+            //     Modifier modifier = Resources.Load<Modifier> ("Modifier/" + modifierInfos.SOFileName);
+            //     if (modifier == null)
+            //         throw new Exception ("Modifier " + modifierInfos.SOFileName + " not found");
+            //     AddModifier (modifier, modifierInfos);
+            //     _stats.AddStats (modifier.Stats);
+            // }
+            // UpdateStats ();
         }
         else
         {
@@ -234,20 +234,9 @@ public class CharacterCanvas : MonoBehaviour
 
     private void UpdateStats ()
     {
-        UpdateStats (true);
-    }
-
-    private void UpdateStats (bool resetCurrentLife = true)
-    {
-        _stats = new AttackableStats (_frameReader.GetPixelIdsAndUsagesCount (_frame));
-
-        foreach (ModifierInfos modifierInfos in _modifiersAdded)
-        {
-            Modifier modifier = Resources.Load<Modifier> ("Modifier/" + modifierInfos.SOFileName);
-            if (modifier == null)
-                throw new Exception ("Modifier " + modifierInfos.SOFileName + " not found");
-            _stats.AddStats (modifier.Stats);
-        }
+        List<Modifier> modifiers = new List<Modifier> ();
+        modifiers.AddRange (_modifiersAdded.ConvertAll (m => m.Modifier));
+        _stats = new AttackableStats (_frameReader.GetPixelIdsAndUsagesCount (_frame), modifiers);
 
         OnStatsChanged?.Invoke ();
         // Debug.Log (_stats.ToString ());
