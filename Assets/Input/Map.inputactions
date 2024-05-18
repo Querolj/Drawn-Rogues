@@ -76,6 +76,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "DebugDisplayAttackableStats",
+                    "type": "Button",
+                    "id": "7d22e7f8-5cd2-470e-84b1-b6cc1f7af042",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -285,6 +294,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "DeleteModifier",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9f0621d3-8366-4e18-ae69-56f0cd51476e",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DebugDisplayAttackableStats",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
