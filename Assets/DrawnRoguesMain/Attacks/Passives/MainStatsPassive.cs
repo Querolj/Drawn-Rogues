@@ -1,7 +1,7 @@
 using System;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
+[CreateAssetMenu (fileName = "MainStatsPassive", menuName = "Passive/MainStatsPassive", order = 1)]
 public class MainStatsPassive : Passive
 {
     [SerializeField]

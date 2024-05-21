@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c5a2250f1451f447a49344f3247c160, type: 3}
+  m_Name: Happy Eye
+  m_EditorClassIdentifier: 
+  _orderInUI: 0
+  _displayName: Happy Eye
+  _type: 1
+  _stats:
+    MainStatsPassiveValues:
+    - Passive: {fileID: 11400000, guid: eb8a25ff83daac345abcac25361b9fb7, type: 2}
+      Value: 0.05
+    AttackDefPassiveValues: []
+    AttackOffPassiveValues:
+    - Passive: {fileID: 11400000, guid: 7b6d870f008ae74498f37e71b3a85c36, type: 2}
+      Value: 0.025
+    EffectDefPassiveValues: []
+    EffectOffPassiveValues: []
+    effectValues: []
+  _sprite: {fileID: 21300000, guid: 5d63d4f0b8450f342b8c8a5ccef88537, type: 3}

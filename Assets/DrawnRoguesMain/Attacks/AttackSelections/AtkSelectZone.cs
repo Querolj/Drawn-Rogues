@@ -32,18 +32,17 @@ public class AtkSelectZone : AttackSelection
     public override void Deactivate ()
     {
         base.Deactivate ();
-        StopDisplayAttackablesContours ();
+        StopDisplayAttackablesOutlines ();
         _trajectoryDrawer.ClearTrajectory ();
         if (_attackableDetector != null && _attackableDetector.gameObject != null)
             DestroyImmediate (_attackableDetector.gameObject);
     }
 
-    private Vector3 _lastMousePos = Vector3.zero;
     protected override void Update ()
     {
         if (_attack == null || !_spriteRenderer.enabled)
         {
-            StopDisplayAttackablesContours ();
+            StopDisplayAttackablesOutlines ();
             return;
         }
 
@@ -81,7 +80,7 @@ public class AtkSelectZone : AttackSelection
             if (_attackableDetector.gameObject.activeInHierarchy)
             {
                 _attackableDetector.gameObject.SetActive (false);
-                StopDisplayAttackablesContours ();
+                StopDisplayAttackablesOutlines ();
                 _trajectoryDrawer.ClearTrajectory ();
             }
 
@@ -95,7 +94,7 @@ public class AtkSelectZone : AttackSelection
         _lastMousePos = Mouse.current.position.ReadValue();
     }
 
-    private void StopDisplayAttackablesContours ()
+    private void StopDisplayAttackablesOutlines ()
     {
         if (_attackableDetector.AttackablesInZone?.Count > 0)
         {

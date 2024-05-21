@@ -43,6 +43,14 @@ public class Modifier : ScriptableObject
             lineJump = true;
         }
 
+        foreach (MainStatsPassiveSerialized mainStatsPassive in Stats.MainStatsPassiveValues)
+        {
+            if (lineJump)
+                text += "\n";
+            text += mainStatsPassive.Passive.ToString (mainStatsPassive.Value);
+            lineJump = true;
+        }
+
         foreach (AttackDefPassiveSerialized attackDefPassive in Stats.AttackDefPassiveValues)
         {
             if (lineJump)
@@ -72,6 +80,14 @@ public class Modifier : ScriptableObject
             if (lineJump)
                 text += "\n";
             text += effectOffPassive.Passive.ToString (effectOffPassive.Value);
+            lineJump = true;
+        }
+
+        foreach(MiscPassiveSerialized miscPassive in Stats.MiscPassiveValues)
+        {
+            if (lineJump)
+                text += "\n";
+            text += miscPassive.Passive.ToString (miscPassive.Value);
             lineJump = true;
         }
 

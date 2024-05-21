@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class ColorDropQuantity
+public class PixelDropQuantity
 {
     public BaseColor BaseColor;
     public int Quantity;
@@ -18,10 +18,10 @@ public class ColouringReward
 public class Reward : MonoBehaviour
 {
     [SerializeField]
-    private List<ColorDropQuantity> _colorDropsReward = new List<ColorDropQuantity> ();
-    public List<ColorDropQuantity> ColorDropsReward
+    private List<PixelDropQuantity> _pixelDropsReward = new List<PixelDropQuantity> ();
+    public List<PixelDropQuantity> PixelDropsReward
     {
-        get { return _colorDropsReward; }
+        get { return _pixelDropsReward; }
     }
 
     public int XpToGain;

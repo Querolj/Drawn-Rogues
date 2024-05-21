@@ -55,7 +55,6 @@ public class AtkSelectJump : AttackSelection
         _trajectoryDrawer.ClearTrajectory ();
     }
 
-    private Vector3 _lastMousePos = Vector3.zero;
     protected override void Update ()
     {
         if (_attack == null || !_spriteRenderer.enabled)
@@ -84,7 +83,6 @@ public class AtkSelectJump : AttackSelection
 
         TryRaycastOnAttackSelectionSprite (Mouse.current.position.ReadValue(), out Vector3 targetPos);
         targetPos.y = Utils.GetMapHeight (targetPos);
-        Debug.Log ("targetPos 2 " + targetPos.ToString ("F3"));
 
         TryTurnPlayer (targetPos);
 

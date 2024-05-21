@@ -5,8 +5,8 @@ using UnityEngine;
 public class Vacuumable : MonoBehaviour
 {
     [SerializeField]
-    private List<ColorDropQuantity> _colorDropsReward = new List<ColorDropQuantity> ();
-    public List<ColorDropQuantity> ColorDropsReward
+    private List<PixelDropQuantity> _colorDropsReward = new List<PixelDropQuantity> ();
+    public List<PixelDropQuantity> ColorDropsReward
     {
         get { return _colorDropsReward; }
     }

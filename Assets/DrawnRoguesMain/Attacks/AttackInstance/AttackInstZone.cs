@@ -13,7 +13,6 @@ public class AttackInstZone : AttackInstance
         AttackZone attackZone = attack as AttackZone ??
             throw new ArgumentException (nameof (attack) + " must be of type " + nameof (AttackZone));
 
-        AnimationTemplate = attackZone.AnimationTemplate;
         ZoneSize = attackZone.ZoneSize;
         AttackableDetectorTemplate = attackZone.AttackableDetectorTemplate;
     }

@@ -16,9 +16,13 @@ MonoBehaviour:
   _displayName: Monocle Eye
   _type: 1
   _stats:
-    MainStatsPassiveValues: []
+    MainStatsPassiveValues:
+    - Passive: {fileID: 11400000, guid: 5e23a164fad71924293c8bf20d1fdbd5, type: 2}
+      Value: 0.05
     AttackDefPassiveValues: []
-    AttackOffPassiveValues: []
+    AttackOffPassiveValues:
+    - Passive: {fileID: 11400000, guid: 7b6d870f008ae74498f37e71b3a85c36, type: 2}
+      Value: 0.025
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
     effectValues: []

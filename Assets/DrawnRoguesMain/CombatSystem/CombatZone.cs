@@ -173,15 +173,17 @@ public class CombatZone : MonoBehaviour
         Reward[] rewards = GetComponentsInChildren<Reward> ();
         Dictionary<BaseColor, int> colorDrops = new Dictionary<BaseColor, int> ();
         int totalXpGained = 0;
+        float pixelDropMultiplier = _playerController.ControlledCharacter.Stats.MiscStats.PixelDropMultiplier;
 
         foreach (Reward reward in rewards)
         {
-            foreach (ColorDropQuantity colorDrop in reward.ColorDropsReward)
+            foreach (PixelDropQuantity colorDrop in reward.PixelDropsReward)
             {
+                int quantity = Mathf.RoundToInt (colorDrop.Quantity * pixelDropMultiplier);
                 if (colorDrops.ContainsKey (colorDrop.BaseColor))
-                    colorDrops[colorDrop.BaseColor] += colorDrop.Quantity;
+                    colorDrops[colorDrop.BaseColor] += quantity;
                 else
-                    colorDrops.Add (colorDrop.BaseColor, colorDrop.Quantity);
+                    colorDrops.Add (colorDrop.BaseColor, quantity);
             }
             _baseColorPalette.AddColorDrops (colorDrops);
             totalXpGained += reward.XpToGain;

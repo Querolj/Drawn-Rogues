@@ -48,7 +48,6 @@ public class AtkSelectProjectile : AttackSelection
             _targettedAttackable.StopDisplayOutline ();
     }
 
-    private Vector3 _lastMousePos = Vector3.zero;
     protected override void Update ()
     {
         if (_attack == null || !_spriteRenderer.enabled)

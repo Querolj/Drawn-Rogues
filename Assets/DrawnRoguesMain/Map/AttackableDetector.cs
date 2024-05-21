@@ -40,7 +40,7 @@ public class AttackableDetector : MonoBehaviour
     {
         _collider = GetComponent<Collider> ();
         Vector3 newPos = transform.position;
-        newPos.z = transform.position.z + 0.05f; // small offset to be behind attackable, so we can trigger OnMouseEnter/Exit events on attackables
+        // newPos.z = transform.position.z + 0.05f; // small offset to be behind attackable, so we can trigger OnMouseEnter/Exit events on attackables
         transform.position = newPos;
     }
 

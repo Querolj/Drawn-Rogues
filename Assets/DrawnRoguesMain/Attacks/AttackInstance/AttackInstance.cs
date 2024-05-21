@@ -35,6 +35,8 @@ public class AttackInstance
     #region Injected
     [Inject]
     protected FightRegistry _fightDescription;
+    [Inject]
+    protected ActionDelayer _actionDelayer;
     #endregion
 
     public virtual void Init (Attack attack, Character owner)

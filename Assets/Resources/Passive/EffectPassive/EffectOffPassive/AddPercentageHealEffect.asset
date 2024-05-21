@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxValue: 3.4028235e+38
   _minValue: -3.4028235e+38
+  _isPercentage: 1
   _description: '{sign}{value}% increase healing received.'
   _inverseDisplayedSignInDescription: 0
   _operationType: 1

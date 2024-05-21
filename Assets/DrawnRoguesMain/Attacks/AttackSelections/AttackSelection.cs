@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Zenject;
 
 public enum AttackSelectionType
@@ -12,13 +13,13 @@ public enum AttackSelectionType
     TrajectoryZone,
     Zone,
     Self,
-    Trajectory
+    Trajectory,
+    Cone
 }
 
 public class AttackSelection : MonoBehaviour
 {
-    public class Factory : PlaceholderFactory<AttackSelection, AttackSelection>
-    { }
+    public class Factory : PlaceholderFactory<AttackSelection, AttackSelection> { }
 
     [SerializeField]
     private AttackSelectionType _attackSelectionType;
@@ -50,6 +51,7 @@ public class AttackSelection : MonoBehaviour
     protected TrajectoryCalculator _trajectoryCalculator;
     protected TrajectoryDrawer _trajectoryDrawer;
     protected CombatZone _combatZone;
+    protected Vector2 _lastMousePos = Vector3.zero;
 
     private void Awake ()
     {
@@ -105,10 +107,17 @@ public class AttackSelection : MonoBehaviour
 
     protected virtual void Update ()
     {
+        if (_lastMousePos == Mouse.current.position.ReadValue ())
+        {
+            return;
+        }
+
         if (_attack == null)
         {
             return;
         }
+
+        _lastMousePos = Mouse.current.position.ReadValue ();
     }
 
     private Dictionary<int, Attackable> _attackableCached = new Dictionary<int, Attackable> ();

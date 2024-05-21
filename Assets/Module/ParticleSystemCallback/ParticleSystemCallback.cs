@@ -7,6 +7,7 @@ public class ParticleSystemCallback : MonoBehaviour
     public event Action OnParticleSystemDestroyed;
 
     private ParticleSystem _particleSystem;
+    public ParticleSystem ParticleSystem => _particleSystem;
     private Vector3 _targetPositionOffset;
     private Transform _target;
 

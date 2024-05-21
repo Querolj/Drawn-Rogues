@@ -133,7 +133,7 @@ public class Vacuumer : MonoBehaviour
 
         // Loot color drops
         Dictionary<BaseColor, int> colorDropsLooted = new Dictionary<BaseColor, int> ();
-        foreach (ColorDropQuantity colorDropQuantity in _focusedVacuumable.ColorDropsReward)
+        foreach (PixelDropQuantity colorDropQuantity in _focusedVacuumable.ColorDropsReward)
             colorDropsLooted.Add (colorDropQuantity.BaseColor, colorDropQuantity.Quantity);
 
         _baseColorInventory.AddColorDrops (colorDropsLooted);

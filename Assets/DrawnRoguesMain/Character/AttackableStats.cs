@@ -15,7 +15,6 @@ public enum MainStatType
 public class AttackableStats
 {
     #region Main stats
-    private int _initialLife;
     private int _baseLife;
     public int BaseLife { get { return _baseLife; } set { _baseLife = value; } }
     private int _alteredLife;
@@ -205,6 +204,11 @@ public class AttackableStats
         get { return _mainStatsPassiveByNames; }
     }
 
+    private Dictionary<string, MiscPassive> _miscPassiveByNames = new Dictionary<string, MiscPassive> ();
+    public Dictionary<string, MiscPassive> MiscPassiveByNames
+    {
+        get { return _miscPassiveByNames; }
+    }
     private Dictionary<string, AttackDefPassive> _attackDefPassiveByNames = new Dictionary<string, AttackDefPassive> ();
     public Dictionary<string, AttackDefPassive> AttackDefPassiveByNames
     {
@@ -241,6 +245,9 @@ public class AttackableStats
         get { return _kilogram; }
         set { _kilogram = value; }
     }
+
+    private AttackableMiscStats _miscStats = new AttackableMiscStats ();
+    public AttackableMiscStats MiscStats => _miscStats;
 
     public AttackableStats () { }
 
@@ -468,6 +475,11 @@ public class AttackableStats
             s += "\n" + stat.Value;
         }
 
+        foreach (KeyValuePair<string, MainStatsPassive> stat in _mainStatsPassiveByNames)
+        {
+            s += "\n" + stat.Value;
+        }
+
         foreach (KeyValuePair<string, AttackOffPassive> stat in _attackoffPassiveByNames)
         {
             s += "\n" + stat.Value;
@@ -488,6 +500,11 @@ public class AttackableStats
             s += "\n" + stat.Value;
         }
 
+        foreach (KeyValuePair<string, MiscPassive> stat in _miscPassiveByNames)
+        {
+            s += "\n" + stat.Value;
+        }
+
         return s;
     }
 }
@@ -497,6 +514,9 @@ public class StatsSerialized
 {
     [BoxGroup ("Passives")]
     public List<MainStatsPassiveSerialized> MainStatsPassiveValues = new List<MainStatsPassiveSerialized> ();
+
+    [BoxGroup ("Passives")]
+    public List<MiscPassiveSerialized> MiscPassiveValues = new List<MiscPassiveSerialized> ();
 
     [BoxGroup ("Passives")]
     public List<AttackDefPassiveSerialized> AttackDefPassiveValues = new List<AttackDefPassiveSerialized> ();
@@ -516,6 +536,6 @@ public class StatsSerialized
     public bool HasAnyStats ()
     {
         return AttackDefPassiveValues?.Count > 0 || AttackOffPassiveValues?.Count > 0 || EffectDefPassiveValues?.Count > 0 ||
-            EffectOffPassiveValues?.Count > 0 || effectValues?.Count > 0 || MainStatsPassiveValues?.Count > 0;
+            EffectOffPassiveValues?.Count > 0 || effectValues?.Count > 0 || MainStatsPassiveValues?.Count > 0 || MiscPassiveValues?.Count > 0;
     }
 }

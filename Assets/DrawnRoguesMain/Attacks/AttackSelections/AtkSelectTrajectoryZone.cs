@@ -49,7 +49,6 @@ public class AtkSelectTrajectoryZone : AttackSelection
             DestroyImmediate (_attackableDetector.gameObject);
     }
 
-    private Vector3 _lastMousePos = Vector3.zero;
     protected override void Update ()
     {
         if (_attack == null || !_spriteRenderer.enabled)

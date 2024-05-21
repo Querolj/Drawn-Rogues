@@ -280,9 +280,9 @@ public class Attackable : CombatEntity
         {
             _renderer.color = fadedColor;
             yield return new WaitForSeconds (fadedTime);
-            _renderer.color = color;
             if (i != fadeIteration - 1)
-                yield return new WaitForSeconds (fadedTime);
+                _renderer.color = Color.white;
+            yield return new WaitForSeconds (fadedTime);
         }
 
     }

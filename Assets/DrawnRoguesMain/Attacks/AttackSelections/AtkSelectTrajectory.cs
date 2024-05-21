@@ -34,7 +34,6 @@ public class AtkSelectTrajectory : AttackSelection
         _target = null;
     }
 
-    private Vector3 _lastMousePos = Vector3.zero;
     protected override void Update ()
     {
         if (_attack == null || !_spriteRenderer.enabled)

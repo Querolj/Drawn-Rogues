@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2741421c64af6344d9c019db2574c849, type: 3}
+  m_Name: BurnEffect
+  m_EditorClassIdentifier: 
+  _description: Burn
+  _animationOnApplyTemplate: {fileID: 0}
+  _particleOnApplyTemplate: {fileID: 1289346369602437238, guid: f90cf0b0cc24e714ba6dbbc8637eca80, type: 3}
+  _inverseDisplayedSignInDescription: 0
+  _effectApplicationTimeline: 0
+  _applyConditionsOnUser: 
+  _applyConditionsOnTarget: 
+  _burnTurnDuration: 3
+  _burningEffect: {fileID: 11400000, guid: 1f47ed9ea752d3740b61bf39a8e75563, type: 2}
