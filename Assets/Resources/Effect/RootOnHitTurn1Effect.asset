@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 753b77113fd5352438f5f53211a6b88a, type: 3}
-  m_Name: RootOnHitEffect
+  m_Name: RootOnHitTurn1Effect
   m_EditorClassIdentifier: 
   _description: '{sign}{value}% chance to root on hit.'
   _animationOnApplyTemplate: {fileID: 0}

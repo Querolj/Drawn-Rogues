@@ -7,14 +7,10 @@ public class AttackInstCone : AttackInstance
 {
     private ParticleSystem _breathParticleSystemTemplate;
     private float _coneAngle;
-    private float _breathDuration = 1.5f;
-    private float _particuleNumberPerDegree = 1f;
     private float _coneObjectAngle;
 
     public ParticleSystem BreathParticleSystem => _breathParticleSystemTemplate;
     public float ConeAngle => _coneAngle;
-    public float BreathDuration => _breathDuration;
-    public float ParticuleNumberPerDegree => _particuleNumberPerDegree;
 
     public void SetConeObjectAngle (float coneObjectAngle)
     {
@@ -29,8 +25,6 @@ public class AttackInstCone : AttackInstance
 
         _breathParticleSystemTemplate = attackCone.BreathParticleSystem;
         _coneAngle = attackCone.ConeAngle;
-        _breathDuration = attackCone.BreathDuration;
-        _particuleNumberPerDegree = attackCone.ParticuleNumberPerDegree;
     }
 
     public override AttackInstance GetCopy ()
@@ -68,12 +62,13 @@ public class AttackInstCone : AttackInstance
         breathParticleSystem.transform.position = attackPos;
         breathParticleSystem.transform.rotation = Quaternion.Euler (0, 0, _coneObjectAngle - _coneAngle / 2f);
         ParticleSystem.MainModule psMain = breathParticleSystem.main;
-        psMain.duration = _breathDuration;
-        psMain.startLifetime = new ParticleSystem.MinMaxCurve (Range - 0.3f, Range);
+        float speed = psMain.startSpeed.constant;
+        float lifetime = Range / speed;
+        psMain.startLifetime = new ParticleSystem.MinMaxCurve (lifetime, lifetime);
         ParticleSystem.ShapeModule psShape = breathParticleSystem.shape;
         psShape.angle = _coneAngle;
         breathParticleSystem.Play ();
-        _actionDelayer.ExecuteInSeconds (_breathDuration, () => InflictDamage (allTargets));
+        _actionDelayer.ExecuteInSeconds (psMain.duration, () => InflictDamage (allTargets));
     }
 
     private void InflictDamage (List<Attackable> allTargets)
