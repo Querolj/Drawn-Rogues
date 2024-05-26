@@ -18,7 +18,10 @@ MonoBehaviour:
   _stats:
     MainStatsPassiveValues:
     - Passive: {fileID: 11400000, guid: eb8a25ff83daac345abcac25361b9fb7, type: 2}
-      Value: -0.05
+      Value: -0.025
+    MiscPassiveValues:
+    - Passive: {fileID: 11400000, guid: 8dbc12e2722daf544a9fb48858162762, type: 2}
+      Value: 0.05
     AttackDefPassiveValues: []
     AttackOffPassiveValues: []
     EffectDefPassiveValues: []

@@ -30,11 +30,10 @@ public class AttackPassive : Passive
             case AttackStatsType.Damage:
                 float minDamage = attack.MinDamage;
                 AlterPropertyValue (ref minDamage);
-                attack.MinDamage = (int) minDamage;
-
+                attack.MinDamage = Mathf.Max ((int) minDamage, 0);
                 float maxDamage = attack.MaxDamage;
                 AlterPropertyValue (ref maxDamage);
-                attack.MaxDamage = (int) maxDamage;
+                attack.MaxDamage = Mathf.Max ((int) maxDamage, 0);
                 break;
             case AttackStatsType.Precision:
                 float precision = attack.Precision;
@@ -54,7 +53,7 @@ public class AttackPassive : Passive
             case AttackStatsType.Range:
                 float range = attack.Range;
                 AlterPropertyValue (ref range);
-                attack.Range = range;
+                attack.Range = Mathf.Max (range, 1);
                 break;
         }
     }

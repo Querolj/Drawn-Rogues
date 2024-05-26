@@ -272,19 +272,18 @@ public class Attackable : CombatEntity
     {
         const float fadedTime = 0.06f;
         const int fadeIteration = 3;
-        Color color = _renderer.color;
-        Color fadedColor = color;
+        Color initialColor = _renderer.color;
+        Color fadedColor = initialColor;
         fadedColor.a = 0.3f;
 
         for (int i = 0; i < fadeIteration; i++)
         {
             _renderer.color = fadedColor;
             yield return new WaitForSeconds (fadedTime);
+            _renderer.color = initialColor;
             if (i != fadeIteration - 1)
-                _renderer.color = Color.white;
-            yield return new WaitForSeconds (fadedTime);
+                yield return new WaitForSeconds (fadedTime);
         }
-
     }
 
     public void DisplayOutline (Color color)

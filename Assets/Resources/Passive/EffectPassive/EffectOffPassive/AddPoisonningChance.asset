@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d287dc57c32d78543bfc5c503cefcbe7, type: 3}
+  m_Name: AddPoisonningChance
+  m_EditorClassIdentifier: 
+  _maxValue: 3.4028235e+38
+  _minValue: -3.4028235e+38
+  _isPercentage: 1
+  _description: '{sign}{value}% additional poisonning chance.'
+  _inverseDisplayedSignInDescription: 0
+  _operationType: 0
+  EffectsToAlter:
+  - {fileID: 11400000, guid: a1171f3f9d7e36b40bd707d209547f29, type: 2}

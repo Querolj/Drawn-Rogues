@@ -6,20 +6,26 @@ public class ActionDelayer : MonoBehaviour
 {
     private class DelayedAction
     {
-        public Action Action;
+        private Action _action;
         public float RemainingSecondsBeforeExecution;
         public float RemainingSecondsBeforeDeletion;
 
         public DelayedAction (Action action, float remainingSecondsBeforeExecution, float remainingSecondsBeforeDeletion)
         {
-            Action = action ??
+            _action = action ??
                 throw new ArgumentNullException (nameof (action));
             RemainingSecondsBeforeExecution = remainingSecondsBeforeExecution;
             RemainingSecondsBeforeDeletion = remainingSecondsBeforeDeletion;
         }
+
+        public void Execute ()
+        {
+            _action ();
+        }
     }
 
     private List<DelayedAction> _actionsToExecute = new List<DelayedAction> ();
+    private List<DelayedAction> _actionsToDelete = new List<DelayedAction> ();
 
     private void Update ()
     {
@@ -33,11 +39,20 @@ public class ActionDelayer : MonoBehaviour
             delayedAction.RemainingSecondsBeforeExecution -= Time.deltaTime;
             if (delayedAction.RemainingSecondsBeforeExecution <= 0f)
             {
-                delayedAction.Action ();
-                if (delayedAction.RemainingSecondsBeforeDeletion <= 0f)
-                    _actionsToExecute.RemoveAt (i);
+                delayedAction.Execute ();
+                if (delayedAction.RemainingSecondsBeforeDeletion > 0f)
+                    _actionsToDelete.Add (delayedAction);
                 _actionsToExecute.RemoveAt (i);
             }
+        }
+
+        // Try delete delayed actions
+        for (int i = _actionsToDelete.Count - 1; i >= 0; i--)
+        {
+            DelayedAction delayedAction = _actionsToDelete[i];
+            delayedAction.RemainingSecondsBeforeDeletion -= Time.deltaTime;
+            if (delayedAction.RemainingSecondsBeforeDeletion <= 0f)
+                _actionsToDelete.RemoveAt (i);
         }
     }
 

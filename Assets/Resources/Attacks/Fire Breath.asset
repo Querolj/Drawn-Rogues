@@ -39,5 +39,3 @@ MonoBehaviour:
   _requiredNumberOfLegsMax: -1
   _breathParticleSystem: {fileID: 1120458173033448550, guid: dacc9c720f08eb543aa1297b88ae4746, type: 3}
   _coneAngle: 60
-  _breathDuration: 1.5
-  _particuleNumberPerDegree: 1.5

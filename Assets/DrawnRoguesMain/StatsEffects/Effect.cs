@@ -53,7 +53,6 @@ public class Effect : ScriptableObject
     }
 
     protected float _alteredValue;
-    private bool _alteredValueSet = false;
 
     public void SetInitialValue (float value)
     {

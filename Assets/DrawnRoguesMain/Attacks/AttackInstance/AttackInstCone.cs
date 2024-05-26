@@ -64,11 +64,12 @@ public class AttackInstCone : AttackInstance
         ParticleSystem.MainModule psMain = breathParticleSystem.main;
         float speed = psMain.startSpeed.constant;
         float lifetime = Range / speed;
-        psMain.startLifetime = new ParticleSystem.MinMaxCurve (lifetime, lifetime);
+        psMain.startLifetime = new ParticleSystem.MinMaxCurve (lifetime - 0.4f, lifetime - 0.2f);
         ParticleSystem.ShapeModule psShape = breathParticleSystem.shape;
         psShape.angle = _coneAngle;
         breathParticleSystem.Play ();
-        _actionDelayer.ExecuteInSeconds (psMain.duration, () => InflictDamage (allTargets));
+        _actionDelayer.ExecuteInSeconds (psMain.duration, () => InflictDamage (allTargets), psMain.duration + 0.1f);
+        _actionDelayer.ExecuteInSeconds (psMain.duration + 0.1f, () => GameObject.Destroy (breathParticleSystem.gameObject));
     }
 
     private void InflictDamage (List<Attackable> allTargets)
