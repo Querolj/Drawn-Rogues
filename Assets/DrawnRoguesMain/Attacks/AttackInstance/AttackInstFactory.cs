@@ -35,7 +35,15 @@ public class AttackInstFactory : IFactory<Attack, Character, AttackInstance>
             attackInstance = _container.Instantiate<AttackInstJump> ();
         }
         else if (attack as AttackCone)
+        {
+            setAttackAnimation = false;
             attackInstance = _container.Instantiate<AttackInstCone> ();
+        }
+        else if (attack as AttackCharge)
+        {
+            attackInstance = _container.Instantiate<AttackInstCharge> ();
+            setAttackAnimation = false;
+        }
         else
             throw new ArgumentException ("Attack type " + attack.GetType () + "not supported");
 

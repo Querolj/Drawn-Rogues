@@ -5,25 +5,20 @@ using Zenject;
 
 public class AttackSelectionManager : MonoBehaviour
 {
-
     [SerializeField]
     private AttackSelection[] _attackSelectionTemplates;
-
-    private TrajectoryDrawer _trajectoryDrawer;
 
     // to sort the templates by type
     private Dictionary<AttackSelectionType, AttackSelection> _attackSelectionTemplatesByType = new Dictionary<AttackSelectionType, AttackSelection> ();
     private Dictionary<AttackSelectionType, AttackSelection> _attackSelectionInstancesByType = new Dictionary<AttackSelectionType, AttackSelection> ();
 
     private AttackSelection _activatedAttackSelection = null;
-    private TrajectoryCalculator _trajectoryCalculator = new TrajectoryCalculator ();
     private AttackSelection.Factory _attackSelectionFactory;
 
     [Inject, UsedImplicitly]
-    private void Init (AttackSelection.Factory attackSelectionFactory, TrajectoryDrawer trajectoryDrawer)
+    private void Init (AttackSelection.Factory attackSelectionFactory)
     {
         _attackSelectionFactory = attackSelectionFactory;
-        _trajectoryDrawer = trajectoryDrawer;
     }
 
     private void Awake ()
@@ -50,7 +45,6 @@ public class AttackSelectionManager : MonoBehaviour
             AttackSelection attackSelectionTemplate = _attackSelectionTemplatesByType[attackSelectionType];
             AttackSelection attackSelectionInstance = _attackSelectionFactory.Create (attackSelectionTemplate);
 
-            attackSelectionInstance.Init (_trajectoryCalculator, _trajectoryDrawer);
             attackSelectionInstance.gameObject.SetActive (false);
             _attackSelectionInstancesByType.Add (attackSelectionType, attackSelectionInstance);
         }

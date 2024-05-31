@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0078395815a4d9542a3d8504eca7d2ba, type: 3}
+  m_Name: AttackCharge
+  m_EditorClassIdentifier: 
+  _displayName: Charge test
+  _animationTemplate: {fileID: 0}
+  _particleTemplate: {fileID: 0}
+  _noDamage: 0
+  _minDamage: 1
+  _maxDamage: 2
+  _precision: 1
+  _criticalChance: 0
+  _criticalMultiplier: 2
+  _attackElement: 1
+  _range: 3
+  _attackSelectionType: 8
+  _attackTypes: 0100000004000000
+  _effectsSerialized: []
+  _isAvailableForPlayer: 1
+  _minimalLevelRequired: 0
+  _requiredWidthAdjectives: 
+  _requiredHeightAdjectives: 
+  _requiredBaseColor: 
+  _requiredNumberOfArmsMin: -1
+  _requiredNumberOfArmsMax: -1
+  _requiredNumberOfLegsMin: -1
+  _requiredNumberOfLegsMax: -1
+  _canGoThroughAttackables: 0
+  _chargeSpeed: 0

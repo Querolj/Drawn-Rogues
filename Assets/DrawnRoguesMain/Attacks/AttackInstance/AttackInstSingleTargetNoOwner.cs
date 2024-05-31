@@ -10,7 +10,7 @@ public class AttackInstSingleTargetNoOwner : AttackInstance
         Name = attack.Name;
         AnimationTemplate = attack.AnimationTemplate;
         ParticleTemplate = attack.ParticleTemplate;
-        AttackType = attack.AttackType;
+        AttackTypes = attack.AttackType;
         MinDamage = attack.MinDamage;
         MaxDamage = attack.MaxDamage;
         NoDamage = attack.NoDamage;

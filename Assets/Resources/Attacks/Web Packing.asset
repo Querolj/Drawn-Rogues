@@ -24,7 +24,7 @@ MonoBehaviour:
   _attackElement: 0
   _range: 3
   _attackSelectionType: 7
-  _attackType: 3
+  _attackTypes: 03000000
   _effectsSerialized:
   - Effect: {fileID: 11400000, guid: 12c7865a63ee94446b486554b643fe60, type: 2}
     Value: 1
@@ -38,6 +38,4 @@ MonoBehaviour:
   _requiredNumberOfLegsMin: -1
   _requiredNumberOfLegsMax: -1
   _breathParticleSystem: {fileID: 8688314643882885419, guid: c08b6028a1d55b644bd18ec8e7dc49c7, type: 3}
-  _coneAngle: 40
-  _breathDuration: 0.75
-  _particuleNumberPerDegree: 1
+  _coneAngle: 60

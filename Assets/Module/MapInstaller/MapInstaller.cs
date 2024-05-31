@@ -42,7 +42,7 @@ public class MapInstaller : MonoInstaller
     public override void InstallBindings ()
     {
         Container.Bind<CursorModeSwitcher> ().FromComponentsInNewPrefab (_modeSwitcher).AsSingle ();
-        Container.Bind<MoveIndicator> ().FromComponentsInNewPrefab (_moveIndicatore).AsSingle ();
+        Container.Bind<MoveIndicator> ().FromComponentsInNewPrefab (_moveIndicatore).AsTransient ();
         Container.Bind<ActionDelayer> ().FromComponentsInNewPrefab (_actionDelayer).AsSingle ();
         Container.Bind<WorldUIContainer> ().FromComponentsInNewPrefab (_worldUIContainer).AsSingle ();
         Container.Bind<ResizableBrush> ().FromNewScriptableObject (_resizableBrush).AsSingle ();

@@ -53,8 +53,8 @@ public class Attack : ScriptableObject
     public AttackSelectionType AttackSelectionType => _attackSelectionType;
 
     [SerializeField, BoxGroup ("Stats")]
-    private AttackType _attackType;
-    public AttackType AttackType => _attackType;
+    private AttackType[] _attackTypes = new AttackType[] { global::AttackType.None };
+    public AttackType[] AttackType => _attackTypes;
 
     [SerializeField, BoxGroup ("Stats")]
     private EffectSerialized[] _effectsSerialized;

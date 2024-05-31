@@ -128,9 +128,9 @@ MonoBehaviour:
   _outline: {fileID: 863070234400948420}
   _eventsOnDeath: []
   _attacksReferences:
-  - {fileID: 11400000, guid: 39a435e0b4849504bada3babfbe867ea, type: 2}
-  - {fileID: 11400000, guid: fbc86f002fffa2649a3d3b591eb95c14, type: 2}
+  - {fileID: 11400000, guid: aab3ec366449efe4aa1caac61a91e9d4, type: 2}
   - {fileID: 11400000, guid: 7b248e08cd290704fa2ba6cace6fbe48, type: 2}
+  - {fileID: 11400000, guid: 901cfa4241b5f7d43832852481a525de, type: 2}
   - {fileID: 11400000, guid: 1e00fecdfcd571048991dbe494e0b9cc, type: 2}
   - {fileID: 11400000, guid: 5bd3379e720f99048afa30729f1fdc8b, type: 2}
   _reduceEscapeChanceValue: 0.2

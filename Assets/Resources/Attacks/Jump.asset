@@ -24,7 +24,7 @@ MonoBehaviour:
   _attackElement: 0
   _range: 6
   _attackSelectionType: 2
-  _attackType: 0
+  _attackTypes: 00000000
   _effectsSerialized: []
   _isAvailableForPlayer: 1
   _minimalLevelRequired: 4

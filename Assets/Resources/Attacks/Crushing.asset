@@ -15,21 +15,21 @@ MonoBehaviour:
   _displayName: Crushing
   _animationTemplate: {fileID: 8686212205060676263, guid: 37cb070c6bfea3f4db88db807237611a, type: 3}
   _particleTemplate: {fileID: 0}
+  _noDamage: 0
   _minDamage: 3
   _maxDamage: 5
-  _noDamage: 0
   _precision: 1
   _criticalChance: 0
   _criticalMultiplier: 2
-  _damageType: 1
+  _attackElement: 0
   _range: 2
   _attackSelectionType: 6
-  _attackType: 1
+  _attackTypes: 01000000
   _effectsSerialized:
   - Effect: {fileID: 11400000, guid: e3aed83410809e34b8da8dee95cb4fbb, type: 2}
     Value: 0.5
   _isAvailableForPlayer: 1
-  _requiredLevel: 0
+  _minimalLevelRequired: 0
   _requiredWidthAdjectives: 0300000004000000
   _requiredHeightAdjectives: 
   _requiredBaseColor: 

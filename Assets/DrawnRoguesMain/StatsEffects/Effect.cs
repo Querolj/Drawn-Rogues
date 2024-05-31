@@ -39,7 +39,7 @@ public class Effect : ScriptableObject
     public AttackTimeline EffectApplicationTimeline => _effectApplicationTimeline;
 
     [SerializeField, BoxGroup ("Application context")]
-    private List<ApplyCondition> _applyConditionsOnUser;
+    private List<ApplyCondition> _applyConditionsOnUser; // TODO : Refactor this to directly reference AttackType enum ?
     public List<ApplyCondition> ApplyConditionsOnUser => _applyConditionsOnUser;
 
     [SerializeField, BoxGroup ("Application context")]
@@ -106,10 +106,10 @@ public class Effect : ScriptableObject
             switch (condition)
             {
                 case ApplyCondition.AttackIsMelee:
-                    apply &= attack.AttackType == AttackType.Melee;
+                    apply &= attack.AttackTypes.Contains (AttackType.Melee);
                     break;
                 case ApplyCondition.AttackIsProjectile:
-                    apply &= attack.AttackType == AttackType.Projectile;
+                    apply &= attack.AttackTypes.Contains (AttackType.Projectile);
                     break;
             }
 

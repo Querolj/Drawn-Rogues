@@ -24,7 +24,7 @@ MonoBehaviour:
   _attackElement: 4
   _range: 1
   _attackSelectionType: 0
-  _attackType: 1
+  _attackTypes: 01000000
   _effectsSerialized:
   - Effect: {fileID: 11400000, guid: a1171f3f9d7e36b40bd707d209547f29, type: 2}
     Value: 0.6

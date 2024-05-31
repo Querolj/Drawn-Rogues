@@ -14,7 +14,8 @@ public enum AttackSelectionType
     Zone,
     Self,
     Trajectory,
-    Cone
+    Cone,
+    Charge
 }
 
 public class AttackSelection : MonoBehaviour
@@ -49,6 +50,7 @@ public class AttackSelection : MonoBehaviour
     protected Bounds _playerBounds;
     protected List<Attackable> _attackablesInZone = new List<Attackable> ();
     protected TrajectoryCalculator _trajectoryCalculator;
+    protected MoveIndicator _moveIndicator;
     protected TrajectoryDrawer _trajectoryDrawer;
     protected CombatZone _combatZone;
     protected Vector2 _lastMousePos = Vector3.zero;
@@ -61,10 +63,11 @@ public class AttackSelection : MonoBehaviour
     }
 
     [Inject, UsedImplicitly]
-    public void Init (TrajectoryCalculator trajectoryCalculator, TrajectoryDrawer trajectoryDrawer)
+    public void Init (TrajectoryCalculator trajectoryCalculator, TrajectoryDrawer trajectoryDrawer, MoveIndicator moveIndicator)
     {
         _trajectoryCalculator = trajectoryCalculator;
         _trajectoryDrawer = trajectoryDrawer;
+        _moveIndicator = moveIndicator;
     }
 
     public virtual void Activate (AttackInstance attack, Character player, CombatZone combatZone, Action onAttackEnded)

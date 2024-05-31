@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class AttackPassive : Passive
@@ -62,8 +63,15 @@ public class AttackPassive : Passive
     {
         if (DamageTypeToAlter?.Count > 0 && !DamageTypeToAlter.Contains (attack.AttackElement))
             return false;
-        if (AttackTypeToAlter?.Count > 0 && !AttackTypeToAlter.Contains (attack.AttackType))
+        if (AttackTypeToAlter?.Count > 0)
+        {
+            foreach (AttackType attackType in AttackTypeToAlter)
+            {
+                if (attack.AttackTypes.Contains (attackType))
+                    return true;
+            }
             return false;
+        }
 
         return true;
     }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CharacterAnimation : MonoBehaviour
@@ -54,9 +55,9 @@ public class CharacterAnimation : MonoBehaviour
         if (attack == null)
             throw new System.ArgumentNullException (nameof (attack));
 
-        if (attack.AttackType == AttackType.Melee)
+        if (attack.AttackTypes.Contains (AttackType.Melee))
             ReadyAttackAnimation ();
-        else if (attack.AttackType == AttackType.Projectile)
+        else if (attack.AttackTypes.Contains (AttackType.Projectile))
             ReadyProjectileAnimation ();
     }
 

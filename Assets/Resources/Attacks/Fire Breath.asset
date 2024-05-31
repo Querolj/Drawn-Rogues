@@ -22,9 +22,9 @@ MonoBehaviour:
   _criticalChance: 0
   _criticalMultiplier: 2
   _attackElement: 2
-  _range: 3
+  _range: 2
   _attackSelectionType: 7
-  _attackType: 3
+  _attackTypes: 03000000
   _effectsSerialized:
   - Effect: {fileID: 11400000, guid: 25acded98d7ba5741b9b22b0694efa37, type: 2}
     Value: 0.35
@@ -38,4 +38,4 @@ MonoBehaviour:
   _requiredNumberOfLegsMin: -1
   _requiredNumberOfLegsMax: -1
   _breathParticleSystem: {fileID: 1120458173033448550, guid: dacc9c720f08eb543aa1297b88ae4746, type: 3}
-  _coneAngle: 60
+  _coneAngle: 40

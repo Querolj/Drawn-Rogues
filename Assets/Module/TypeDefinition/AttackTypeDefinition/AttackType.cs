@@ -3,5 +3,6 @@ public enum AttackType
     None,
     Melee,
     Projectile,
-    Breath
+    Breath,
+    Charge
 }

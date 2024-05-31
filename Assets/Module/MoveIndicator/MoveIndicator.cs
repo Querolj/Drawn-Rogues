@@ -94,6 +94,15 @@ public class MoveIndicator : MonoBehaviour
         _arrowIndicator.SetActive (true);
     }
 
+    public void ActiveChargeAttackMode (Bounds charBounds)
+    {
+        _boundExtendY = charBounds.extents.y;
+        _moveDecal.SetActive (false);
+        _combatMoveIndicator.gameObject.SetActive (true);
+        _combatMoveIndicator.SetSizeFromCharacter (charBounds);
+        _arrowIndicator.SetActive (false);
+    }
+
     public void DeactivateCombatMode ()
     {
         _boundExtendY = _arrowIndicator.GetComponent<SpriteRenderer> ().bounds.extents.y;
@@ -102,7 +111,7 @@ public class MoveIndicator : MonoBehaviour
         _arrowIndicator.SetActive (true);
     }
 
-    public void Hide()
+    public void Hide ()
     {
         _arrowIndicator.SetActive (false);
         _moveDecal.SetActive (false);

@@ -19,7 +19,7 @@ public class AttackInstance
     public float CriticalMultiplier { get; set; }
     public float Range { get; set; }
     public AttackElement AttackElement { get; set; }
-    public AttackType AttackType;
+    public AttackType[] AttackTypes;
 
     protected Character _owner;
     protected Action _onAttackEnded;
@@ -45,7 +45,7 @@ public class AttackInstance
         Name = attack.Name;
         AnimationTemplate = attack.AnimationTemplate;
         ParticleTemplate = attack.ParticleTemplate;
-        AttackType = attack.AttackType;
+        AttackTypes = attack.AttackType;
         MinDamage = attack.MinDamage;
         MaxDamage = attack.MaxDamage;
         NoDamage = attack.NoDamage;
