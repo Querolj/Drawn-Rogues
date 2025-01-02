@@ -17,7 +17,7 @@ public class ForceField : Attackable, IColouringSpellBehaviour, IPlayerProjectil
 
         int life = (int) ((float) _turnManager.ActivePlayerCharacter.Stats.Intelligence * 0.1f);
         life = Mathf.Max (life, 1);
-        Stats.Life = life;
+        Stats.MaxLife = life;
         
         onInitDone?.Invoke ();
     }

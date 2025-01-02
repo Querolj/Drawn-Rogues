@@ -32,7 +32,7 @@ public class BurningTempEffect : TempEffect
             () =>
             {
                 float percentageOfLifeLost = Mathf.Clamp (_maxBurnStrenght - (distance * _burnStrenghtSubstractedPerMeterMoved), _minBurnStrenght, _maxBurnStrenght);
-                int burnDamage = Mathf.RoundToInt (percentageOfLifeLost * attackable.Stats.Life);
+                int burnDamage = Mathf.RoundToInt (percentageOfLifeLost * attackable.Stats.MaxLife);
                 burnDamage = Mathf.Max (burnDamage, 1);
                 fightDescription.Report (fightDescription.GetColoredAttackableName (attackable.Description.DisplayName, attackableTransform.tag) + " took <b>" + burnDamage + "</b> damage from " + burning + ".");
                 attackable.Stats.AttackableState.ReceiveDamage (burnDamage);

@@ -8,7 +8,7 @@ public class HealEffect : Effect
     {
         string coloredUserName = fightDescription.GetColoredAttackableName (user.Description.DisplayName, user.tag);
         string coloredTargetName = fightDescription.GetColoredAttackableName (target.Description.DisplayName, target.tag);
-        int healAmount = (int) (_alteredValue * user.Stats.Life);
+        int healAmount = (int) (_alteredValue * user.Stats.MaxLife);
         user.Stats.AttackableState.Heal (healAmount);
         
         string text = coloredUserName + " heal " + coloredTargetName + " for <color=\"green\"><b>" + healAmount + "</b></color> life.";

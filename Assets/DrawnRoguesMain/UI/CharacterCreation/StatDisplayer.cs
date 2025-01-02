@@ -36,7 +36,7 @@ public class StatDisplayer : MonoBehaviour
                 _text.text = _character.Stats.Strenght.ToString ();
                 break;
             case Stat.Life:
-                _text.text = _character.Stats.Life.ToString ();
+                _text.text = _character.Stats.MaxLife.ToString ();
                 break;
             case Stat.Mobility:
                 _text.text = _character.Stats.Mobility.ToString ();

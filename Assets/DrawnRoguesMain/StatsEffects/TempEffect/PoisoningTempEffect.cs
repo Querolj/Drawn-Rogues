@@ -13,7 +13,7 @@ public class PoisoningTempEffect : TempEffect
         PlayAnimation (attackableTransform.position,
             () =>
             {
-                int poisonDamage = (int) (attackable.Stats.Life * _poisonDamagePercentage);
+                int poisonDamage = (int) (attackable.Stats.MaxLife * _poisonDamagePercentage);
                 poisonDamage = Math.Max (poisonDamage, 1);
                 string attackableName = attackable.Description.DisplayName;
                 fightDescription.Report (fightDescription.GetColoredAttackableName (attackableName, attackableTransform.tag) + " took <b>" + poisonDamage + "</b> damage from poisoning.");

@@ -738,13 +738,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22f75951b50cbd64c8cd2f4413d5b2d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _updatePercentagePerSecond: 0.25
+  _zoomedScale: 1.6
   _fillImage: {fileID: 3672888831570521924}
   _maxLifeText: {fileID: 3672888831043355092}
   _currentLifeText: {fileID: 3672888832168788356}
   _sliderHealthBar: {fileID: 3672888832262447437}
   _statusIconsDisplayer: {fileID: 7249799168947081459}
-  _updateHealthPerSecond: 0.06
-  _zoomedScale: 1.6
 --- !u!1 &5029477893013834770
 GameObject:
   m_ObjectHideFlags: 0

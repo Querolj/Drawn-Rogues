@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,26 +7,26 @@ using UnityEngine.UI;
 public class AttackableStatesUI : MonoBehaviour
 {
     #region Serialized Fields
-    [SerializeField]
+    [SerializeField, BoxGroup ("UI Settings"), Range (0f, 1f)]
+    private float _updatePercentagePerSecond = 0.05f;
+
+    [SerializeField, BoxGroup ("UI Settings")]
+    private float _zoomedScale = 1.6f;
+
+    [SerializeField, FoldoutGroup ("References")]
     private Image _fillImage;
 
-    [SerializeField]
+    [SerializeField, FoldoutGroup ("References")]
     private TMP_Text _maxLifeText;
 
-    [SerializeField]
+    [SerializeField, FoldoutGroup ("References")]
     private TMP_Text _currentLifeText;
 
-    [SerializeField]
+    [SerializeField, FoldoutGroup ("References")]
     private Slider _sliderHealthBar;
 
-    [SerializeField]
+    [SerializeField, FoldoutGroup ("References")]
     private StatusIconsDisplayer _statusIconsDisplayer;
-
-    [SerializeField]
-    private float _updateHealthPerSecond = 10f;
-
-    [SerializeField]
-    private float _zoomedScale = 1.6f;
     #endregion
 
     public bool IsSliderValueUpdating { get { return _attackable.Stats.AttackableState.CurrentLife != Mathf.RoundToInt (_sliderHealthBar.value); } }
@@ -61,17 +62,21 @@ public class AttackableStatesUI : MonoBehaviour
 
         if (IsSliderValueUpdating)
         {
-            float updateHealthPerSecondSigned = _updateHealthPerSecond * (_attackable.Stats.AttackableState.CurrentLife >= _sliderHealthBar.value ? 1 : -1);
-            float normalizedLife = _sliderHealthBar.value / _attackable.Stats.Life;
-            float newNormalizedHealthBarValue = normalizedLife + updateHealthPerSecondSigned * Time.deltaTime;
+            float currentLife = _attackable.Stats.AttackableState.CurrentLife;
+            float maxLife = _attackable.Stats.MaxLife;
 
-            if (updateHealthPerSecondSigned < 0)
-                _sliderHealthBar.value = Mathf.Clamp (newNormalizedHealthBarValue * _attackable.Stats.Life, _attackable.Stats.AttackableState.CurrentLife, _attackable.Stats.Life);
+            float deltaPercentageSigned = _updatePercentagePerSecond * Time.deltaTime * (currentLife >= _sliderHealthBar.value ? 1 : -1);
+
+            float normalizedSliderValue = _sliderHealthBar.value / _sliderHealthBar.maxValue;
+            float newNormalizedHealthBarValue = normalizedSliderValue + deltaPercentageSigned;
+
+            if (deltaPercentageSigned > 0)
+                _sliderHealthBar.value = Mathf.Clamp (newNormalizedHealthBarValue * maxLife, 0, currentLife);
             else
-                _sliderHealthBar.value = Mathf.Clamp (newNormalizedHealthBarValue * _attackable.Stats.Life, 0, _attackable.Stats.AttackableState.CurrentLife);
+                _sliderHealthBar.value = Mathf.Clamp (newNormalizedHealthBarValue * maxLife, currentLife, maxLife);
 
             if (!IsSliderValueUpdating)
-                _sliderHealthBar.value = _attackable.Stats.AttackableState.CurrentLife;
+                _sliderHealthBar.value = currentLife;
 
             UpdateBarColor ();
         }
@@ -110,10 +115,10 @@ public class AttackableStatesUI : MonoBehaviour
             throw new System.ArgumentNullException (nameof (attackable));
         _initialOffsetFromAttackable = transform.position - _attackable.transform.position;
 
-        _sliderHealthBar.maxValue = _attackable.Stats.Life;
+        _sliderHealthBar.maxValue = _attackable.Stats.MaxLife;
         _sliderHealthBar.minValue = 0;
         _sliderHealthBar.value = _attackable.Stats.AttackableState.CurrentLife;
-        _maxLifeText.text = _attackable.Stats.Life.ToString ();
+        _maxLifeText.text = _attackable.Stats.MaxLife.ToString ();
         _currentLifeText.text = _attackable.Stats.AttackableState.CurrentLife.ToString ();
         UpdateBarColor ();
         _initialized = true;

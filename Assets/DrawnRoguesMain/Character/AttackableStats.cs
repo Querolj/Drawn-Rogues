@@ -18,7 +18,7 @@ public class AttackableStats
     private int _baseLife;
     public int BaseLife { get { return _baseLife; } set { _baseLife = value; } }
     private int _alteredLife;
-    public int Life
+    public int MaxLife
     {
         get
         {
@@ -29,7 +29,7 @@ public class AttackableStats
         set
         {
             _baseLife = value;
-            _attackableState = new AttackableState (Life);
+            _attackableState = new AttackableState (MaxLife);
         }
     }
     private Dictionary < int, (OperationTypeEnum, float) > _lifeModifiersById = new Dictionary < int, (OperationTypeEnum, float) > ();
@@ -39,7 +39,7 @@ public class AttackableStats
         get
         {
             if (_attackableState == null)
-                _attackableState = new AttackableState (Life);
+                _attackableState = new AttackableState (MaxLife);
             return _attackableState;
         }
     }
@@ -327,7 +327,7 @@ public class AttackableStats
                 Intelligence += value;
                 break;
             case PixelUsage.Body:
-                Life += value;
+                MaxLife += value;
                 break;
             case PixelUsage.Arm:
                 Strenght += value;
@@ -346,7 +346,7 @@ public class AttackableStats
                 Intelligence = value;
                 break;
             case PixelUsage.Body:
-                Life = value;
+                MaxLife = value;
                 break;
             case PixelUsage.Arm:
                 Strenght = value;
@@ -468,7 +468,7 @@ public class AttackableStats
 
     public override string ToString ()
     {
-        string s = "Life : " + Life + "\nIntelligence : " + Intelligence + "\nStrenght : " + Strenght + "\nMobility : " + Mobility + "\n";
+        string s = "Life : " + MaxLife + "\nIntelligence : " + Intelligence + "\nStrenght : " + Strenght + "\nMobility : " + Mobility + "\n";
 
         foreach (KeyValuePair<string, Effect> stat in _effectByNames)
         {

@@ -28,7 +28,7 @@ public class BleedingTempEffect : TempEffect
             {
                 float percentageOfLifeLost = distance * _bleedStrenght;
                 percentageOfLifeLost = Mathf.Clamp (percentageOfLifeLost, 0.01f, _maxPercentageLifeLost);
-                int bleedDamage = (int) (distance * _bleedStrenght * attackable.Stats.Life);
+                int bleedDamage = (int) (distance * _bleedStrenght * attackable.Stats.MaxLife);
                 bleedDamage = Mathf.Max (bleedDamage, 1);
                 fightDescription.Report (fightDescription.GetColoredAttackableName (attackable.Description.DisplayName, attackableTransform.tag) + " took <b>" + bleedDamage + "</b> damage from " + bleeding + ".");
                 attackable.Stats.AttackableState.ReceiveDamage (bleedDamage);

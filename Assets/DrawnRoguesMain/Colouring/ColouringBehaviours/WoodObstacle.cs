@@ -30,7 +30,7 @@ public class WoodObstacle : Attackable, IColouringSpellBehaviour
         countBuf.Release ();
         int pixelCount = count[0];
         //Set life
-        Stats.Life = (int) ((float) pixelCount * 0.2f);
+        Stats.MaxLife = (int) ((float) pixelCount * 0.2f);
 
         // Set kilogram
         Stats.Kilogram = pixelCount * KG_PER_PIXEL;
