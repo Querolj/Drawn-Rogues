@@ -1,5 +1,7 @@
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 public class CombatCamera : MonoBehaviour
 {
@@ -21,6 +23,14 @@ public class CombatCamera : MonoBehaviour
     private Bounds _bounds;
     private Vector3 _oldMousePosition;
 
+    private CameraService _cameraService;
+
+    [Inject, UsedImplicitly]
+    private void Init (CameraService cameraService)
+    {
+        _cameraService = cameraService;
+    }
+
     private void Start ()
     {
         _bounds = _combatZone.Bounds;
@@ -28,7 +38,7 @@ public class CombatCamera : MonoBehaviour
 
     private void FixedUpdate ()
     {
-        if (!_combatZone.FightStarted)
+        if (!_combatZone.FightStarted || _cameraService.IsBlending)
             return;
 
         Vector3 direction = Vector3.zero;

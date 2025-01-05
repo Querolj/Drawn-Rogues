@@ -90,7 +90,7 @@ public abstract class AIBehaviour : MonoBehaviour
         }
 
         List<Vector3> trajPoints = GetTrajectoryToPlayer (projectileStartPosition, playerCharacter, attackInstProjectile.TrajectorySpeed,
-            attackInstProjectile.TrajectoryRadius);
+            attackInstProjectile.TrajectoryRadius, attackInstProjectile.TrajectoryCurveHeight, attackInstProjectile.TrajectoryCurve);
         attackInstProjectile.Execute (_character, playerCharacter, attackPos, onTurnEnd, null, trajPoints);
     }
 
@@ -101,7 +101,7 @@ public abstract class AIBehaviour : MonoBehaviour
         attackerOriginPosition.z = _character.transform.position.z;
 
         List<Vector3> trajPoints = GetTrajectoryToPlayer (attackerOriginPosition, playerCharacter, attackInstTrajectory.TrajectorySpeed,
-            attackInstTrajectory.TrajectoryRadius);
+            attackInstTrajectory.TrajectoryRadius, attackInstTrajectory.TrajectoryRadius, attackInstTrajectory.TrajectoryCurve);
         attackInstTrajectory.Execute (_character, playerCharacter, attackPos, onTurnEnd, null, trajPoints);
     }
 
@@ -112,17 +112,17 @@ public abstract class AIBehaviour : MonoBehaviour
         attackerOriginPosition.z = _character.transform.position.z;
 
         List<Vector3> trajPoints = GetTrajectoryToPlayer (attackerOriginPosition, playerCharacter, attackInstTrajectoryZone.TrajectorySpeed,
-            attackInstTrajectoryZone.TrajectoryRadius);
+            attackInstTrajectoryZone.TrajectoryRadius, attackInstTrajectoryZone.TrajectoryCurveHeight, attackInstTrajectoryZone.TrajectoryCurve);
         attackInstTrajectoryZone.Execute (_character, playerCharacter, attackPos, onTurnEnd, new List<Attackable> () { playerCharacter }, trajPoints);
     }
 
-    protected List<Vector3> GetTrajectoryToPlayer (Vector3 startPos, Character playerCharacter, float speed, float radius)
+    protected List<Vector3> GetTrajectoryToPlayer (Vector3 startPos, Character playerCharacter, float speed, float radius, float curveHeight, AnimationCurve curve)
     {
         Bounds playerBounds = (Bounds) playerCharacter.GetSpriteBounds ();
         Vector3 targetPos = playerBounds.center;
         targetPos.z = playerCharacter.transform.position.z;
 
-        return _trajectoryCalculator.GetCurvedTrajectory (startPos, targetPos, radius, _character.gameObject.GetInstanceID (), out Attackable attackableHit);
+        return _trajectoryCalculator.GetCurvedTrajectory (startPos, targetPos, radius, curveHeight, curve, _character.gameObject.GetInstanceID (), out Attackable attackableHit);
     }
 
     protected void MoveTowardCharacter (CombatZone combatZone, Character targetCharacter, Action onTurnEnd)

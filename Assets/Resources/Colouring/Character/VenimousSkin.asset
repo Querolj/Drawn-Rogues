@@ -27,6 +27,8 @@ MonoBehaviour:
   _baseBonusToMainStats: 1
   _kilogramPerPixel: 0.001
   _stats:
+    MainStatsPassiveValues: []
+    MiscPassiveValues: []
     AttackDefPassiveValues: []
     AttackOffPassiveValues: []
     EffectDefPassiveValues: []

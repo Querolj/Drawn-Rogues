@@ -8,6 +8,9 @@ public class AttackInstTrajectoryZone : AttackInstance
     public Vector2 ZoneSize;
     public float TrajectorySpeed = 1f;
     public float TrajectoryRadius = 1f;
+    public float TrajectoryCurveHeight = 1f;
+    public AnimationCurve TrajectoryCurve;
+
 
     public override void Init (Attack attack, Character owner)
     {
@@ -17,6 +20,8 @@ public class AttackInstTrajectoryZone : AttackInstance
 
         TrajectorySpeed = attackTrajectoryZone.TrajectorySpeed;
         TrajectoryRadius = attackTrajectoryZone.TrajectoryRadius;
+        TrajectoryCurveHeight = attackTrajectoryZone.TrajectoryCurveHeight;
+        TrajectoryCurve = attackTrajectoryZone.TrajectoryCurve;
         ZoneSize = attackTrajectoryZone.ZoneSize;
         AttackableDetectorTemplate = attackTrajectoryZone.AttackableDetectorTemplate;
     }

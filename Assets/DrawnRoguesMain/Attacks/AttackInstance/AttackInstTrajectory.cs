@@ -6,6 +6,8 @@ public class AttackInstTrajectory : AttackInstance
 {
     public float TrajectorySpeed = 1f;
     public float TrajectoryRadius = 1f;
+    public float TrajectoryCurveHeight = 1f;
+    public AnimationCurve TrajectoryCurve;
 
     public override void Init (Attack attack, Character owner)
     {
@@ -13,8 +15,10 @@ public class AttackInstTrajectory : AttackInstance
         AttackTrajectory attackTrajectory = attack as AttackTrajectory ??
             throw new ArgumentException (nameof (attack) + " must be of type " + nameof (AttackTrajectory));
 
-        TrajectorySpeed = attackTrajectory.TrajectorySpeed;
+        TrajectorySpeed = attackTrajectory.TrajectorySpeedFactor;
         TrajectoryRadius = attackTrajectory.TrajectoryRadius;
+        TrajectoryCurveHeight = attackTrajectory.TrajectoryCurveHeight;
+        TrajectoryCurve = attackTrajectory.TrajectorySpeedCurve;
     }
 
     public override AttackInstance GetCopy ()

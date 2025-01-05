@@ -1,43 +1,47 @@
+using Sirenix.OdinInspector;
 using UnityEngine;
 using Zenject;
 
 public class MapInstaller : MonoInstaller
 {
-    [SerializeField]
+    [SerializeField, BoxGroup ("Prefabs")]
     private CursorModeSwitcher _modeSwitcher;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Prefabs")]
     private MoveIndicator _moveIndicatore;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Prefabs")]
     private ActionDelayer _actionDelayer;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Prefabs")]
     private ResizableBrush _resizableBrush;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Prefabs")]
     private TrajectoryDrawer _trajectoryDrawer;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Prefabs")]
     private AttackSelectionManager _attackSelectionManager;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Prefabs")]
     private WorldUIContainer _worldUIContainer;
 
-    [SerializeField]
-    private GameObject _combatUIContainer;
-
-    [SerializeField]
+    [SerializeField, BoxGroup ("Prefabs")]
     private FightRegistry _fightRegistry;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Prefabs")]
     private InputMapSwitcher _inputMapSwitcher;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Prefabs")]
     private TextureTransition _textureTransition;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Prefabs")]
     private Drawer _drawer;
+
+    [SerializeField, BoxGroup ("Objects in scene")]
+    private CameraService _camera;
+
+    [SerializeField, BoxGroup ("Objects in scene")]
+    private GameObject _combatUIContainer;
 
     public override void InstallBindings ()
     {
@@ -51,7 +55,7 @@ public class MapInstaller : MonoInstaller
         Container.Bind<InputMapSwitcher> ().FromComponentsInNewPrefab (_inputMapSwitcher).AsSingle ();
         Container.Bind<TextureTransition> ().FromComponentsInNewPrefab (_textureTransition).AsTransient ();
         Container.Bind<Drawer> ().FromComponentsInNewPrefab (_drawer).AsSingle ();
-
+        Container.Bind<CameraService> ().FromComponentOn (_camera.gameObject).AsSingle ();
 
         GameObjectCreationParameters combatUIContainerParams = new GameObjectCreationParameters ();
         combatUIContainerParams.ParentTransform = _combatUIContainer.transform;

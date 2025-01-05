@@ -61,7 +61,7 @@ public class AtkSelectProjectile : AttackSelection
             return;
         }
 
-        if (Mouse.current.leftButton.wasPressedThisFrame && _targettedAttackable != null && _trajectoryPoints?.Count > 1)
+        if (Mouse.current.leftButton.wasPressedThisFrame && _targettedAttackable != null && _trajectoryPoints?.Count > 0)
         {
             _attackProjectile.Execute (_player, _targettedAttackable, _validSelectionIcon.transform.position, _onAttackEnded, null, _trajectoryPoints);
             Deactivate ();
@@ -74,12 +74,12 @@ public class AtkSelectProjectile : AttackSelection
         }
         _timeSinceLastUpdate = 0f;
 
-        if (Vector3.Distance (_lastMousePos, Mouse.current.position.ReadValue()) < 1)
+        if (Vector3.Distance (_lastMousePos, Mouse.current.position.ReadValue ()) < 1)
         {
             return;
         }
 
-        TryRaycastOnAttackSelectionSprite (Mouse.current.position.ReadValue(), out Vector3 targetPos);
+        TryRaycastOnAttackSelectionSprite (Mouse.current.position.ReadValue (), out Vector3 targetPos);
         targetPos.y = Utils.GetMapHeight (targetPos);
         UpdateProjectileStartPos ();
         TryTurnPlayer (targetPos);
@@ -89,9 +89,10 @@ public class AtkSelectProjectile : AttackSelection
         if (isPositionInRange)
         {
             _trajectoryPoints = _trajectoryCalculator.GetCurvedTrajectory (_projectileStartPosition, targetPos,
-                _attackProjectile.TrajectoryRadius, _player.gameObject.GetInstanceID (), out Attackable attackable);
+                _attackProjectile.TrajectoryRadius, _attackProjectile.TrajectoryCurveHeight, _attackProjectile.TrajectoryCurve,
+                _player.gameObject.GetInstanceID (), out Attackable attackable);
 
-            if (attackable != null && _trajectoryPoints?.Count > 1)
+            if (attackable != null && _trajectoryPoints?.Count > 0)
             {
                 if (_targettedAttackable != null && _targettedAttackable != attackable)
                 {
@@ -114,7 +115,7 @@ public class AtkSelectProjectile : AttackSelection
                 _validSelectionIcon.transform.position = targetPos;
             }
 
-            if (_trajectoryPoints?.Count > 1)
+            if (_trajectoryPoints?.Count > 0)
                 _trajectoryDrawer.DrawTrajectory (_trajectoryPoints, _attackProjectile.TrajectoryRadius);
         }
         else
@@ -132,6 +133,6 @@ public class AtkSelectProjectile : AttackSelection
         _material.SetFloat ("_AttackRange", _attack.Range + _radiusAdded);
         _material.SetVector ("_AttackPosition", _attackerOriginPosition);
 
-        _lastMousePos = Mouse.current.position.ReadValue();
+        _lastMousePos = Mouse.current.position.ReadValue ();
     }
 }

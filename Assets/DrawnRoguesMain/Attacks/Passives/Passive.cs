@@ -12,26 +12,26 @@ public enum OperationTypeEnum
 
 public class Passive : ScriptableObject
 {
-    [SerializeField]
-    private float _maxValue = float.MaxValue;
-    public float MaxValue => _maxValue;
-
-    [SerializeField]
-    private float _minValue = float.MinValue;
-    public float MinValue => _minValue;
-
-    [SerializeField, InfoBox ("If true, the value will be displayed as a percentage. If false, it will be displayed as a number.")]
+    [SerializeField, InfoBox ("If true, the value will be displayed as a percentage. If false, it will be displayed as a number."), BoxGroup ("Display")]
     private bool _isPercentage = true;
 
-    [SerializeField, TextArea (3, 10), InfoBox ("Can contain {value} to display the value, and {sign} to display + or - depending on the value.")]
+    [SerializeField, TextArea (3, 10), InfoBox ("Can contain {value} to display the value, and {sign} to display + or - depending on the value."), BoxGroup ("Display")]
     private string _description;
     public string Description => _description;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Display")]
     private bool _inverseDisplayedSignInDescription;
     public bool InverseDisplayedSignInDescription => _inverseDisplayedSignInDescription;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Settings")]
+    private float _maxValue = float.MaxValue;
+    public float MaxValue => _maxValue;
+
+    [SerializeField, BoxGroup ("Settings")]
+    private float _minValue = float.MinValue;
+    public float MinValue => _minValue;
+
+    [SerializeField, BoxGroup ("Settings")]
     private OperationTypeEnum _operationType;
     public OperationTypeEnum OperationType => _operationType;
 

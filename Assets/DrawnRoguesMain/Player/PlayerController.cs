@@ -18,11 +18,11 @@ public class PlayerController : MonoBehaviour
     #region Serialized Fields
 
     //debug
-    [SerializeField]
+    [SerializeField, BoxGroup ("Debug")]
     private string _playerNameToLoad;
 
     //debug
-    [SerializeField]
+    [SerializeField, BoxGroup ("Debug")]
     private GameObject _drawedCharacterTestPrefab;
 
     [SerializeField, BoxGroup ("Inputs")]
@@ -31,31 +31,34 @@ public class PlayerController : MonoBehaviour
     [SerializeField, BoxGroup ("Inputs")]
     private InputActionReference _drawModeInput;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("References")]
     private AttackRegistry _attackRegistry;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("References")]
     private CinemachineVirtualCamera _playerVirtualCamera;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("References")]
     private CinemachineVirtualCamera _freeDrawVirtualCamera;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("References")]
+    private CinemachineBrain _cinemachineBrain;
+
+    [SerializeField, BoxGroup ("References")]
     private CharacterCanvas _characterCanvas;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("References")]
     private Transform _startPosition;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("References")]
     private GameObject _charCreationUI;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("References")]
     private AttackChoser _attackChoserUI;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("References")]
     private GameObject _mapUI;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("References")]
     private FreeDrawUI _freeDrawUI;
     #endregion
 

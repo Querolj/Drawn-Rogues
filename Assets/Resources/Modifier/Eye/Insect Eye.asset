@@ -12,10 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c5a2250f1451f447a49344f3247c160, type: 3}
   m_Name: Insect Eye
   m_EditorClassIdentifier: 
-  _orderInUI: 0
   _displayName: Insect Eye
+  _sprite: {fileID: 21300000, guid: dc92052bf7eba3b4c956492e8b9a775a, type: 3}
+  _orderInUI: 0
   _type: 1
   _stats:
+    MainStatsPassiveValues: []
+    MiscPassiveValues: []
     AttackDefPassiveValues: []
     AttackOffPassiveValues:
     - Passive: {fileID: 11400000, guid: 7b6d870f008ae74498f37e71b3a85c36, type: 2}
@@ -23,5 +26,3 @@ MonoBehaviour:
     EffectDefPassiveValues: []
     EffectOffPassiveValues: []
     effectValues: []
-  _sprite: {fileID: 21300000, guid: dc92052bf7eba3b4c956492e8b9a775a, type: 3}
-  _description: 

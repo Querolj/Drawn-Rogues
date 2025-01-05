@@ -5,7 +5,7 @@ public class TrajectoryCalculator
 {
     private const float SMASH_SPEED_MULT = 4f;
     private const float SMASH_HEIGHT = 1f;
-    private const float STEP = 5f;
+    private const float STEP = 2.5f;
     private const float CENTER_OFFSET = 0.02f;
 
     public bool TryGetSmashTrajectory (Vector3 startPosition, Vector3 targettedPos,
@@ -18,7 +18,7 @@ public class TrajectoryCalculator
         if (targettedPos.x < startPosition.x)
             center -= Vector3.Cross (targettedPos - startPosition, Vector3.forward).normalized * SMASH_HEIGHT;
         else
-            center += Vector3.Cross (targettedPos - startPosition, Vector3.forward).normalized * SMASH_HEIGHT;
+            center -= Vector3.Cross (targettedPos - startPosition, Vector3.back).normalized * SMASH_HEIGHT;
 
         Vector3 projRelCenter = startPosition - center;
         Vector3 targetRelCenter = targettedPos - center;
@@ -26,12 +26,13 @@ public class TrajectoryCalculator
         float lerpValue = 0f;
         Vector3 lastLerpedPos = Vector3.Slerp (projRelCenter, targetRelCenter, 0f);
         trajectoryPoints = new List<Vector3> ();
+        float stepRelative = STEP / (targettedPos - startPosition).magnitude;
+
         while (lerpValue < 1f)
         {
-            lerpValue += Time.deltaTime * STEP;
+            lerpValue += Time.fixedDeltaTime * stepRelative;
             Vector3 lerpedPos = Vector3.Slerp (projRelCenter, targetRelCenter, lerpValue);
             lerpedPos += center;
-
             if (TrySphereCast (lerpedPos, lastLerpedPos, radius, 1 << LayerMask.NameToLayer ("Attackable"), instanceIdToAvoid, out Vector3 hitPos, out attackableHit))
             {
                 hitPos.z = center.z;
@@ -49,26 +50,27 @@ public class TrajectoryCalculator
         if (TrySphereCast (lastLerpedPos, lastLerpedPos + Vector3.down * 10f, radius, 1 << LayerMask.NameToLayer ("Attackable"), instanceIdToAvoid, out Vector3 hitPos2, out attackableHit))
         {
             lerpValue = 0f;
-
+            stepRelative = STEP / (hitPos2 - lastLerpedPos).magnitude;
             while (lerpValue < 1f)
             {
                 Vector3 smashLerpedPos = Vector3.Lerp (lastLerpedPos, hitPos2, lerpValue);
                 smashLerpedPos.z = center.z;
                 trajectoryPoints.Add (smashLerpedPos);
 
-                lerpValue += Time.deltaTime * STEP * SMASH_SPEED_MULT;
+                lerpValue += Time.fixedDeltaTime * stepRelative * SMASH_SPEED_MULT;
             }
         }
         else if (TryDoubleRayCastOnMap (lastLerpedPos, lastLerpedPos + Vector3.down * 10f, radius, out Vector3 smashHitPos))
         {
             lerpValue = 0f;
+            stepRelative = STEP / (smashHitPos - lastLerpedPos).magnitude;
             while (lerpValue < 1f)
             {
                 Vector3 smashLerpedPos = Vector3.Lerp (lastLerpedPos, smashHitPos, lerpValue);
                 smashLerpedPos.z = center.z;
                 trajectoryPoints.Add (smashLerpedPos);
 
-                lerpValue += Time.deltaTime * STEP * SMASH_SPEED_MULT;
+                lerpValue += Time.fixedDeltaTime * stepRelative * SMASH_SPEED_MULT;
             }
         }
         else
@@ -77,16 +79,16 @@ public class TrajectoryCalculator
         return true;
     }
 
-    public List<Vector3> GetCurvedTrajectory (Vector3 startPosition, Vector3 targettedPos,
-        float radius, int goIdToAvoid, out Attackable attackableHit)
+    public List<Vector3> GetCurvedTrajectory (Vector3 startPosition, Vector3 targettedPos, float radius,
+        float trajectoryCurveHeight, AnimationCurve speedCurve, int goIdToAvoid, out Attackable attackableHit)
     {
         attackableHit = null;
 
         Vector3 center = (startPosition + targettedPos) / 2f;
         if (targettedPos.x < startPosition.x)
-            center -= Vector3.Cross (targettedPos - startPosition, Vector3.forward).normalized * CENTER_OFFSET;
+            center -= Vector3.Cross (targettedPos - startPosition, Vector3.forward).normalized * trajectoryCurveHeight;
         else
-            center += Vector3.Cross (targettedPos - startPosition, Vector3.forward).normalized * CENTER_OFFSET;
+            center -= Vector3.Cross (targettedPos - startPosition, Vector3.back).normalized * trajectoryCurveHeight;
 
         // Debug.Log ("Center: " + center + " start pos: " + startPosition + " target pos: " + targettedPos + " cross: " + Vector3.Cross (targettedPos - startPosition, Vector3.forward).normalized * 0.01f);
         Vector3 projRelCenter = startPosition - center;
@@ -95,10 +97,11 @@ public class TrajectoryCalculator
         float lerpValue = 0f;
         Vector3 lastLerpedPos = Vector3.Slerp (projRelCenter, targetRelCenter, 0f);
         List<Vector3> trajectoryPoints = new List<Vector3> ();
+        float stepRelative = STEP / (targettedPos - startPosition).magnitude;
         while (lerpValue < 1f)
         {
-            lerpValue += Time.deltaTime * STEP;
-            Vector3 lerpedPos = Vector3.Slerp (projRelCenter, targetRelCenter, lerpValue);
+            lerpValue += Time.fixedDeltaTime * stepRelative;
+            Vector3 lerpedPos = Vector3.Slerp (projRelCenter, targetRelCenter, speedCurve.Evaluate (lerpValue));
             lerpedPos += center;
             Debug.DrawLine (lerpedPos, lastLerpedPos, Color.red, 10f);
             trajectoryPoints.Add (lerpedPos);
@@ -130,9 +133,10 @@ public class TrajectoryCalculator
         float lerpValue = 0f;
         Vector3 lastLerpedPos = Vector3.Slerp (projRelCenter, targetRelCenter, 0f);
         List<Vector3> trajectoryPoints = new List<Vector3> ();
+        float stepRelative = STEP / (targettedPos - startPosition).magnitude;
         while (lerpValue < 1f)
         {
-            lerpValue += Time.deltaTime * STEP;
+            lerpValue += Time.fixedDeltaTime * stepRelative;
             Vector3 lerpedPos = Vector3.Slerp (projRelCenter, targetRelCenter, lerpValue);
             lerpedPos += center;
             trajectoryPoints.Add (lerpedPos);
@@ -186,10 +190,8 @@ public class TrajectoryCalculator
         hitPos = Vector3.zero;
 
         Vector3 direction = target - origin;
-        float distance = direction.magnitude;
         direction.Normalize ();
 
-        Vector3 extends = new Vector3 (radius, radius, 0.001f);
         Physics.Raycast (origin + Vector3.right * radius, direction, out RaycastHit rightHit, Mathf.Infinity, layerMask : 1 << LayerMask.NameToLayer ("Map"));
         Physics.Raycast (origin + Vector3.left * radius, direction, out RaycastHit leftHit, Mathf.Infinity, layerMask : 1 << LayerMask.NameToLayer ("Map"));
 

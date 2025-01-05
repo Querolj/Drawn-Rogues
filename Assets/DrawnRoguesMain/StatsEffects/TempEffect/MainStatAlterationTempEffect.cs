@@ -14,9 +14,6 @@ public class MainStatAlterationTempEffect : TempEffect
     public OperationTypeEnum OperationType => _operationType;
 
     [SerializeField, BoxGroup ("Specifics")]
-    private float _operationValue;
-
-    [SerializeField, BoxGroup ("Specifics")]
     private string _wearOffText;
 
     private int _id;

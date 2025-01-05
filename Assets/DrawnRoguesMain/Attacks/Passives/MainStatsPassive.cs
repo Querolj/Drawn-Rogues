@@ -1,10 +1,11 @@
 using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 [CreateAssetMenu (fileName = "MainStatsPassive", menuName = "Passive/MainStatsPassive", order = 1)]
 public class MainStatsPassive : Passive
 {
-    [SerializeField]
+    [SerializeField, BoxGroup ("Settings")]
     private MainStatType _mainStatType;
 
     public void AlterStats (AttackableStats stats) // effect value is suplied separately because it may be altered by other passives

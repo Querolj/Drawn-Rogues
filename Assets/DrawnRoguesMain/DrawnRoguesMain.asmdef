@@ -31,7 +31,8 @@
         "CursorModeSwitcher",
         "InputMapSwitcher",
         "TextureTransition",
-        "Unity.Localization"
+        "Unity.Localization",
+        "Camera"
     ],
     "includePlatforms": [
         "Editor",

@@ -6,6 +6,8 @@ public class AttackInstProjectile : AttackInstance
 {
     public float TrajectorySpeed = 1f;
     public float TrajectoryRadius = 1f;
+    public float TrajectoryCurveHeight;
+    public AnimationCurve TrajectoryCurve;
 
     private Projectile _projectileTemplate;
 
@@ -15,10 +17,11 @@ public class AttackInstProjectile : AttackInstance
         AttackProjectile attackProjectile = attack as AttackProjectile ??
             throw new ArgumentException (nameof (attack) + " must be of type " + nameof (AttackProjectile));
 
-        TrajectorySpeed = attackProjectile.TrajectorySpeed;
-        TrajectoryRadius = attackProjectile.TrajectoryRadius;
+        TrajectorySpeed = attackProjectile.TrajectorySpeedFactor;
+        TrajectoryRadius = attackProjectile.ProjectileTemplate.Radius;
+        TrajectoryCurveHeight = attackProjectile.TrajectoryCurveHeight;
+        TrajectoryCurve = attackProjectile.TrajectorySpeedCurve;
         _projectileTemplate = attackProjectile.ProjectileTemplate;
-
     }
 
     public override AttackInstance GetCopy ()

@@ -71,8 +71,6 @@ public class AtkSelectTrajectory : AttackSelection
 
         if (isPositionInRange)
         {
-            _validSelectionIcon.transform.position = targetPos;
-
             if (_trajectoryCalculator.TryGetSmashTrajectory (_trajectoryStart, targetPos,
                     _attackTrajectory.TrajectoryRadius, _player.GetInstanceID (), out Attackable attackable, out _trajectoryPoints))
             {
@@ -93,7 +91,7 @@ public class AtkSelectTrajectory : AttackSelection
             }
 
             _validSelectionIcon.transform.position = _trajectoryPoints?.Count > 0 ? _trajectoryPoints[_trajectoryPoints.Count - 1] : targetPos;
-            if (_trajectoryPoints?.Count > 1)
+            if (_trajectoryPoints?.Count > 0)
                 _trajectoryDrawer.DrawTrajectory (_trajectoryPoints, _attackTrajectory.TrajectoryRadius);
         }
         else

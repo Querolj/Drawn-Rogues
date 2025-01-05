@@ -12,25 +12,27 @@ public enum ModifierType
 [CreateAssetMenu (fileName = "Modifier", menuName = "Modifier/Modifier", order = 1)]
 public class Modifier : ScriptableObject
 {
-    [SerializeField, Range (0, 1000)]
-    private int _orderInUI;
-    public int OrderInUI => _orderInUI;
-
-    [SerializeField, InfoBox ("Modifier name and asset name are not the same", InfoMessageType.Error, nameof (IsNameDifferentFromAssetName))]
+    [SerializeField, InfoBox ("Modifier name and asset name are not the same", InfoMessageType.Error, nameof (IsNameDifferentFromAssetName)), BoxGroup ("Display")]
     private string _displayName;
     public string DisplayName => _displayName;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Display")]
+    private Sprite _sprite;
+    public Sprite Sprite => _sprite;
+
+    [SerializeField, Range (0, 1000), BoxGroup ("Display")]
+    private int _orderInUI;
+    public int OrderInUI => _orderInUI;
+
+    [SerializeField, BoxGroup ("Stats")]
     private ModifierType _type;
     public ModifierType Type => _type;
 
-    [SerializeField]
+    [SerializeField, BoxGroup ("Stats")]
     private StatsSerialized _stats;
     public StatsSerialized Stats => _stats;
 
-    [SerializeField]
-    private Sprite _sprite;
-    public Sprite Sprite => _sprite;
+    
 
     public string GetStatsDescription ()
     {

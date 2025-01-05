@@ -35,6 +35,30 @@ MonoBehaviour:
   _requiredNumberOfArmsMax: -1
   _requiredNumberOfLegsMin: -1
   _requiredNumberOfLegsMax: -1
-  TrajectorySpeed: 15
-  TrajectoryRadius: 0.05
+  TrajectoryCurveHeight: 0.4
+  TrajectorySpeedFactor: 10
+  TrajectorySpeedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1.5655121
+      outSlope: 1.5655121
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.053872053
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1.65153
+      outSlope: 1.65153
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.04377103
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   ProjectileTemplate: {fileID: 8473946744376720238, guid: 81bcc3b052942ca4baefd573586a9c2c, type: 3}

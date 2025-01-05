@@ -1,15 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class AttackPassive : Passive
 {
-    [Tooltip ("If empty, will apply to all damage types")]
+    [Tooltip ("If empty, will apply to all damage types"), BoxGroup ("Settings")]
     public List<AttackElement> DamageTypeToAlter;
 
-    [Tooltip ("If empty, will apply to all attack types")]
+    [Tooltip ("If empty, will apply to all attack types"), BoxGroup ("Settings")]
     public List<AttackType> AttackTypeToAlter;
-
+    
+    [BoxGroup ("Settings")]
     public AttackStatsType AttackStatToAlter;
 
     public enum AttackStatsType
