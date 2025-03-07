@@ -100,7 +100,7 @@ public class AttackableStats
 
     private void AlterMainStatMethod (Dictionary < int, (OperationTypeEnum, float) > modifiersById, ref int valueToAlter)
     {
-        foreach ((OperationTypeEnum, float) mainStatModifier in GetSortedListOfModifiers (modifiersById))
+        foreach ((OperationTypeEnum, float) mainStatModifier in SortListOfModifiersByOperationType (modifiersById))
         {
             OperationTypeEnum operationType = mainStatModifier.Item1;
             float value = mainStatModifier.Item2;
@@ -122,7 +122,7 @@ public class AttackableStats
         }
     }
 
-    private List < (OperationTypeEnum, float) > GetSortedListOfModifiers (Dictionary < int, (OperationTypeEnum, float) > modifiersById)
+    private List < (OperationTypeEnum, float) > SortListOfModifiersByOperationType (Dictionary < int, (OperationTypeEnum, float) > modifiersById)
     {
         List < (OperationTypeEnum, float) > modifiers = new List < (OperationTypeEnum, float) > ();
         foreach (KeyValuePair < int, (OperationTypeEnum, float) > mobilityModifier in modifiersById)

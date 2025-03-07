@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EffectPassive : Passive
 {
-    [BoxGroup ("Settings")]
+    [BoxGroup ("Effect(s) focused by passive"), HideLabel]
     public Effect[] EffectsToAlter;
 
     public float GetAlterEffectValue (Effect effect, float effectValue) // effect value is suplied separately because it may be altered by other passives

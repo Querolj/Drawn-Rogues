@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class AttackPassive : Passive
 {
-    [Tooltip ("If empty, will apply to all damage types"), BoxGroup ("Settings")]
-    public List<AttackElement> DamageTypeToAlter;
-
-    [Tooltip ("If empty, will apply to all attack types"), BoxGroup ("Settings")]
+    [Tooltip ("If empty, will apply to all attack types"), BoxGroup ("Statistic focused by passive")]
     public List<AttackType> AttackTypeToAlter;
     
-    [BoxGroup ("Settings")]
+    [BoxGroup ("Statistic focused by passive")]
     public AttackStatsType AttackStatToAlter;
+
+    [Tooltip ("If empty, will apply to all damage types"), BoxGroup ("Statistic focused by passive"), ShowIf (nameof (IsAttackStatFocusedDamage))]
+    public List<AttackElement> DamageTypeToAlter;
 
     public enum AttackStatsType
     {
@@ -21,6 +21,11 @@ public class AttackPassive : Passive
         Precision,
         CriticalChance,
         CriticalMultipliier
+    }
+
+    private bool IsAttackStatFocusedDamage()
+    {
+        return AttackStatToAlter == AttackStatsType.Damage;
     }
 
     public void AlterAttack (AttackInstance attack)

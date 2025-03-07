@@ -2,36 +2,34 @@ using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
+// Order of enum = order of operation
 public enum OperationTypeEnum
 {
     Add,
     AddPercentage,
-    PercentageResistance,
     Set,
+    PercentageResistance,
 }
 
 public class Passive : ScriptableObject
 {
-    [SerializeField, InfoBox ("If true, the value will be displayed as a percentage. If false, it will be displayed as a number."), BoxGroup ("Display")]
-    private bool _isPercentage = true;
-
-    [SerializeField, TextArea (3, 10), InfoBox ("Can contain {value} to display the value, and {sign} to display + or - depending on the value."), BoxGroup ("Display")]
+    [SerializeField, TextArea (3, 10), InfoBox ("Can contain <b>{value}</b> to display the value, and <b>{sign}</b> to display + or - depending on the value."), BoxGroup ("Description"), HideLabel]
     private string _description;
     public string Description => _description;
 
-    [SerializeField, BoxGroup ("Display")]
+    [SerializeField, BoxGroup ("Description"), InfoBox ("If true, the sign displayed will be the opposite of the value's sign.")]
     private bool _inverseDisplayedSignInDescription;
     public bool InverseDisplayedSignInDescription => _inverseDisplayedSignInDescription;
 
-    [SerializeField, BoxGroup ("Settings")]
+    [SerializeField, BoxGroup ("Value Settings")]
     private float _maxValue = float.MaxValue;
     public float MaxValue => _maxValue;
 
-    [SerializeField, BoxGroup ("Settings")]
+    [SerializeField, BoxGroup ("Value Settings")]
     private float _minValue = float.MinValue;
     public float MinValue => _minValue;
 
-    [SerializeField, BoxGroup ("Settings")]
+    [SerializeField, BoxGroup ("Value Settings")]
     private OperationTypeEnum _operationType;
     public OperationTypeEnum OperationType => _operationType;
 
@@ -68,7 +66,7 @@ public class Passive : ScriptableObject
 
     public override string ToString ()
     {
-        float mult = _isPercentage ? 100f : 1f;
+        float mult = OperationType == OperationTypeEnum.AddPercentage || OperationType == OperationTypeEnum.PercentageResistance ?  100f : 1f;
         string descriptionWithValue = Description.Replace ("{value}", Mathf.Abs (_value * mult).ToString ());
         if (InverseDisplayedSignInDescription)
             descriptionWithValue = descriptionWithValue.Replace ("{sign}", _value < 0 ? "+" : "-");
